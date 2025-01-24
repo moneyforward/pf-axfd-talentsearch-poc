@@ -1,0 +1,22 @@
+{
+  "@odata.type": "#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill",
+  "name": "documentInteligence",
+  "description": "Analyze a document by DocumentIntelligenceLayoutSkill",
+  "context": "/document",
+  "outputMode": "oneToMany",
+  "markdownHeaderDepth": "h6",
+  "inputs": [
+    {
+      "name": "file_data",
+      "source": "/document/file_data",
+      "sourceContext": null,
+      "inputs": []
+    }
+  ],
+  "outputs": [
+    {
+      "name": "markdown_document",
+      "targetName": "markdown_document"
+    }
+  ]
+}

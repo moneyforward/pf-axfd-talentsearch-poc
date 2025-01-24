@@ -1,0 +1,33 @@
+{
+  "@odata.type": "#Microsoft.Skills.Util.DocumentExtractionSkill",
+  "name": "docextract",
+  "description": "",
+  "context": "/document",
+  "parsingMode": "default",
+  "dataToExtract": "contentAndMetadata",
+  "inputs": [
+    {
+      "name": "file_data",
+      "source": "/document/file_data",
+      "sourceContext": null,
+      "inputs": []
+    }
+  ],
+  "outputs": [
+    {
+      "name": "content",
+      "targetName": "extracted_content"
+    },
+    {
+      "name": "normalized_images",
+      "targetName": "extracted_normalized_images"
+    }
+  ],
+  "configuration": {
+    "imageAction": "generateNormalizedImages",
+    "normalizedImageMaxWidth@odata.type": "#Int64",
+    "normalizedImageMaxWidth": 1024,
+    "normalizedImageMaxHeight@odata.type": "#Int64",
+    "normalizedImageMaxHeight": 1024
+  }
+}
