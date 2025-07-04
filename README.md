@@ -26,3 +26,12 @@ C4Context
 
 
 
+Firebase ( front )
+    ↓
+Cloud Function Integration ( back )
+    ↓
+Vertex AI ( search Engine )
+
+
+
+PEODAMA people data management

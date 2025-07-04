@@ -38,3 +38,6 @@ clean:
 	@echo "Cleaning the project..."
 	@echo "This is where the clean commands would go."
 	@echo "Clean complete."
+
+
+

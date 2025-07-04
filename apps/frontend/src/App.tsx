@@ -1,9 +1,13 @@
-import Top from "./Top";
 import './App.css'
+import { RouterProvider } from "react-router";
+import PFTRouter from "./Router";
+import useStaticStyles from './staticStyles';
+
 
 function App() {
+  useStaticStyles();
   return (
-    <Top />
+    <RouterProvider router={PFTRouter} />
   )
 }
 

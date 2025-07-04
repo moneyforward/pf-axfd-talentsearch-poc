@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@griffel/react": "^1.5.30",
     "@moneyforward/mfui-components": "^2.2.1",
     "@moneyforward/mfui-design-tokens": "^2.0.0",
     "@moneyforward/mfui-icons-react": "^2.0.0",
+    "firebase": "^11.9.1",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router": "^7.6.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

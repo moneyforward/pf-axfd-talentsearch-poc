@@ -1,16 +1,40 @@
-import React from "react";
+import { makeStyles } from "@griffel/react";
 import {
-    SidePaneas MFSidebar
-    , SidebarItem
+    SubNavigation
 } from "@moneyforward/mfui-components";
-import "../Top.css";
 
-const Sidebar: React.FC = () => (
-    <MfSidebar selectedKey="補填検索">
-        <SidebarItem itemKey="補填検索">補填検索</SidebarItem>
-        <SidebarItem itemKey="JD検索">JD検索</SidebarItem>
-        <SidebarItem itemKey="JD作成">JD作成</SidebarItem>
-    </MfSidebar>
-);
+makeStyles({
+
+    subNavigation: {
+        display: "flex",
+        flexDirection: "column",
+        maxWidth: "300px",
+        height: "100%",
+        backgroundColor: "#f0f0f0",
+    },
+
+});
+
+interface SidebarProps {
+    className?: string;
+}
+
+const Sidebar = (props: SidebarProps) => {
+    return (
+        <div className={props.className}>
+            <SubNavigation
+                orientation="vertical"
+                navigationItems={[
+                    { href: "/backfill", label: "補填検索" },
+                    { href: "/jd/search", label: "JD検索" , locked: true},
+                    { href: "/jd/create", label: "JD作成" , locked: true},
+                ]}
+            >
+            </SubNavigation>
+        </div>
+    );
+
+
+};
 
 export default Sidebar;

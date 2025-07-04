@@ -1,5 +1,4 @@
 import React from "react";
-import "../Top.css";
 
 export type PersonCardProps = {
   meta: string;
