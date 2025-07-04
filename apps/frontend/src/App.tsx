@@ -1,3 +1,4 @@
+import '@moneyforward/mfui-components/styles.css';
 import './App.css'
 import { RouterProvider } from "react-router";
 import PFTRouter from "./Router";
