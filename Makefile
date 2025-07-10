@@ -6,6 +6,9 @@ VERSION=1.0.0
 .PHONY:build
 build: reactbuild javabuild
 	@echo "Building the project..."
+	@echo "build backend and frontend"
+	make -C apps/backend build
+	make -C apps/frontend build
 	@echo "This is where the build commands would go."
 	docker build -t $(PROJECT_NAME):$(VERSION) .
 	@echo "Build complete."
