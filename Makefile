@@ -4,11 +4,9 @@ VERSION=1.0.0
 
 
 .PHONY:build
-build: reactbuild javabuild
+build:
 	@echo "Building the project..."
 	@echo "build backend and frontend"
-	make -C apps/backend build
-	make -C apps/frontend build
 	@echo "This is where the build commands would go."
 	docker build -t $(PROJECT_NAME):$(VERSION) .
 	@echo "Build complete."
@@ -28,13 +26,14 @@ javabuild:
 	@echo "Building Java project..."
 	@echo "This is where the Java build commands would go."
 	@echo "Java build complete."
-
+	make -C apps/backend build
 
 .PHONY: reactbuild
 reactbuild:
 	@echo "Building React project..."
 	@echo "This is where the React build commands would go."
 	@echo "React build complete."
+	make -C apps/frontend build
 
 .PHONY:clean
 clean: 

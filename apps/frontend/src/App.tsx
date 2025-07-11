@@ -1,14 +1,14 @@
-import '@moneyforward/mfui-components/styles.css';
 import './App.css'
 import { RouterProvider } from "react-router";
 import PFTRouter from "./Router";
-import useStaticStyles from './staticStyles';
+import { Provider } from './components/ui/provider';
 
 
 function App() {
-  useStaticStyles();
   return (
-    <RouterProvider router={PFTRouter} />
+    <Provider>
+      <RouterProvider router={PFTRouter} />
+    </Provider>
   )
 }
 
