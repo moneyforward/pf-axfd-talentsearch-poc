@@ -2,3 +2,5 @@
 node_modules/
 dist/
 apps/backend/src/main/resources/static
+
+.DS_Store
