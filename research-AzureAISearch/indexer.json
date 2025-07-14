@@ -1,0 +1,29 @@
+{
+    "@odata.context": "https://pf-tm-search.search.windows.net/$metadata#indexers/$entity",
+    "@odata.etag": "\"0x8DD3C1F467560BC\"",
+    "name": "documentitelligence",
+    "description": null,
+    "dataSourceName": "azureblob-1737082410336-datasource",
+    "skillsetName": "indexer-document-intelligence",
+    "targetIndexName": "talents",
+    "disabled": null,
+    "schedule": {
+      "interval": "P1D",
+      "startTime": "2025-01-24T01:47:53.545Z"
+    },
+    "parameters": {
+      "batchSize": null,
+      "maxFailedItems": null,
+      "maxFailedItemsPerBatch": null,
+      "base64EncodeKeys": null,
+      "configuration": {
+        "dataToExtract": "contentAndMetadata",
+        "parsingMode": "default",
+        "allowSkillsetToReadFileData": true
+      }
+    },
+    "fieldMappings": [],
+    "outputFieldMappings": [],
+    "cache": null,
+    "encryptionKey": null
+  }

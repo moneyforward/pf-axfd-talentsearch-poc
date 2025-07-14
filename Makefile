@@ -4,8 +4,9 @@ VERSION=1.0.0
 
 
 .PHONY:build
-build: reactbuild javabuild
+build:
 	@echo "Building the project..."
+	@echo "build backend and frontend"
 	@echo "This is where the build commands would go."
 	docker build -t $(PROJECT_NAME):$(VERSION) .
 	@echo "Build complete."
@@ -25,16 +26,30 @@ javabuild:
 	@echo "Building Java project..."
 	@echo "This is where the Java build commands would go."
 	@echo "Java build complete."
-
+	make -C apps/backend build
 
 .PHONY: reactbuild
 reactbuild:
 	@echo "Building React project..."
 	@echo "This is where the React build commands would go."
 	@echo "React build complete."
+	make -C apps/frontend build
+
+.PHONY: frontend-to-static
+frontend-to-static:
+	@echo "Copying React build to Spring Boot static directory..."
+	cp -r apps/frontend/dist/* apps/backend/src/main/resources/static/
+	@echo "Copy complete."
+
+.PHONY: reactfullbuild
+reactfullbuild: reactbuild frontend-to-static
+	@echo "React build and copy to static complete."
 
 .PHONY:clean
 clean: 
 	@echo "Cleaning the project..."
 	@echo "This is where the clean commands would go."
 	@echo "Clean complete."
+
+
+

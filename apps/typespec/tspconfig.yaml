@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "emit": [
+      "@typespec/openapi3",
+      "@typespec/json-schema"
+    ]
+  },
+  "outputDir": "tsp-output",
+  "options": {
+    "@typespec/openapi3": {
+      "emitter-output-dir": "openapi"
+    },
+    "@typespec/json-schema": {
+      "emitter-output-dir": "json-schema"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+    "name": "keyphrase",
+    "description": "",
+    "context": "/document",
+    "inputs": [
+        {
+            "name": "text",
+            "source": "/document/extracted_content"
+        },
+        {
+            "name": "languageCode",
+            "source": "/document/languageCode" 
+          }
+    ],
+    "outputs": [
+        {
+            "name": "keyPhrases",
+            "targetName": "keyPhrases"
+        }
+    ],
+    "defaultLanguageCode": "ja",
+    "maxKeyPhraseCount": 123,
+    "modelVersion": "",
+    "@odata.type": "#Microsoft.Skills.Text.KeyPhraseExtractionSkill"
+}

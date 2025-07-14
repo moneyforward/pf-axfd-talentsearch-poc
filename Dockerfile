@@ -1,21 +1,46 @@
 FROM ubuntu
+SHELL ["/bin/bash", "-c"]
+ENV HOME="/root"
 
 RUN apt-get update && apt-get install -y \
     curl \
     git \
     unzip \
     zip \
-    wget
+    wget 
 
-# Install SDKMAN!
-RUN curl -s "https://get.sdkman.io" | bash
-RUN bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install java 21.0.7-ms && sdk install maven 3.9.9"
+RUN git clone https://github.com/go-nv/goenv.git ${HOME}/.goenv
+# Go Build Environment
+ENV GOENV_ROOT="${HOME}/.goenv"
+ENV PATH="${GOENV_ROOT}/bin:$PATH"
+RUN echo 'eval "$(goenv init -)"' >> ${HOME}/.bashrc
 
-# Set the JAR path
-ENV JAR_PATH=/usr/local/lib
 
-# apps/backend/hypertm/target/hypertm-0.0.1-SNAPSHOT.jar
-COPY apps/backend/hypertm/target/hypertm-0.0.1-SNAPSHOT.jar ${JAR_PATH}/hypertm.jar
-COPY bin/run.sh /usr/local/bin/run.sh
+# Node.js Build Environment
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+# RUN export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")" ;\
+#     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm 
+ENV NVM_DIR=${HOME}/.nvm
 
-RUN chmod +x /usr/local/bin/run.sh
+COPY apps /usr/local/apps
+WORKDIR /usr/local/apps/frontend
+RUN source ${NVM_DIR}/nvm.sh && nvm install 20 && nvm use 20 && nvm alias default 20 && \
+    rm -rf package-lock.json node_modules dist && npm install && npm run build
+RUN mkdir -p /opt/local/frontend/dist && \
+    mkdir -p /opt/local/backend
+RUN cp -r /usr/local/apps/frontend/dist /opt/local/frontend/
+
+
+
+WORKDIR /usr/local/apps/backend
+RUN goenv install latest && \
+    goenv global latest
+RUN eval "$(goenv init -)" && \
+    go mod tidy && \
+    go build  .
+
+RUN cp /usr/local/apps/backend/pf-skillsearch /opt/local/backend/pf-skillsearch
+
+WORKDIR /opt/local/backend
+CMD [ "./pf-skillsearch" ]
+EXPOSE 8080

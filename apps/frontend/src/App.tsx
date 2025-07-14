@@ -1,9 +1,13 @@
-import Top from "./Top";
 import './App.css'
+import { RouterProvider } from "react-router";
+import PFTRouter from "./Router";
+import { Provider } from './components/ui/provider';
 
 function App() {
   return (
-    <Top />
+    <Provider>
+      <RouterProvider router={PFTRouter} />
+    </Provider>
   )
 }
 

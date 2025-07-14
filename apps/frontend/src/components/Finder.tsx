@@ -1,6 +1,5 @@
 import React from "react";
 import PersonCard from "./PersonCard";
-import "../Top.css";
 
 const Finder: React.FC = () => (
   <div className="finder">

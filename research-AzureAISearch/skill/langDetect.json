@@ -1,0 +1,28 @@
+{
+    "name": "languageDetect",
+    "description": "",
+    "context": "",
+    "inputs": [
+        {
+            "name": "text",
+            "source": "/document/extracted_content"
+        }
+    ],
+    "outputs": [
+        {
+            "name": "languageCode",
+            "targetName": "languageCode"
+        },
+        {
+            "name": "languageName",
+            "targetName": "languageName"
+        },
+        {
+            "name": "score",
+            "targetName": ".anguageScore"
+        }
+    ],
+    "defaultCountryHint": "",
+    "modelVersion": "",
+    "@odata.type": "#Microsoft.Skills.Text.LanguageDetectionSkill"
+}

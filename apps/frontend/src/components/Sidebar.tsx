@@ -1,16 +1,35 @@
-import React from "react";
-import {
-    SidePaneas MFSidebar
-    , SidebarItem
-} from "@moneyforward/mfui-components";
-import "../Top.css";
+import { Box, Flex } from "@chakra-ui/react";
 
-const Sidebar: React.FC = () => (
-    <MfSidebar selectedKey="補填検索">
-        <SidebarItem itemKey="補填検索">補填検索</SidebarItem>
-        <SidebarItem itemKey="JD検索">JD検索</SidebarItem>
-        <SidebarItem itemKey="JD作成">JD作成</SidebarItem>
-    </MfSidebar>
-);
+
+const Sidebar = () => {
+    return (
+        <Flex
+            direction="column"
+            maxWidth={"250px"}
+            height="100%"
+            layerStyle={"sidebar"}
+            padding="12px"
+            gap="12px"
+        >
+            <Box
+                layerStyle="sidebarItem"
+            >
+                補填検索
+            </Box>
+            <Box
+                layerStyle="sidebarItem"
+            >
+                JDテンプレート
+            </Box>
+            <Box
+                layerStyle="sidebarItem"
+            >
+                JD作成
+            </Box>
+        </Flex>
+    );
+
+
+};
 
 export default Sidebar;
