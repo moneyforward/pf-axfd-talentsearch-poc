@@ -35,6 +35,16 @@ reactbuild:
 	@echo "React build complete."
 	make -C apps/frontend build
 
+.PHONY: frontend-to-static
+frontend-to-static:
+	@echo "Copying React build to Spring Boot static directory..."
+	cp -r apps/frontend/dist/* apps/backend/src/main/resources/static/
+	@echo "Copy complete."
+
+.PHONY: reactfullbuild
+reactfullbuild: reactbuild frontend-to-static
+	@echo "React build and copy to static complete."
+
 .PHONY:clean
 clean: 
 	@echo "Cleaning the project..."

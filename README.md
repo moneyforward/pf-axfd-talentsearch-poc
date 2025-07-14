@@ -35,3 +35,8 @@ Vertex AI ( search Engine )
 
 
 PEODAMA people data management
+
+# React のビルド成果物(index.htmlや静的ファイル)が `src/main/resources/static` に配置されていることを確認してください。
+# 例: React 側で `npm run build` を実行し、`build` ディレクトリの中身を `static` ディレクトリにコピーします。
+# 例コマンド:
+# cp -r ../frontend/dist/* ../backend/src/main/resources/static/

@@ -3,7 +3,6 @@ import { RouterProvider } from "react-router";
 import PFTRouter from "./Router";
 import { Provider } from './components/ui/provider';
 
-
 function App() {
   return (
     <Provider>
