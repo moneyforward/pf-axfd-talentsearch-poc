@@ -1,8 +1,3 @@
 build:
-	mvnw clean package -DskipTests
-
-
-test:
-	mvnw test
-
+	go build -o bin/hypertm .
 
