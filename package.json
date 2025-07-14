@@ -1,0 +1,7 @@
+{
+  "name": "pf-talentsearch-root",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ]
+}
