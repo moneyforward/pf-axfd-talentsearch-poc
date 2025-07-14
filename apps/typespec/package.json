@@ -1,0 +1,24 @@
+{
+    "name": "pf-talentsearch-typespec",
+    "version": "1.0.0",
+    "description": "TypeSpec API definitions for PF Talent Search",
+    "main": "main.tsp",
+    "scripts": {
+        "build": "tsp compile .",
+        "watch": "tsp compile . --watch",
+        "format": "tsp format **/*.tsp",
+        "lint": "tsp compile . --no-emit",
+        "clean": "rimraf tsp-output"
+    },
+    "dependencies": {
+        "@typespec/compiler": "^0.62.0",
+        "@typespec/http": "^0.62.0",
+        "@typespec/rest": "^0.62.0",
+        "@typespec/openapi3": "^0.62.0",
+        "@typespec/json-schema": "^0.62.0"
+    },
+    "devDependencies": {
+        "rimraf": "^6.0.1"
+    },
+    "private": true
+}
