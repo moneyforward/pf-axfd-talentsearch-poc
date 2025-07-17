@@ -12,7 +12,7 @@ const TwoPaneMainHeader = (props: TwoPaneMainHeaderProps) => {
     console.log("TwoPaneMainHeader props:", props);
     return (
         <Flex
-            direction="column"
+            direction="row"
         >
             <Sidebar />
             <main>

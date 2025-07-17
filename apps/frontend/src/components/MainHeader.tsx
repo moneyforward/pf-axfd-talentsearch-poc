@@ -10,6 +10,7 @@ const MainHeader = (props: MainHeaderProps) => {
 
       <header
       >
+        main header
         {props.breadcrumbs &&
           props.breadcrumbs.map((crumb, index) => (
             <span key={index} className="breadcrumb-item">
