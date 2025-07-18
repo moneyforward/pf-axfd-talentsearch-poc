@@ -6,6 +6,7 @@ import { Outlet } from "react-router";
 
 export interface TwoPaneMainHeaderProps extends React.PropsWithChildren {
     className?: string;
+    breadcrumbs?: string[];
 }
 
 const TwoPaneMainHeader = (props: TwoPaneMainHeaderProps) => {
@@ -13,13 +14,20 @@ const TwoPaneMainHeader = (props: TwoPaneMainHeaderProps) => {
     return (
         <Flex
             direction="row"
+            minHeight="100%"
+            width="100%"
         >
             <Sidebar />
-            <main>
+            <Flex
+                direction="column"
+                width="100%"
+                height="100%"
+            >
                 <MainHeader
+                    breadcrumbs={props.breadcrumbs}
                 />
                 <Outlet />
-            </main>
+            </Flex>
         </Flex>
     );
 

@@ -6,19 +6,20 @@ interface MainHeaderProps {
 
 const MainHeader = (props: MainHeaderProps) => {
   return (
-    <Flex>
-
-      <header
-      >
-        main header
-        {props.breadcrumbs &&
-          props.breadcrumbs.map((crumb, index) => (
-            <span key={index} className="breadcrumb-item">
-              {crumb}
-            </span>
-          ))
-        }
-      </header>
+    <Flex
+      direction="column"
+      className="main-header"
+      width="100%"
+      backgroundColor="primary.100"
+      boxShadow="md"
+    >
+      {props.breadcrumbs &&
+        props.breadcrumbs.map((crumb, index) => (
+          <span key={index} className="breadcrumb-item">
+            {crumb}
+          </span>
+        ))
+      }
     </Flex>
   )
 };

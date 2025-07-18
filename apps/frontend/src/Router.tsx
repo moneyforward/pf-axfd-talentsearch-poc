@@ -11,7 +11,17 @@ const PFTRouter = createBrowserRouter([
             {
                 path: "/backfill",
                 element: <Backfill />,
-            }]
+
+            },
+            {
+                path: "/jd/template",
+                element: <div>JD Template Page</div>, // Placeholder for JD Template page
+            },
+            {
+                path: "/jd/create",
+                element: <div>JD Create Page</div>, // Placeholder for JD Create page
+            },
+        ]
     },
 ]);
 export default PFTRouter;

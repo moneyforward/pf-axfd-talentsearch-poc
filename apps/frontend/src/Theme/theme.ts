@@ -3,27 +3,29 @@ import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 const pfThemeConfig = defineConfig({
     theme: {
         layerStyles: {
+            message: {
+                value: {
+                    border: "1px solid",
+                }
+            },
             sidebar: {
                 value: {
-                    bgColor: { value: "primary.900" },
-                    color: { value: "natural.900" },
-                    borderWidth: { value: "1px" },
-                    borderRadius: { value: "md" }
+                    bgColor: "primary.600",
+                    borderWidth: "1px",
+                    borderRadius: "md"
                 }
             },
             sidebarItem: {
                 value: {
-                    bgColor: { value: "primary.800" },
-                    color: { value: "primary.400" },
-                    padding: { value: "8px" },
-                    borderRadius: { value: "md" },
+                    color: "natural.100",
+                    padding: "8px",
+                    borderRadius: "md",
                     _hover: {
-                        bgColor: { value: "primary.700" },
-                        cursor: { value: "pointer" }
+                        bgColor: "primary.400",
+                        cursor: "pointer"
                     }
                 }
             }
-
         },
         tokens: {
             colors: {
