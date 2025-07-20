@@ -3,6 +3,16 @@ import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 const pfThemeConfig = defineConfig({
     theme: {
         layerStyles: {
+            personCard: {
+                description: "Style for person cards",
+                value: {
+                    border: "1px solid",
+                    borderRadius: "md",
+                    padding: "8px",
+                    boxShadow: "md",
+                    maxWidth: "200px",
+                }
+            },
             message: {
                 value: {
                     border: "1px solid",

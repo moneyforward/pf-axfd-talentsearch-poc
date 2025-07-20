@@ -1,4 +1,4 @@
-import { Flex, Tag } from "@chakra-ui/react";
+import { Flex, HStack, Tag } from "@chakra-ui/react";
 
 export type PersonCardProps = {
   meta?: string;
@@ -13,24 +13,26 @@ const PersonCard = (props: PersonCardProps) => (
     direction="column"
     width={props.small ? "100px" : "200px"}
     height={props.small ? "150px" : "250px"}
+    layerStyle={"personCard"}
   >
     <div className="person-meta">{props.meta}</div>
     <div className="person-name">{props.name}</div>
     <div className="person-desc">{props.desc}</div>
-    <Tag.Root
-      display={"flex"}
-      direction={"row"}
-      gap={"5px"}
-      flexWrap={"wrap"}
 
-    >
+    <HStack >
       {props.skills.map((skill, i) => (
-        <Tag.Label
+        <Tag.Root
+          display={"flex"}
+          direction={"row"}
+          gap={"5px"}
+          flexWrap={"wrap"}
           key={`${skill}-${i}`}
-        >{skill}</Tag.Label>
+        >
+          <Tag.Label
+          >{skill}</Tag.Label>
+        </Tag.Root>
       ))}
-    </Tag.Root>
-
+    </HStack>
   </Flex >
 
 );

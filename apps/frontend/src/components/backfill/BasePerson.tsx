@@ -1,7 +1,8 @@
-import { Flex } from "@chakra-ui/react";
+import { Box, Flex, IconButton, Textarea } from "@chakra-ui/react";
 import { type JSX } from "react";
 import Message from "../messages/Message";
-import PersonCard from "../PersonCard";
+import PersonCard from "./PersonCard";
+import { LuSend } from "react-icons/lu";
 
 const BasePerson = (): JSX.Element => {
   return (
@@ -19,7 +20,6 @@ const BasePerson = (): JSX.Element => {
         small={false}
       />
 
-
       <Message
         message="Hello, this is a message!"
       />
@@ -28,6 +28,22 @@ const BasePerson = (): JSX.Element => {
         message="Hello, this is a message!"
       />
 
+      <Flex
+
+      >
+        <Textarea
+          justifyContent={"flex-end"}
+          alignContent={"flex-end"}
+        >
+        </Textarea>
+        <Box>
+          <IconButton
+            variant={"ghost"}
+          >
+            <LuSend />
+          </IconButton>
+        </Box>
+      </Flex>
     </Flex >
   );
 };
