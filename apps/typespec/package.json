@@ -1,14 +1,13 @@
 {
-    "name": "pf-talentsearch-typespec",
+    "name": "@mfskillsearch/typespec",
     "version": "1.0.0",
     "description": "TypeSpec API definitions for PF Talent Search",
     "main": "main.tsp",
     "scripts": {
-        "build": "tsp compile .",
-        "watch": "tsp compile . --watch",
-        "format": "tsp format **/*.tsp",
-        "lint": "tsp compile . --no-emit",
-        "clean": "rimraf tsp-output"
+        "spec": "tsp compile api/main.tsp --config tspconfig.yaml",
+        "postspec": "npm run openapi",
+        "openapi": "npx openapi-typescript ./dist/@typespec/openapi3/openapi.yaml -o ./dist/typescript/index.d.ts -t --root-types --enum  --enum-values",
+        "tsp-install": "tsp install"
     },
     "dependencies": {
         "@typespec/compiler": "^0.62.0",

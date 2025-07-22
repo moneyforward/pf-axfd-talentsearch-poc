@@ -1,4 +1,16 @@
-import { Flex, HStack, Tag } from "@chakra-ui/react";
+import {
+  Flex,
+  HStack,
+  Tag,
+} from "@chakra-ui/react";
+
+export type Skill = { name: string; value: number };
+export type Person = {
+  name: string;
+  info: string;
+  sub: string;
+  skills: Skill[];
+};
 
 export type PersonCardProps = {
   meta?: string;

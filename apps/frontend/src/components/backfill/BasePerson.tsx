@@ -15,9 +15,9 @@ const BasePerson = (): JSX.Element => {
     >
       <PersonCard
         name="John Doe"
-        desc="Software Engineer"
-        skills={["JavaScript", "React", "Node.js"]}
-        small={false}
+        skills={[]}
+        desc=""
+
       />
 
       <Message
