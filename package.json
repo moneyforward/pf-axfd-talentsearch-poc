@@ -5,6 +5,7 @@
     "apps/*"
   ],
   "scripts": {
+    "predev": "cd apps/backend ; make run &",
     "dev": "npm run dev --workspace=apps/frontend",
     "prebuild": "npm run spec",
     "build": "npm run build --workspaces --if-present",
