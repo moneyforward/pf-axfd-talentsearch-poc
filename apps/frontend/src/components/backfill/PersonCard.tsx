@@ -3,6 +3,7 @@ import {
   HStack,
   Tag,
 } from "@chakra-ui/react";
+import type { components } from "@mfskillsearch/typespec";
 
 export type Skill = { name: string; value: number };
 export type Person = {
@@ -13,40 +14,35 @@ export type Person = {
 };
 
 export type PersonCardProps = {
-  meta?: string;
-  name: string;
-  desc: string;
-  skills: string[];
-  small?: boolean;
+  persona?: components["schemas"]["PFSkillSearch.Models.Person"];
 };
 
-const PersonCard = (props: PersonCardProps) => (
-  <Flex
-    direction="column"
-    width={props.small ? "100px" : "200px"}
-    height={props.small ? "150px" : "250px"}
-    layerStyle={"personCard"}
-  >
-    <div className="person-meta">{props.meta}</div>
-    <div className="person-name">{props.name}</div>
-    <div className="person-desc">{props.desc}</div>
+const PersonCard = (props: PersonCardProps) => {
+  if (!props.persona) {
+    return <div>Loading...</div>;
+  }
+  return (
+    <Flex
+      direction="column"
+      layerStyle={"personCard"}
+    >
+      <div className="person-meta">{props.persona.employee_id}</div>
+      <div className="person-name">{props.persona.employee_name}</div>
+      <div className="person-desc">{props.persona.mail}</div>
 
-    <HStack >
-      {props.skills.map((skill, i) => (
+      <HStack >
         <Tag.Root
           display={"flex"}
           direction={"row"}
           gap={"5px"}
           flexWrap={"wrap"}
-          key={`${skill}-${i}`}
         >
           <Tag.Label
-          >{skill}</Tag.Label>
+          >aaa</Tag.Label>
         </Tag.Root>
-      ))}
-    </HStack>
-  </Flex >
-
-);
+      </HStack>
+    </Flex >
+  )
+};
 
 export default PersonCard;

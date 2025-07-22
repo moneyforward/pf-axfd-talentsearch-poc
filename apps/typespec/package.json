@@ -1,6 +1,7 @@
 {
     "name": "@mfskillsearch/typespec",
     "version": "1.0.0",
+    "type": "module",
     "description": "TypeSpec API definitions for PFSkillSearch",
     "scripts": {
         "spec": "tsp compile api/main.tsp --config tspconfig.yaml",
@@ -17,5 +18,5 @@
         "@typespec/openapi3": "^1.2.1",
         "@typespec/json-schema": "^1.2.1"
     },
-    "private": true
+    "types": "dist/typescript/index.d.ts"
 }

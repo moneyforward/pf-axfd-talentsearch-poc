@@ -6,6 +6,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, type JSX } from "react";
 import type { components } from "@mfskillsearch/typespec"
+import PersonCard from "./PersonCard";
 
 const BasePerson = (): JSX.Element => {
   const [persona, setPersona] = useState<components["schemas"]["PFSkillSearch.Models.Person"]>();
@@ -18,6 +19,9 @@ const BasePerson = (): JSX.Element => {
           textStyle={"sectionTitle"}
         >
           現在設定されている人物像
+          <PersonCard
+            persona={persona}
+          />
         </Heading>
 
       </Box>
