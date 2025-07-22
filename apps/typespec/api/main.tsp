@@ -1,17 +1,20 @@
 import "@typespec/http";
-import "@typespec/rest";
-import "@typespec/openapi3";
 
-using TypeSpec.Http;
-using TypeSpec.Rest;
+import "./models/index.tsp";
+import "./route/index.tsp";
+
+using Http;
 
 /**
- * PF Talent Search API
+ * PF Skill Search API
  *
- * This API provides endpoints for talent search and management functionality.
+ * This API provides endpoints for skill search and management functionality.
  */
-@service({
-  title: "PF Talent Search API",
-  description: "API for talent search and management in the PF system",
-})
-namespace PFTalentSearch;
+@service(#{ title: "PF SkillSearch API" })
+@server("http://localhost:8080", "SkillSearch API Development Server")
+namespace PFSkillSearch.Routes {
+
+}
+namespace PFSkillSearch.Models {
+
+}

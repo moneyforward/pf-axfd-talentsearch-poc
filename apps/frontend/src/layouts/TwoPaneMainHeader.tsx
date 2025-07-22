@@ -23,9 +23,6 @@ const TwoPaneMainHeader = (props: TwoPaneMainHeaderProps) => {
                 width="100%"
                 height="100%"
             >
-                <MainHeader
-                    breadcrumbs={props.breadcrumbs}
-                />
                 <Outlet />
             </Flex>
         </Flex>

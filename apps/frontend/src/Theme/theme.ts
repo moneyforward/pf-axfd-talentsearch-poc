@@ -3,6 +3,15 @@ import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 const pfThemeConfig = defineConfig({
     theme: {
         layerStyles: {
+            mainHeader: {
+                description: "Style for the main header",
+                value: {
+                    color: "white",
+                    padding: "12px",
+                    width: "100%",
+                    boxShadow: "sm",
+                }
+            },
             personCard: {
                 description: "Style for person cards",
                 value: {
@@ -34,6 +43,27 @@ const pfThemeConfig = defineConfig({
                         bgColor: "primary.400",
                         cursor: "pointer"
                     }
+                }
+            }
+        },
+        textStyles: {
+            breadCrumb: {
+                description: "Style for breadcrumb text",
+                value: {
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    color: "natural.800",
+                    padding: "4px 8px"
+                }
+            },
+            sectionTitle: {
+                description: "Style for section titles",
+                value: {
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    fontFamily: "'Noto Sans JP', sans-serif",
+                    color: "natural.900",
+                    marginBottom: "2px",
                 }
             }
         },

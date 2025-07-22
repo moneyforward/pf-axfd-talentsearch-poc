@@ -1,50 +1,49 @@
-import { Box, Flex, IconButton, Textarea } from "@chakra-ui/react";
-import { type JSX } from "react";
-import Message from "../messages/Message";
-import PersonCard from "./PersonCard";
-import { LuSend } from "react-icons/lu";
+import {
+  Box,
+  Input,
+  VStack,
+  Heading
+} from "@chakra-ui/react";
+import { useState, type JSX } from "react";
+import type { components } from "@mfskillsearch/typespec"
 
 const BasePerson = (): JSX.Element => {
+  const [persona, setPersona] = useState<components["schemas"]["PFSkillSearch.Models.Person"]>();
+
   return (
-    <Flex
-      direction="column"
-      height={"100%"}
-      maxWidth="30%"
-      width="20%"
-      shadow={"md"}
-    >
-      <PersonCard
-        name="John Doe"
-        skills={[]}
-        desc=""
-
-      />
-
-      <Message
-        message="Hello, this is a message!"
-      />
-
-      <Message
-        message="Hello, this is a message!"
-      />
-
-      <Flex
-
-      >
-        <Textarea
-          justifyContent={"flex-end"}
-          alignContent={"flex-end"}
+    <VStack align="start" minW="340px" maxW="340px" w="340px">
+      <Box >
+        <Heading
+          as="h3"
+          textStyle={"sectionTitle"}
         >
-        </Textarea>
-        <Box>
-          <IconButton
-            variant={"ghost"}
-          >
-            <LuSend />
-          </IconButton>
-        </Box>
-      </Flex>
-    </Flex >
+          現在設定されている人物像
+        </Heading>
+
+      </Box>
+
+      {/* Input */}
+      <Box
+        w="100%"
+      >
+        <Heading
+          textStyle={"sectionTitle"}
+        >
+          人を探す
+        </Heading>
+        <Input placeholder="名前を入力してください。" bg="#fff" borderColor="#ccc" borderRadius="3px" h="40px" fontSize="14px" color="#919191" fontFamily="'Noto Sans JP', sans-serif" />
+      </Box>
+      {/* PersonCard */}
+      <Box h="145px" w="201px" fontSize="14px" color="#000" fontFamily="'Noto Sans JP', sans-serif" display="flex" alignItems="center">
+        <Heading
+          textStyle={"sectionTitle"}
+        >
+          重視しているポイント
+        </Heading>
+      </Box>
+      <Box w="100%" bg="#fff" borderTop="1px solid #000" minH="60px" borderRadius={0} />
+      <Box w="319px" h="76px" borderRadius="xl" border="1px solid #919191" />
+    </VStack>
   );
 };
 
