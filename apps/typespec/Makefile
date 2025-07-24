@@ -12,6 +12,7 @@ help: ## Show this help message
 
 install: ## Install dependencies
 	npm install
+	go mod download
 
 build: ## Compile TypeSpec to OpenAPI and JSON Schema
 	npm run build

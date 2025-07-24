@@ -1,6 +1,5 @@
 import {
     createListCollection,
-    Input,
     Portal,
     Select,
     VStack
@@ -10,14 +9,14 @@ import ApiClientContext, { REFRESHED } from "../../lib/ApiClient";
 import { useContext, useMemo, useState } from "react";
 
 interface SearchPersonProps {
-    person: components["schemas"]["PFSkillSearch.Models.Person"];
     setPerson: (person: components["schemas"]["PFSkillSearch.Models.Person"]) => void;
 }
 
-const SearchPerson = ({ person, setPerson }: SearchPersonProps) => {
+const SearchPerson = ({ setPerson }: SearchPersonProps) => {
     const [people, setPeople] = useState<components["schemas"]["PFSkillSearch.Models.Person"][]>([]);
     const apiClient = useContext(ApiClientContext);
     const [searchTerm, setSearchTerm] = useState("");
+
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
         console.log("Searching for person:", inputValue);
@@ -27,6 +26,7 @@ const SearchPerson = ({ person, setPerson }: SearchPersonProps) => {
                     return;
                 }
                 setPeople(result);
+
             }).then(() => {
             });
     }
@@ -43,6 +43,11 @@ const SearchPerson = ({ person, setPerson }: SearchPersonProps) => {
         <VStack>
             <Select.Root
                 collection={collection}
+                onSelect={(item) => {
+                    console.log("Selected person:", item);
+                    const person = item.value as unknown as components["schemas"]["PFSkillSearch.Models.Person"];
+                    setPerson(person);
+                }}
             >
                 <Select.HiddenSelect />
                 <Select.Label>人物を検索</Select.Label>
@@ -51,7 +56,6 @@ const SearchPerson = ({ person, setPerson }: SearchPersonProps) => {
                         <Select.ValueText
                             inputMode="search"
                             placeholder="名前を入力してください。"
-
                         />
                     </Select.Trigger>
                     <Select.IndicatorGroup>
@@ -75,7 +79,7 @@ const SearchPerson = ({ person, setPerson }: SearchPersonProps) => {
                     </Select.Positioner>
                 </Portal>
             </Select.Root>
-            <Input
+            {/* <Input
                 placeholder="名前を入力してください。"
                 bg="#fff"
                 borderColor="#ccc"
@@ -85,7 +89,7 @@ const SearchPerson = ({ person, setPerson }: SearchPersonProps) => {
                 color="#919191"
                 fontFamily="'Noto Sans JP', sans-serif"
                 onChange={handleInputChange}
-            />
+            /> */}
         </VStack>
     );
 }
