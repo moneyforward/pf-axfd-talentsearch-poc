@@ -3,21 +3,16 @@ package route
 import (
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/gin-gonic/gin"
-	"jp.co.moneyforward/pf-skillsearch/schema"
+	"jp.co.moneyforward/pf-skillsearch/vertex"
 )
 
+// GET　/api/people
+// parameters: query string ?query=username
+// returns: 200 OK with search results or 404 Not Found if no results found
 func SearchPeople(c *gin.Context) {
-	var req struct {
-		Name string `json:"name"`
-	}
-
-	if err := c.BindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-		return
-	}
+	query := c.Param("query")
 	var apiKey string
 	if os.Getenv("AISEARCH_API_KEY") != "" {
 		apiKey = os.Getenv("AISEARCH_API_KEY")
@@ -25,15 +20,23 @@ func SearchPeople(c *gin.Context) {
 		apiKey = "" // 認証されたKeyを使用する場合は、ここで取得する必要があります
 	}
 
-	client := VertexAISearch.NewVertexAISearch(apiKey, "your-project-id", "us-central1")
-
-	// Simulate a search operation
-	people := []string{"Alice", "Bob", "Charlie"} // Example data
-	results := []schema.PFSkillSearchModelsPerson{}
-	for _, person := range people {
-		if strings.Contains(strings.ToLower(person), strings.ToLower(req.Name)) {
-			results = append(results, schema.PFSkillSearchModelsPerson{})
-		}
+	client, err := vertex.NewVertexAISearch(apiKey, os.Getenv("GOOGLE_CLOUD_PROJECT"), "us")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client", "details": err.Error()})
+		return
+	}
+	if client == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client"})
+		return
+	}
+	results, err := client.SearchPeople(query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Search failed", "details": err.Error()})
+		return
+	}
+	if len(results) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No results found"})
+		return
 	}
 
 	c.JSON(http.StatusOK, results)
