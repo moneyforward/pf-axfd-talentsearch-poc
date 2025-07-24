@@ -6,7 +6,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import MainHeader from "../components/MainHeader";
+import MainHeader from "../components/misc/MainHeader";
 import BasePerson from "../components/backfill/BasePerson";
 
 

@@ -51,6 +51,6 @@ func main() {
 	// frontend hosting.
 	router.NoRoute(route.Frontend)
 	router.GET("/api/health", route.HealthCheck)
-
+	router.GET("/api/people", route.SearchPeople)
 	router.Run(":8080")
 }

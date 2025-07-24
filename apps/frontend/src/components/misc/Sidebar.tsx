@@ -1,6 +1,13 @@
-import { Box, Flex, IconButton } from "@chakra-ui/react";
+import {
+    Box,
+    Flex,
+    IconButton
+} from "@chakra-ui/react";
 import { useState } from "react";
-import { LuPanelLeftClose, LuPanelLeftOpen } from "react-icons/lu";
+import {
+    LuPanelLeftClose,
+    LuPanelLeftOpen
+} from "react-icons/lu";
 import { Link } from "react-router";
 
 
@@ -21,7 +28,12 @@ const Sidebar = () => {
             color={"primary.100"}
             fontWeight={"semibold"}
         >
-            <Flex direction="row" justifyContent="right" alignItems="right" mb="0px">
+            <Flex
+                direction="row"
+                justifyContent="right"
+                alignItems="right"
+                verticalAlign={"middle"}
+            >
                 <IconButton
                     variant={"ghost"}
                     color={"primary.100"}

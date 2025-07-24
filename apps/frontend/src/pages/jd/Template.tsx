@@ -1,5 +1,5 @@
 import { VStack } from "@chakra-ui/react";
-import MainHeader from "../../components/MainHeader";
+import MainHeader from "../../components/misc/MainHeader";
 
 const JdTemplates = () => {
     return (

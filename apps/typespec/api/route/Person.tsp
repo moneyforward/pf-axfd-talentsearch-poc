@@ -7,9 +7,13 @@ using Http;
 using Rest;
 
 namespace PFSkillSearch.Routes {
-  /**
-   * API root endpoint
-   */
+  @route("/people")
+  @get
+  op searchPeople(@query name: string): {
+    @statusCode statusCode: 200;
+    @body body: Person[];
+  };
+
   @route("/person")
   @get
   op getPersonById(id: string): {
