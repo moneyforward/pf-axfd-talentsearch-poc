@@ -25,5 +25,5 @@ func NewVertexAISearch(apiKey, project, location string) (*VertexAISearch, error
 }
 
 func (s *VertexAISearch) SearchPeople(name string) ([]string, error) {
-
+	return nil, nil
 }
