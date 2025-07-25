@@ -36,8 +36,9 @@ const Sidebar = () => {
             >
                 <IconButton
                     variant={"ghost"}
-                    color={"primary.100"}
+                    colorPalette={"primary"}
                     onClick={() => setIsOpen(!isOpen)}
+                    aria-label="Toggle Sidebar"
                 >
                     {isOpen ? <LuPanelLeftClose /> : <LuPanelLeftOpen />}
                 </IconButton>
@@ -46,6 +47,15 @@ const Sidebar = () => {
                 display={isOpen ? "block" : "none"}
                 flexGrow={1}
                 overflowY="auto"
+                data-state="open"
+                _open={{
+                    animationName: "slide-from-right-full, fade-in",
+                    animationDuration: "300ms",
+                }}
+                _closed={{
+                    animationName: "slide-from-left-full, fade-out",
+                    animationDuration: "120ms",
+                }}
             >
                 <Link to="/backfill">
                     <Box

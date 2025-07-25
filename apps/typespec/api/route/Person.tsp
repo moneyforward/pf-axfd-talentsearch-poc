@@ -7,9 +7,9 @@ using Http;
 using Rest;
 
 namespace PFSkillSearch.Routes {
-  @route("/people")
+  @route("/people/{name}")
   @get
-  op searchPeople(@query name: string): {
+  op searchPeople(@path name: string): {
     @statusCode statusCode: 200;
     @body body: Person[];
   };

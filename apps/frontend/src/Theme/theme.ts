@@ -24,7 +24,10 @@ const pfThemeConfig = defineConfig({
             },
             message: {
                 value: {
-                    border: "1px solid",
+                    bgColor: "primary.100",
+                    borderRadius: "md",
+                    width: "90%",
+
                 }
             },
             sidebar: {

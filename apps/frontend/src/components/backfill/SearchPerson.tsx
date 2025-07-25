@@ -1,84 +1,107 @@
 import {
-    createListCollection,
+    Combobox,
+    HStack,
     Portal,
-    Select,
+    Span,
+    Spinner,
+    useListCollection,
     VStack
 } from "@chakra-ui/react";
 import type { components } from "@mfskillsearch/typespec";
 import ApiClientContext, { REFRESHED } from "../../lib/ApiClient";
-import { useContext, useMemo, useState } from "react";
+import {
+    useContext,
+    useState
+} from "react";
+import { useAsync } from "react-use";
 
 interface SearchPersonProps {
     setPerson: (person: components["schemas"]["PFSkillSearch.Models.Person"]) => void;
 }
 
 const SearchPerson = ({ setPerson }: SearchPersonProps) => {
-    const [people, setPeople] = useState<components["schemas"]["PFSkillSearch.Models.Person"][]>([]);
     const apiClient = useContext(ApiClientContext);
     const [searchTerm, setSearchTerm] = useState("");
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const inputValue = event.target.value;
-        console.log("Searching for person:", inputValue);
-        apiClient.person.search(inputValue)
+    const { collection, set } = useListCollection<components["schemas"]["PFSkillSearch.Models.Person"]>({
+        initialItems: [],
+        itemToString: (item) => item.employee_name,
+        itemToValue: (item) => item.employee_id,
+    });
+    const state = useAsync(async () => {
+        await apiClient.person.search(searchTerm)
             .then((result) => {
                 if (result === REFRESHED) {
                     return;
+                } else {
+                    set(result as components["schemas"]["PFSkillSearch.Models.Person"][]);
                 }
-                setPeople(result);
-
-            }).then(() => {
+            })
+            .catch((error) => {
+                console.error("Error fetching person data:", error);
             });
-    }
-
-    const collection = useMemo(() => {
-        return createListCollection({
-            items: people,
-            itemToString: (item) => `${item.employee_name} (${item.mail})`,
-            itemToValue: (item) => item.employee_id,
-        });
-    }, [people]);
+    }, [searchTerm, set]);
 
     return (
-        <VStack>
-            <Select.Root
+        <VStack
+            width="100%"
+        >
+            <Combobox.Root
                 collection={collection}
-                onSelect={(item) => {
-                    console.log("Selected person:", item);
-                    const person = item.value as unknown as components["schemas"]["PFSkillSearch.Models.Person"];
-                    setPerson(person);
-                }}
+                placeholder="名前やメールアドレスで検索できます。"
+                onInputValueChange={(e) => setSearchTerm(e.inputValue)}
+                positioning={{ sameWidth: true, placement: "bottom-start" }}
             >
-                <Select.HiddenSelect />
-                <Select.Label>人物を検索</Select.Label>
-                <Select.Control>
-                    <Select.Trigger>
-                        <Select.ValueText
-                            inputMode="search"
-                            placeholder="名前を入力してください。"
-                        />
-                    </Select.Trigger>
-                    <Select.IndicatorGroup>
 
-                    </Select.IndicatorGroup>
-                </Select.Control>
+                <Combobox.Control>
+                    <Combobox.Input
+                        placeholder="名前、メールアドレスで検索"
+                    />
+                    <Combobox.IndicatorGroup>
+                        <Combobox.ClearTrigger />
+                        <Combobox.Trigger />
+                    </Combobox.IndicatorGroup>
+                </Combobox.Control>
                 <Portal>
-                    <Select.Positioner>
-                        <Select.Content>
-                            {collection.items.map((person) => {
-                                return (
-                                    <Select.Item
-                                        item={person} key={person.employee_id}
-                                    >
-                                        {`${person.employee_name} (${person.mail})`}
-                                        <Select.ItemIndicator />
-                                    </Select.Item>
-                                );
-                            })}
-                        </Select.Content>
-                    </Select.Positioner>
+                    <Combobox.Positioner>
+                        <Combobox.Content minW="sw">
+                            {state.loading ? (
+                                <HStack p="2">
+                                    <Spinner size="xs" borderWidth="1px" />
+                                    <span>検索中...</span>
+                                </HStack>
+                            ) : state.error ? (
+                                <Span p="2" color="fg.error">
+                                    エラーが発生しました {state.error.message}
+                                </Span>
+                            ) : (
+                                collection.items?.map((person) => (
+                                    <Combobox.Item key={person.employee_id} item={person}>
+                                        <HStack justify="space-between" textStyle="sm">
+                                            <Span fontWeight="medium" truncate>
+                                                {person.employee_name}
+                                            </Span>
+                                            <Span color="fg.muted" truncate>
+                                                {[
+                                                    person.dept_1,
+                                                    person.dept_2,
+                                                    person.dept_3,
+                                                    person.dept_4,
+                                                    person.dept_5,
+                                                    person.dept_6
+                                                ].filter((d) => {
+                                                    return d && d.length > 0;
+                                                }).join(" / ")}
+                                            </Span>
+                                        </HStack>
+                                        <Combobox.ItemIndicator />
+                                    </Combobox.Item>
+                                ))
+                            )}
+                        </Combobox.Content>
+                    </Combobox.Positioner>
                 </Portal>
-            </Select.Root>
+
+            </Combobox.Root>
             {/* <Input
                 placeholder="名前を入力してください。"
                 bg="#fff"
@@ -90,7 +113,7 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
                 fontFamily="'Noto Sans JP', sans-serif"
                 onChange={handleInputChange}
             /> */}
-        </VStack>
+        </VStack >
     );
 }
 

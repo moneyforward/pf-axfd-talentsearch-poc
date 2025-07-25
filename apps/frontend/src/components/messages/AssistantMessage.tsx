@@ -1,30 +1,32 @@
 import { Card, Flex } from "@chakra-ui/react";
 
 
-interface MessageProps extends React.PropsWithChildren {
+interface AssistantMessageProps extends React.PropsWithChildren {
     className?: string;
     message: string;
 }
 
-const Message = (props: MessageProps) => {
+const AssistantMessage = (props: AssistantMessageProps) => {
     console.log("Message props:", props);
     return (
-        <Flex>
+        <Flex
+        >
             <Card.Root
                 layerStyle={"message"}
+
+                p="0px"
             >
-                <Card.Body>
+                <Card.Body
+                    m="0px"
+                >
                     <p>This is a message body.</p>
                     {props.message}
                 </Card.Body>
-                <Card.Footer>
-                    <button>Reply</button>
-                </Card.Footer>
             </Card.Root>
         </Flex>
     );
 
 }
 
-export default Message;
+export default AssistantMessage;
 

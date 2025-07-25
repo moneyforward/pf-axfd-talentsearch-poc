@@ -7,12 +7,16 @@ export class ApiClient {
     private client;
 
     constructor() {
+        console.log("Environment mode :", import.meta.env.MODE);
+        console.log("ApiClient constructor called. baseUrl:", import.meta.env.VITE_APP_API_URL);
         this.client = createClient<paths>({
-            baseUrl: `${import.meta.env.BASE_URL}`,
+            baseUrl: `${import.meta.env.VITE_APP_API_URL}`,
             headers: {
+
                 "Content-Type": "application/json",
-            },
-            // ここで必要な認証トークンなどを設定できます。
+                // ここで必要な認証トークンなどを設定できます。
+                "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
+            }
         });
 
     }
@@ -24,10 +28,10 @@ export class ApiClient {
     person = {
         search: async (name: string):
             Promise<components["schemas"]["PFSkillSearch.Models.Person"][] | WAIT_STATUS> => {
-            if (await this.delay("searchItem", 800)) {
-                return await this.client.GET("/people", {
+            if (await this.delay("person/search", 400)) {
+                return await this.client.GET("/people/{name}", {
                     params: {
-                        query: {
+                        path: {
                             name: name,
                         },
                     }

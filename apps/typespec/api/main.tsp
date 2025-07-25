@@ -11,7 +11,7 @@ using Http;
  * This API provides endpoints for skill search and management functionality.
  */
 @service(#{ title: "PF SkillSearch API" })
-@server("http://localhost:8080", "SkillSearch API Development Server")
+@server("http://localhost:8080/api", "SkillSearch API Development Server")
 namespace PFSkillSearch.Routes {
 
 }

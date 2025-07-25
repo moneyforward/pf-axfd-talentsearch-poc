@@ -58,11 +58,6 @@ type PFSkillSearchModelsPerson struct {
 	YearsOfService                 string  `json:"years_of_service"`
 }
 
-// SearchPeopleParams defines parameters for SearchPeople.
-type SearchPeopleParams struct {
-	Name string `form:"name" json:"name"`
-}
-
 // GetPersonByIdJSONBody defines parameters for GetPersonById.
 type GetPersonByIdJSONBody struct {
 	Id string `json:"id"`

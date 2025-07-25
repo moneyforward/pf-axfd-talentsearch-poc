@@ -7,7 +7,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import MainHeader from "../components/misc/MainHeader";
-import BasePerson from "../components/backfill/BasePerson";
+import Instruction from "../components/backfill/Instruction";
 
 
 const Backfill = () => {
@@ -29,7 +29,7 @@ const Backfill = () => {
         w="100%"
       >
         {/* Left: BasePerson */}
-        <BasePerson />
+        <Instruction />
         {/* Right: Finder */}
         <VStack align="start" flex={1} minW={0}>
           <Box w="100%" maxW="817px" bg="#fff" borderRadius="sm" p={4}>
