@@ -1,14 +1,34 @@
 namespace PFSkillSearch.Models {
-    
     model Persona {
         name: string;
-        joinedDate: string;
         skills: Skill[];
+        career: Career[];
     }
+
+    model Career {
+        start_month: int16;
+        end_month?: int16;
+        company: string;
+        position: string;
+        role: string;
+        description?: string;
+    }
+
     model Skill {
         name: string;
         experience: int16; // in years
         description?: string;
+    }
+
+    model MatchingResult {
+        @doc("Similarity score between 0.0 and 1.0")
+        score: float32;
+
+        @doc("The person object that was matched")
+        person: Person; // The person object that matches the persona
+
+        @doc("Optional description of the match")
+        description?: string; // Optional description of the match
     }
 
     model Person {

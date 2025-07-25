@@ -27,8 +27,29 @@ namespace PFSkillSearch.Routes {
 
   @route("/person/{id}")
   @get
-  op getPerson(id: string): {
+  op getPerson(
+    @path
+    id: string,
+  ): {
     @statusCode statusCode: 200;
     @body body: Person;
+  };
+
+  @route("/persona/")
+  @post
+  @doc("Generate a persona based on the provided data")
+  op generatePersona(@body body: Person): {
+    @statusCode statusCode: 200;
+    @body body: Persona;
+  };
+
+  @route("/person/find")
+  @post
+  op findPerson(@body body: Persona): {
+    @statusCode statusCode: 200;
+
+    @doc("Find people matching the provided persona")
+    @body
+    body: MatchingResult[];
   };
 }

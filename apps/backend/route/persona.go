@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"jp.co.moneyforward/pf-skillsearch/schema"
 	"jp.co.moneyforward/pf-skillsearch/vertex"
 )
 
@@ -40,4 +41,23 @@ func SearchPeople(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, results)
+}
+
+func GeneratePersona(c *gin.Context) {
+	var person schema.PFSkillSearchModelsPersona
+	if err := c.ShouldBindJSON(&person); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body", "details": err.Error()})
+		return
+	}
+
+	// personIdから、履歴書を取得
+
+	// personIdから、職務経歴書を取得
+
+	// personIdから、過去のhalf_review, monthly_reviewを取得
+
+	// persona 情報を生成
+
+	c.JSON(http.StatusOK, persona)
+
 }
