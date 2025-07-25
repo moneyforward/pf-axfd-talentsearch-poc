@@ -44,11 +44,12 @@ func SearchPeople(c *gin.Context) {
 }
 
 func GeneratePersona(c *gin.Context) {
-	var person schema.PFSkillSearchModelsPersona
+	var person schema.PFSkillSearchModelsPerson
 	if err := c.ShouldBindJSON(&person); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body", "details": err.Error()})
 		return
 	}
+	var persona schema.PFSkillSearchModelsPersona
 
 	// personIdから、履歴書を取得
 
@@ -60,4 +61,39 @@ func GeneratePersona(c *gin.Context) {
 
 	c.JSON(http.StatusOK, persona)
 
+}
+
+func FindPerson(c *gin.Context) {
+	var persona schema.PFSkillSearchModelsPersona
+	if err := c.ShouldBindJSON(&persona); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body", "details": err.Error()})
+		return
+	}
+	var apiKey string
+	if os.Getenv("AISEARCH_API_KEY") != "" {
+		apiKey = os.Getenv("AISEARCH_API_KEY")
+	} else {
+		apiKey = "" // 認証されたKeyを使用する場合は、ここで取得する必要があります
+	}
+
+	client, err := vertex.NewVertexAISearch(apiKey, os.Getenv("GOOGLE_CLOUD_PROJECT"), "us")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client", "details": err.Error()})
+		return
+	}
+	if client == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client"})
+		return
+	}
+	results, err := client.FindPerson(persona)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Search failed", "details": err.Error()})
+		return
+	}
+	if len(results) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No results found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, results)
 }

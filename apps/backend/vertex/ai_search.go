@@ -48,6 +48,11 @@ func (s *VertexAISearch) client() (*discoveryengine.SearchClient, error) {
 	}
 	return c, nil
 }
+func (s *VertexAISearch) FindPerson() error {
+	// Implement the logic to find a person based on the provided schema.PFSkillSearchModelsPersona
+	// This function should interact with the Vertex AI Search API to find matching persons.
+	return nil
+}
 
 func (s *VertexAISearch) SearchPeople(query string) ([]schema.PFSkillSearchModelsPerson, error) {
 	c, err := s.client()

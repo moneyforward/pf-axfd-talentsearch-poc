@@ -52,5 +52,7 @@ func main() {
 	router.NoRoute(route.Frontend)
 	router.GET("/api/health", route.HealthCheck)
 	router.GET("/api/people/:query", route.SearchPeople)
+	router.POST("/api/persona", route.GeneratePersona)
+	router.POST("/api/person/find", route.FindPerson)
 	router.Run(":8080")
 }
