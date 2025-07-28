@@ -9,8 +9,9 @@ export class ApiClient {
     constructor() {
         console.log("Environment mode :", import.meta.env.MODE);
         console.log("ApiClient constructor called. baseUrl:", import.meta.env.VITE_APP_API_URL);
+        const mock = (import.meta.env.VITE_APP_API_MOCK ? "/mock" : "");
         this.client = createClient<paths>({
-            baseUrl: `${import.meta.env.VITE_APP_API_URL}`,
+            baseUrl: `${import.meta.env.VITE_APP_API_URL}${mock}`,
             headers: {
 
                 "Content-Type": "application/json",

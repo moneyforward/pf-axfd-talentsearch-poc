@@ -52,6 +52,7 @@ func main() {
 	router.NoRoute(route.Frontend)
 	router.GET("/api/health", route.HealthCheck)
 	router.GET("/api/people/:query", route.SearchPeople)
+	router.GET("/api/mock/people/:query", route.SearchPeopleMock)
 	router.POST("/api/persona", route.GeneratePersona)
 	router.POST("/api/person/find", route.FindPerson)
 	router.GET("/api/person/:personId/face", route.FaceImage)

@@ -17,7 +17,7 @@ const Instruction = (): JSX.Element => {
   }
 
   useEffect(() => {
-
+    console.log("Selected person:", person);
   }, [person]);
 
   return (
