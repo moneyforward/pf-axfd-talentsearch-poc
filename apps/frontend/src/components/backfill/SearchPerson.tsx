@@ -22,10 +22,10 @@ interface SearchPersonProps {
 const SearchPerson = ({ setPerson }: SearchPersonProps) => {
     const apiClient = useContext(ApiClientContext);
     const [searchTerm, setSearchTerm] = useState("");
-    const { collection, set } = useListCollection<components["schemas"]["PFSkillSearch.Models.Person"]>({
+    const { collection, set } = useListCollection<components["schemas"]["PFSkillSearch.Models.MatchingResult"]>({
         initialItems: [],
-        itemToString: (item) => item.employee_name,
-        itemToValue: (item) => item.employee_id,
+        itemToString: (item) => item.person.employee_name,
+        itemToValue: (item) => item.person.employee_id,
     });
     const state = useAsync(async () => {
         await apiClient.person.search(searchTerm)
@@ -33,7 +33,7 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
                 if (result === REFRESHED) {
                     return;
                 } else {
-                    set(result as components["schemas"]["PFSkillSearch.Models.Person"][]);
+                    set(result as unknown as components["schemas"]["PFSkillSearch.Models.MatchingResult"][]);
                 }
             })
             .catch((error) => {
@@ -56,7 +56,6 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
                     }
                 })}
             >
-
                 <Combobox.Control>
                     <Combobox.Input
                         placeholder="名前、メールアドレスで検索"
@@ -79,20 +78,20 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
                                     エラーが発生しました {state.error.message}
                                 </Span>
                             ) : (
-                                collection.items?.map((person) => (
-                                    <Combobox.Item key={person.employee_id} item={person}>
+                                collection.items?.map((item) => (
+                                    <Combobox.Item key={item.person.employee_id} item={item}>
                                         <HStack justify="space-between" textStyle="sm">
                                             <Span fontWeight="medium" truncate>
-                                                {person.employee_name}
+                                                {item.person.employee_name}
                                             </Span>
                                             <Span color="fg.muted" truncate>
                                                 {[
-                                                    person.dept_1,
-                                                    person.dept_2,
-                                                    person.dept_3,
-                                                    person.dept_4,
-                                                    person.dept_5,
-                                                    person.dept_6
+                                                    item.person.dept_1,
+                                                    item.person.dept_2,
+                                                    item.person.dept_3,
+                                                    item.person.dept_4,
+                                                    item.person.dept_5,
+                                                    item.person.dept_6
                                                 ].filter((d) => {
                                                     return d && d.length > 0;
                                                 }).join(" / ")}

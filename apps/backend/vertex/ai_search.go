@@ -13,18 +13,18 @@ import (
 
 type VertexAISearch struct {
 	apiVersion    string
-	project       string
-	location      string
 	apiKey        string
 	servingConfig string
 }
 
-func NewVertexAISearch(apiKey, project, location string) (*VertexAISearch, error) {
-	var servingConfig = "projects/" + project
+func NewVertexAISearch(apiKey string, location string) (*VertexAISearch, error) {
+	var servingConfig = "projects/" + os.Getenv("GOOGLE_CLOUD_PROJECT")
 	servingConfig += "/locations/" + location
 	servingConfig += "/collections/default_collection"
 	servingConfig += "/engines/" + os.Getenv("GOOGLE_CLOUD_ENGINE")
 	servingConfig += "/servingConfigs/default_search"
+
+	// projects/'218635233545'/locations/us/collections/default_collection/engines/pf-ai-app-skillsearch_1753251538165/servingConfigs/default_search
 	// curl -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" \
 	// -H "Content-Type: application/json" \
 	// "https://us-discoveryengine.googleapis.com
@@ -38,8 +38,6 @@ func NewVertexAISearch(apiKey, project, location string) (*VertexAISearch, error
 
 	vertexAI := &VertexAISearch{
 		apiVersion:    "v1",
-		project:       project,
-		location:      "us",
 		apiKey:        apiKey,
 		servingConfig: servingConfig,
 		// projects/PROJECT_ID/locations/global/collections/default_collection/engines/APP_ID/servingConfigs/default_search
@@ -49,15 +47,27 @@ func NewVertexAISearch(apiKey, project, location string) (*VertexAISearch, error
 
 func (s *VertexAISearch) client() (*discoveryengine.SearchClient, error) {
 	ctx := context.Background()
-	log.Println("Credentials file:", os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
-	c, err := discoveryengine.NewSearchClient(ctx,
-		option.WithCredentialsFile(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")))
 
-	if err != nil {
-		log.Fatalf("Failed to create discovery engine client: %v", err)
-		return nil, err
+	log.Println("servingConfig:", s.servingConfig)
+	if os.Getenv("GOOGLE_APPLICATION_CREDENTIALS") == "" {
+		c, err := discoveryengine.NewSearchClient(ctx)
+		if err != nil {
+			log.Fatalf("Failed to create discovery engine client: %v", err)
+			return nil, err
+		}
+		return c, nil
+	} else {
+		log.Println("Credentials file:", os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+		c, err := discoveryengine.NewSearchClient(ctx,
+			option.WithCredentialsFile(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")),
+		)
+		if err != nil {
+			log.Fatalf("Failed to create discovery engine client: %v", err)
+			return nil, err
+		}
+		return c, nil
 	}
-	return c, nil
+
 }
 func (s *VertexAISearch) FindPerson(persona schema.PFSkillSearchModelsPersona) ([]schema.PFSkillSearchModelsPerson, error) {
 	// Implement the logic to find a person based on the provided schema.PFSkillSearchModelsPersona
@@ -95,6 +105,57 @@ func (s *VertexAISearch) FindPerson(persona schema.PFSkillSearchModelsPersona) (
 		// results = append(results, person)
 	}
 	return results, nil
+}
+
+func (s *VertexAISearch) SearchPeopleMock(query string) ([]schema.PFSkillSearchModelsMatchingResult, error) {
+	return []schema.PFSkillSearchModelsMatchingResult{
+		{
+			Person: schema.PFSkillSearchModelsPerson{
+				EmployeeId:                     "1",
+				EmployeeName:                   "山田 太郎",
+				Mail:                           "yamada.taro@example.com",
+				Age:                            "30",
+				Gender:                         "男性",
+				JobTitle:                       "エンジニア",
+				Dept1:                          "開発部",
+				Location:                       "東京",
+				EmploymentType:                 "正社員",
+				CurrentEmployeeFlag:            "1",
+				Birthday:                       "1995-01-01",
+				EnteredAt:                      "2020-04-01",
+				RecruitmentCategoryNewGraduate: "新卒",
+				SalaryTable:                    "A",
+				YearsOfService:                 "5",
+				JobFamily:                      "IT",
+				JpNonJpClassification:          "JP",
+				LoadDate:                       "2025-07-28",
+			},
+			Score: 0.95,
+		},
+		{
+			Person: schema.PFSkillSearchModelsPerson{
+				EmployeeId:                     "2",
+				EmployeeName:                   "佐藤 花子",
+				Mail:                           "sato.hanako@example.com",
+				Age:                            "28",
+				Gender:                         "女性",
+				JobTitle:                       "フロントエンドエンジニア",
+				Dept1:                          "Web開発部",
+				Location:                       "大阪",
+				EmploymentType:                 "契約社員",
+				CurrentEmployeeFlag:            "1",
+				Birthday:                       "1997-03-15",
+				EnteredAt:                      "2021-10-01",
+				RecruitmentCategoryNewGraduate: "中途",
+				SalaryTable:                    "B",
+				YearsOfService:                 "3",
+				JobFamily:                      "IT",
+				JpNonJpClassification:          "JP",
+				LoadDate:                       "2025-07-28",
+			},
+			Score: 0.89,
+		},
+	}, nil
 }
 
 func (s *VertexAISearch) SearchPeople(query string) ([]schema.PFSkillSearchModelsPerson, error) {

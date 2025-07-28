@@ -2,7 +2,7 @@ import {
   Separator,
   VStack,
 } from "@chakra-ui/react";
-import { useState, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import type { components } from "@mfskillsearch/typespec"
 import PersonCard from "./PersonCard";
 import SearchPerson from "./SearchPerson";
@@ -15,6 +15,10 @@ const Instruction = (): JSX.Element => {
   if (person) {
     console.log(person);
   }
+
+  useEffect(() => {
+
+  }, [person]);
 
   return (
     <VStack

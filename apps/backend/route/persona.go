@@ -1,6 +1,7 @@
 package route
 
 import (
+	"image/jpeg"
 	"net/http"
 	"os"
 
@@ -21,7 +22,7 @@ func SearchPeople(c *gin.Context) {
 		apiKey = "" // 認証されたKeyを使用する場合は、ここで取得する必要があります
 	}
 
-	client, err := vertex.NewVertexAISearch(apiKey, os.Getenv("GOOGLE_CLOUD_PROJECT"), "us")
+	client, err := vertex.NewVertexAISearch(apiKey, "us")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client", "details": err.Error()})
 		return
@@ -30,7 +31,7 @@ func SearchPeople(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client"})
 		return
 	}
-	results, err := client.SearchPeople(query)
+	results, err := client.SearchPeopleMock(query)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Search failed", "details": err.Error()})
 		return
@@ -63,6 +64,27 @@ func GeneratePersona(c *gin.Context) {
 
 }
 
+func FaceImage(c *gin.Context) {
+	personID := c.Param("personId")
+	if personID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "personId is required"})
+		return
+	}
+
+	cs := vertex.NewCloudStorage()
+	img, err := cs.GetFaceImage(personID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get face image", "details": err.Error()})
+		return
+	}
+
+	c.Header("Content-Type", "image/jpeg")
+	if err := jpeg.Encode(c.Writer, img, nil); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to encode image", "details": err.Error()})
+		return
+	}
+}
+
 func FindPerson(c *gin.Context) {
 	var persona schema.PFSkillSearchModelsPersona
 	if err := c.ShouldBindJSON(&persona); err != nil {
@@ -76,7 +98,7 @@ func FindPerson(c *gin.Context) {
 		apiKey = "" // 認証されたKeyを使用する場合は、ここで取得する必要があります
 	}
 
-	client, err := vertex.NewVertexAISearch(apiKey, os.Getenv("GOOGLE_CLOUD_PROJECT"), "us")
+	client, err := vertex.NewVertexAISearch(apiKey, "us")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client", "details": err.Error()})
 		return

@@ -54,5 +54,7 @@ func main() {
 	router.GET("/api/people/:query", route.SearchPeople)
 	router.POST("/api/persona", route.GeneratePersona)
 	router.POST("/api/person/find", route.FindPerson)
+	router.GET("/api/person/:personId/face", route.FaceImage)
 	router.Run(":8080")
+
 }
