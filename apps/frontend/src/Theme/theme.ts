@@ -3,27 +3,72 @@ import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 const pfThemeConfig = defineConfig({
     theme: {
         layerStyles: {
+            mainHeader: {
+                description: "Style for the main header",
+                value: {
+                    color: "white",
+                    padding: "12px",
+                    width: "100%",
+                    boxShadow: "sm",
+                }
+            },
+            personCard: {
+                description: "Style for person cards",
+                value: {
+                    border: "1px solid",
+                    borderRadius: "md",
+                    padding: "8px",
+                    boxShadow: "md",
+                    maxWidth: "200px",
+                }
+            },
+            message: {
+                value: {
+                    bgColor: "primary.100",
+                    borderRadius: "md",
+                    width: "90%",
+
+                }
+            },
             sidebar: {
                 value: {
-                    bgColor: { value: "primary.900" },
-                    color: { value: "natural.900" },
-                    borderWidth: { value: "1px" },
-                    borderRadius: { value: "md" }
+                    bgColor: "primary.600",
+                    borderWidth: "1px",
+                    borderRadius: "md"
                 }
             },
             sidebarItem: {
                 value: {
-                    bgColor: { value: "primary.800" },
-                    color: { value: "primary.400" },
-                    padding: { value: "8px" },
-                    borderRadius: { value: "md" },
+                    color: "natural.100",
+                    padding: "8px",
+                    borderRadius: "md",
                     _hover: {
-                        bgColor: { value: "primary.700" },
-                        cursor: { value: "pointer" }
+                        bgColor: "primary.400",
+                        cursor: "pointer"
                     }
                 }
             }
-
+        },
+        textStyles: {
+            breadCrumb: {
+                description: "Style for breadcrumb text",
+                value: {
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    color: "natural.800",
+                    padding: "4px 8px"
+                }
+            },
+            sectionTitle: {
+                description: "Style for section titles",
+                value: {
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    fontFamily: "'Noto Sans JP', sans-serif",
+                    color: "natural.900",
+                    marginBottom: "2px",
+                }
+            }
         },
         tokens: {
             colors: {

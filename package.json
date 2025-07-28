@@ -1,7 +1,16 @@
 {
-  "name": "pf-talentsearch-root",
+  "name": "@mfskillsearch/root",
   "private": true,
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "scripts": {
+    "predev": "cd apps/backend ; make run &",
+    "dev": "npm run dev --workspace=apps/frontend",
+    "prebuild": "npm run spec",
+    "build": "npm run build --workspaces --if-present",
+    "spec": "npm run spec --workspace=apps/typespec",
+    "preview": "npm run preview --workspace=apps/frontend",
+    "start:api": "npm run start --workspace=apps/backend"
+  }
 }

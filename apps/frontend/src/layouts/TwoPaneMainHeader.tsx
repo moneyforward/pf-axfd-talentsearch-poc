@@ -1,25 +1,29 @@
 import { Flex } from "@chakra-ui/react";
-import MainHeader from "../components/MainHeader";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/misc/Sidebar";
 import { Outlet } from "react-router";
 
 
 export interface TwoPaneMainHeaderProps extends React.PropsWithChildren {
     className?: string;
+    breadcrumbs?: string[];
 }
 
 const TwoPaneMainHeader = (props: TwoPaneMainHeaderProps) => {
     console.log("TwoPaneMainHeader props:", props);
     return (
         <Flex
-            direction="column"
+            direction="row"
+            minHeight="100%"
+            width="100%"
         >
             <Sidebar />
-            <main>
-                <MainHeader
-                />
+            <Flex
+                direction="column"
+                width="100%"
+                height="100%"
+            >
                 <Outlet />
-            </main>
+            </Flex>
         </Flex>
     );
 
