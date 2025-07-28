@@ -3,6 +3,7 @@ package vertex
 import (
 	"context"
 	"log"
+	"os"
 
 	discoveryengine "cloud.google.com/go/discoveryengine/apiv1"
 	"cloud.google.com/go/discoveryengine/apiv1/discoveryenginepb"
@@ -11,18 +12,21 @@ import (
 )
 
 type VertexAISearch struct {
-	apiVersion string
-	project    string
-	location   string
-	apiKey     string
+	apiVersion    string
+	project       string
+	location      string
+	apiKey        string
+	servingConfig string
 }
 
 func NewVertexAISearch(apiKey, project, location string) (*VertexAISearch, error) {
 	vertexAI := &VertexAISearch{
-		apiVersion: "v1",
-		project:    project,
-		location:   "us",
-		apiKey:     apiKey,
+		apiVersion:    "v1",
+		project:       project,
+		location:      "us",
+		apiKey:        apiKey,
+		servingConfig: "projects/" + project + "/locations/" + location + "/collections/default_collection/engines/pf-ai-app-skillsearch_1753251538165/servingConfigs/default_search",
+		// projects/PROJECT_ID/locations/global/collections/default_collection/engines/APP_ID/servingConfigs/default_search
 	}
 	// curl -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" \
 	// -H "Content-Type: application/json" \
@@ -39,19 +43,50 @@ func NewVertexAISearch(apiKey, project, location string) (*VertexAISearch, error
 
 func (s *VertexAISearch) client() (*discoveryengine.SearchClient, error) {
 	ctx := context.Background()
-	c, err := discoveryengine.NewSearchClient(ctx, option.WithAPIKey(
-		s.apiKey,
-	))
+	c, err := discoveryengine.NewSearchClient(ctx,
+		option.WithCredentialsFile(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")))
 	if err != nil {
 		log.Fatalf("Failed to create discovery engine client: %v", err)
 		return nil, err
 	}
 	return c, nil
 }
-func (s *VertexAISearch) FindPerson() error {
+func (s *VertexAISearch) FindPerson(persona schema.PFSkillSearchModelsPersona) ([]schema.PFSkillSearchModelsPerson, error) {
 	// Implement the logic to find a person based on the provided schema.PFSkillSearchModelsPersona
 	// This function should interact with the Vertex AI Search API to find matching persons.
-	return nil
+	c, err := s.client()
+	if err != nil {
+		log.Printf("Failed to create discovery engine client: %v", err)
+	}
+
+	defer c.Close()
+	log.Println("Finding person with persona:", s.apiKey)
+	// Implement the search logic here using the discoveryengine client
+	// For example, you can use the Search method with the appropriate request parameters.
+	// This is a placeholder for the actual search logic.
+	// You would typically create a SearchRequest, set the necessary parameters, and call the Search
+	iter := c.Search(context.Background(), &discoveryenginepb.SearchRequest{
+		ServingConfig: s.servingConfig + ":search",
+		Query:         persona.Name,
+		PageSize:      10,
+		LanguageCode:  "ja",
+	})
+	var results []schema.PFSkillSearchModelsPerson
+
+	for {
+		resp, err := iter.Next()
+		if err != nil {
+			if err.Error() == "no more items in iterator" {
+				break
+			}
+			log.Printf("Error getting next search result: %v", err)
+			return nil, err
+		}
+		log.Printf("Found document: %v", resp.Document)
+		// ここでschema.PFSkillSearchModelsPersonに変換してappend
+		// results = append(results, person)
+	}
+	return results, nil
 }
 
 func (s *VertexAISearch) SearchPeople(query string) ([]schema.PFSkillSearchModelsPerson, error) {
@@ -62,12 +97,11 @@ func (s *VertexAISearch) SearchPeople(query string) ([]schema.PFSkillSearchModel
 	defer c.Close()
 	log.Println("Searching for people with query:", query)
 	req := &discoveryenginepb.SearchRequest{
-		ServingConfig: "projects/" + s.project + "/locations/" + s.location + "/collections/default_collection/engines/pf-ai-app-skillsearch_1753251538165/servingConfigs/default_search:search",
+		ServingConfig: s.servingConfig + ":search",
 		Query:         query,
 		PageSize:      10,
 		LanguageCode:  "ja",
 		UserInfo: &discoveryenginepb.UserInfo{
-			UserId:   "user-1234", // 必須ではないが推奨
 			TimeZone: "Asia/Tokyo",
 		},
 		SpellCorrectionSpec: &discoveryenginepb.SearchRequest_SpellCorrectionSpec{

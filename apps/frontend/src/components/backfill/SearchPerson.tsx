@@ -50,6 +50,11 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
                 placeholder="名前やメールアドレスで検索できます。"
                 onInputValueChange={(e) => setSearchTerm(e.inputValue)}
                 positioning={{ sameWidth: true, placement: "bottom-start" }}
+                onSelect={(item => {
+                    if (item) {
+                        setPerson(item as unknown as components["schemas"]["PFSkillSearch.Models.Person"]);
+                    }
+                })}
             >
 
                 <Combobox.Control>

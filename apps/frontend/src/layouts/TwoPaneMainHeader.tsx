@@ -1,5 +1,4 @@
 import { Flex } from "@chakra-ui/react";
-import MainHeader from "../components/misc/MainHeader";
 import Sidebar from "../components/misc/Sidebar";
 import { Outlet } from "react-router";
 

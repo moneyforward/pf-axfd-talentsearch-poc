@@ -1,5 +1,4 @@
 import {
-    Box,
     HStack,
     IconButton, Spacer, Textarea,
     VStack,

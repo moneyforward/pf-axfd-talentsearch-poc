@@ -1,5 +1,4 @@
 import {
-  Box,
   Separator,
   VStack,
 } from "@chakra-ui/react";
@@ -10,8 +9,12 @@ import SearchPerson from "./SearchPerson";
 import Chat from "./Chat";
 
 const Instruction = (): JSX.Element => {
-  const [persona, setPersona] = useState<components["schemas"]["PFSkillSearch.Models.Person"]>();
+  const [persona,] = useState<components["schemas"]["PFSkillSearch.Models.Person"]>();
   const [person, setPerson] = useState<components["schemas"]["PFSkillSearch.Models.Person"]>();
+
+  if (person) {
+    console.log(person);
+  }
 
   return (
     <VStack
