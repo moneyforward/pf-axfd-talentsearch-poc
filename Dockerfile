@@ -22,27 +22,31 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | b
 #     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm 
 ENV NVM_DIR=${HOME}/.nvm
 
-COPY apps /usr/local/apps
-WORKDIR /usr/local/apps
-RUN source ${NVM_DIR}/nvm.sh && nvm install 20 && nvm use 20 && nvm alias default 20 && \
-    rm -rf package-lock.json node_modules dist && npm install && npm run build
+COPY apps /usr/local/ss/apps/
+COPY package.json /usr/local/ss/package.json
 
-WORKDIR /usr/local/apps/frontend
+WORKDIR /usr/local/ss
+RUN source ${NVM_DIR}/nvm.sh && \
+    nvm install 20 && nvm use 20 && nvm alias default 20 && \
+    rm -rf package-lock.json node_modules dist && \
+    npm install && npm run build
+
+WORKDIR /usr/local/ss/apps/frontend
 
 RUN mkdir -p /opt/local/frontend/dist && \
     mkdir -p /opt/local/backend
-RUN cp -r /usr/local/apps/frontend/dist /opt/local/frontend/
+RUN cp -r /usr/local/ss/apps/frontend/dist /opt/local/frontend/
 
 
 
-WORKDIR /usr/local/apps/backend
+WORKDIR /usr/local/ss/apps/backend
 RUN goenv install latest && \
     goenv global latest
 RUN eval "$(goenv init -)" && \
     go mod tidy && \
     go build  .
 
-RUN cp /usr/local/apps/backend/pf-skillsearch /opt/local/backend/pf-skillsearch
+RUN cp /usr/local/ss/apps/backend/pf-skillsearch /opt/local/backend/pf-skillsearch
 
 WORKDIR /opt/local/backend
 CMD [ "./pf-skillsearch" ]
