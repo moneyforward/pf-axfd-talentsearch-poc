@@ -14,7 +14,8 @@ RUN git clone https://github.com/go-nv/goenv.git ${HOME}/.goenv
 ENV GOENV_ROOT="${HOME}/.goenv"
 ENV PATH="${GOENV_ROOT}/bin:$PATH"
 RUN echo 'eval "$(goenv init -)"' >> ${HOME}/.bashrc
-
+RUN goenv install latest && \
+    goenv global latest
 
 # Node.js Build Environment
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
@@ -25,10 +26,13 @@ ENV NVM_DIR=${HOME}/.nvm
 COPY apps /usr/local/ss/apps/
 COPY package.json /usr/local/ss/package.json
 
+
+
 WORKDIR /usr/local/ss
 RUN source ${NVM_DIR}/nvm.sh && \
     nvm install 20 && nvm use 20 && nvm alias default 20 && \
     rm -rf package-lock.json node_modules dist && \
+    eval "$(goenv init -)" && \
     npm install && npm run build
 
 WORKDIR /usr/local/ss/apps/frontend
@@ -40,8 +44,6 @@ RUN cp -r /usr/local/ss/apps/frontend/dist /opt/local/frontend/
 
 
 WORKDIR /usr/local/ss/apps/backend
-RUN goenv install latest && \
-    goenv global latest
 RUN eval "$(goenv init -)" && \
     go mod tidy && \
     go build  .
