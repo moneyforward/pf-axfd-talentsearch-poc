@@ -8,8 +8,7 @@
         "postspec": "npm run openapi; npm run server",
         "openapi": "npx openapi-typescript ./dist/@typespec/openapi3/openapi.yaml -o ./dist/typescript/index.d.ts -t --root-types --enum  --enum-values",
         "server": "go tool oapi-codegen -generate types -package schema ./dist/@typespec/openapi3/openapi.yaml > ../backend/schema/schema.go",
-        "tsp-install": "tsp install",
-        "build": "npm run spec"
+        "tsp-install": "tsp install"
     },
     "devDependencies": {
         "rimraf": "^6.0.1",

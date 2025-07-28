@@ -20,14 +20,11 @@ type VertexAISearch struct {
 }
 
 func NewVertexAISearch(apiKey, project, location string) (*VertexAISearch, error) {
-	vertexAI := &VertexAISearch{
-		apiVersion:    "v1",
-		project:       project,
-		location:      "us",
-		apiKey:        apiKey,
-		servingConfig: "projects/" + project + "/locations/" + location + "/collections/default_collection/engines/pf-ai-app-skillsearch_1753251538165/servingConfigs/default_search",
-		// projects/PROJECT_ID/locations/global/collections/default_collection/engines/APP_ID/servingConfigs/default_search
-	}
+	var servingConfig = "projects/" + project
+	servingConfig += "/locations/" + location
+	servingConfig += "/collections/default_collection"
+	servingConfig += "/engines/" + os.Getenv("GOOGLE_CLOUD_ENGINE")
+	servingConfig += "/servingConfigs/default_search"
 	// curl -X POST -H "Authorization: Bearer $(gcloud auth print-access-token)" \
 	// -H "Content-Type: application/json" \
 	// "https://us-discoveryengine.googleapis.com
@@ -38,13 +35,24 @@ func NewVertexAISearch(apiKey, project, location string) (*VertexAISearch, error
 	// /engines/pf-ai-app-skillsearch_1753251538165
 	// /servingConfigs/default_search:search" \
 	// -d '{"query":"tokugami","pageSize":10,"spellCorrectionSpec":{"mode":"AUTO"},"languageCode":"ja","userInfo":{"timeZone":"Asia/Tokyo"},"contentSearchSpec":{"snippetSpec":{"returnSnippet":true}}}'
+
+	vertexAI := &VertexAISearch{
+		apiVersion:    "v1",
+		project:       project,
+		location:      "us",
+		apiKey:        apiKey,
+		servingConfig: servingConfig,
+		// projects/PROJECT_ID/locations/global/collections/default_collection/engines/APP_ID/servingConfigs/default_search
+	}
 	return vertexAI, nil
 }
 
 func (s *VertexAISearch) client() (*discoveryengine.SearchClient, error) {
 	ctx := context.Background()
+	log.Println("Credentials file:", os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 	c, err := discoveryengine.NewSearchClient(ctx,
 		option.WithCredentialsFile(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")))
+
 	if err != nil {
 		log.Fatalf("Failed to create discovery engine client: %v", err)
 		return nil, err
