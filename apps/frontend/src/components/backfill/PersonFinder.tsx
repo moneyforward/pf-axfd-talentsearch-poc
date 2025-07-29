@@ -11,6 +11,7 @@ const PersonFinder: React.FC = () => (
     overflowY={"scroll"}
   >
     <div className="finder-section-title">スキルの一致度が高い</div>
+
     <div className="finder-section-body">
       {Array.from({ length: 4 }).map((_, i) => (
         <PersonCard
@@ -18,6 +19,7 @@ const PersonFinder: React.FC = () => (
         />
       ))}
     </div>
+
     <div className="finder-note">
       <p>過去の業界、業種があっても良いかも。</p>
       <p>職種も？ エンジニアならエンジニア、営業なら営業</p>

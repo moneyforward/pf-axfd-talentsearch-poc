@@ -3,6 +3,7 @@ import "@typespec/rest";
 import "../models/index.tsp";
 
 using PFSkillSearch.Models;
+using PFSkillSearch.Models.Payload;
 using Http;
 
 namespace PFSkillSearch.Routes {
@@ -10,7 +11,7 @@ namespace PFSkillSearch.Routes {
   @get
   op searchPeople(@path name: string): {
     @statusCode statusCode: 200;
-    @body body: Person[];
+    @body body: SearchPeopleResponse[];
   };
 
   @route("/person")
@@ -44,12 +45,12 @@ namespace PFSkillSearch.Routes {
 
   @route("/person/find")
   @post
-  op findPerson(@body body: Persona): {
+  op findPerson(@body body: FindPersonRequest): {
     @statusCode statusCode: 200;
 
     @doc("Find people matching the provided persona")
     @body
-    body: MatchingResult[];
+    body: FindPersonResponse[];
   };
 
   @route("/person/{personId}/face")
@@ -57,6 +58,7 @@ namespace PFSkillSearch.Routes {
   @doc("Get the face image(jpg) of a person by their ID")
   op getPersonFace(@path personId: string): {
     @statusCode statusCode: 200;
+
     @header
     contentType: "image/jpeg";
 

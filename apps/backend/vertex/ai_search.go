@@ -166,8 +166,12 @@ func (s *VertexAISearch) SearchPeople(query string) ([]schema.PFSkillSearchModel
 	iter := c.Search(context.Background(), req)
 
 	var results []schema.PFSkillSearchModelsPerson
-
+	var counter = 0
 	for {
+		if counter >= 5 { // Limit to 5 results
+			break
+		}
+		counter++
 		resp, err := iter.Next()
 		if err != nil {
 			if err.Error() == "no more items in iterator" {

@@ -17,10 +17,9 @@ export type Person = {
 
 export type PersonaCardProps = {
   persona?: components["schemas"]["PFSkillSearch.Models.Person"];
-  isBase?: boolean;
 };
 
-const PersonaCard = ({ persona, isBase }: PersonaCardProps) => {
+const PersonaCard = ({ persona }: PersonaCardProps) => {
   if (!persona) {
     return (<></>);
   }
@@ -28,7 +27,7 @@ const PersonaCard = ({ persona, isBase }: PersonaCardProps) => {
   return (
     <Flex
       direction="column"
-      layerStyle={isBase ? "basePerson" : "personCard"}
+      layerStyle={"basePerson"}
       p="0px"
     >
 

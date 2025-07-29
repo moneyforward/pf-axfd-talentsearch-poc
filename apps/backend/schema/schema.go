@@ -7,6 +7,14 @@ import (
 	"time"
 )
 
+// Defines values for PFSkillSearchModelsCareerRole.
+const (
+	Business PFSkillSearchModelsCareerRole = "Business"
+	Engineer PFSkillSearchModelsCareerRole = "Engineer"
+	Manager  PFSkillSearchModelsCareerRole = "Manager"
+	Other    PFSkillSearchModelsCareerRole = "Other"
+)
+
 // HealthResponse Base model for all API responses
 type HealthResponse = PFSkillSearchBaseResponse
 
@@ -24,16 +32,41 @@ type PFSkillSearchBaseResponse struct {
 
 // PFSkillSearchModelsCareer defines model for PFSkillSearch.Models.Career.
 type PFSkillSearchModelsCareer struct {
-	Company     string  `json:"company"`
-	Description *string `json:"description,omitempty"`
-	EndMonth    *int16  `json:"end_month,omitempty"`
-	Position    string  `json:"position"`
-	Role        string  `json:"role"`
-	StartMonth  int16   `json:"start_month"`
+	Company     string                        `json:"company"`
+	Description *string                       `json:"description,omitempty"`
+	EndMonth    *int16                        `json:"end_month,omitempty"`
+	Position    string                        `json:"position"`
+	Role        PFSkillSearchModelsCareerRole `json:"role"`
+	StartMonth  int16                         `json:"start_month"`
 }
 
-// PFSkillSearchModelsMatchingResult defines model for PFSkillSearch.Models.MatchingResult.
-type PFSkillSearchModelsMatchingResult struct {
+// PFSkillSearchModelsCareerRole defines model for PFSkillSearchModelsCareer.Role.
+type PFSkillSearchModelsCareerRole string
+
+// PFSkillSearchModelsPayloadFindPersonRequest defines model for PFSkillSearch.Models.Payload.FindPersonRequest.
+type PFSkillSearchModelsPayloadFindPersonRequest struct {
+	Instructions string                     `json:"instructions"`
+	Person       *PFSkillSearchModelsPerson `json:"person,omitempty"`
+	Persona      PFSkillSearchModelsPersona `json:"persona"`
+}
+
+// PFSkillSearchModelsPayloadFindPersonResponse defines model for PFSkillSearch.Models.Payload.FindPersonResponse.
+type PFSkillSearchModelsPayloadFindPersonResponse struct {
+	// Result The status of the search operation
+	Result []struct {
+		// Description Optional description of the match
+		Description *string `json:"description,omitempty"`
+
+		// Person The person object that was matched
+		Person PFSkillSearchModelsPerson `json:"person"`
+
+		// Score Similarity score between 0.0 and 1.0
+		Score float32 `json:"score"`
+	} `json:"result"`
+}
+
+// PFSkillSearchModelsPayloadSearchPeopleResponse defines model for PFSkillSearch.Models.Payload.SearchPeopleResponse.
+type PFSkillSearchModelsPayloadSearchPeopleResponse struct {
 	// Description Optional description of the match
 	Description *string `json:"description,omitempty"`
 
@@ -89,9 +122,14 @@ type PFSkillSearchModelsPersona struct {
 
 // PFSkillSearchModelsSkill defines model for PFSkillSearch.Models.Skill.
 type PFSkillSearchModelsSkill struct {
+	// Description Optional description of the skill
 	Description *string `json:"description,omitempty"`
-	Experience  int16   `json:"experience"`
-	Name        string  `json:"name"`
+
+	// Experience Skill experience in years
+	Experience int16 `json:"experience"`
+
+	// Name Skill name
+	Name string `json:"name"`
 }
 
 // GetPersonByIdJSONBody defines parameters for GetPersonById.
@@ -103,7 +141,7 @@ type GetPersonByIdJSONBody struct {
 type GetPersonByIdJSONRequestBody GetPersonByIdJSONBody
 
 // FindPersonJSONRequestBody defines body for FindPerson for application/json ContentType.
-type FindPersonJSONRequestBody = PFSkillSearchModelsPersona
+type FindPersonJSONRequestBody = PFSkillSearchModelsPayloadFindPersonRequest
 
 // GeneratePersonaJSONRequestBody defines body for GeneratePersona for application/json ContentType.
 type GeneratePersonaJSONRequestBody = PFSkillSearchModelsPerson

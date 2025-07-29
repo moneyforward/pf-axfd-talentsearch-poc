@@ -22,12 +22,12 @@ interface SearchPersonProps {
 const SearchPerson = ({ setPerson }: SearchPersonProps) => {
     const apiClient = useContext(ApiClientContext);
     const [searchTerm, setSearchTerm] = useState("");
-    const { collection, set } = useListCollection<components["schemas"]["PFSkillSearch.Models.MatchingResult"]>({
+    const { collection, set } = useListCollection<components["schemas"]["PFSkillSearch.Models.Payload.SearchPeopleResponse"]>({
         initialItems: [],
         itemToString: (item) => item.person.employee_name,
         itemToValue: (item) => item.person.employee_id,
     });
-    const [people, setPeople] = useState<components["schemas"]["PFSkillSearch.Models.MatchingResult"][]>([]);
+    const [people, setPeople] = useState<components["schemas"]["PFSkillSearch.Models.Payload.SearchPeopleResponse"][]>([]);
     const state = useAsync(async () => {
         if (!searchTerm) {
             set([]);

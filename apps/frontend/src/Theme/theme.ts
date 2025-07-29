@@ -15,7 +15,7 @@ const pfThemeConfig = defineConfig({
             basePerson: {
                 description: "Style for base person cards",
                 value: {
-                    borderRadius: "md",
+                    borderRadius: "4px",
                     padding: "8px",
                     boxShadow: "md",
                     width: "100%",

@@ -13,7 +13,6 @@ export class ApiClient {
         this.client = createClient<paths>({
             baseUrl: `${import.meta.env.VITE_APP_API_URL}${mock}`,
             headers: {
-
                 "Content-Type": "application/json",
                 // ここで必要な認証トークンなどを設定できます。
                 "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
@@ -27,8 +26,23 @@ export class ApiClient {
     }
 
     person = {
+        find: async (request: components["schemas"]["PFSkillSearch.Models.Payload.FindPersonRequest"]):
+            Promise<components["schemas"]["PFSkillSearch.Models.Payload.FindPersonResponse"]> => {
+            return await this.client.POST("/person/find", {
+                body: request,
+            }).then((response) => {
+                if (!response.error) {
+                    return response.data as unknown as components["schemas"]["PFSkillSearch.Models.Payload.FindPersonResponse"];
+                } else {
+                    throw new Error(`Error finding person: ${response}`);
+                }
+            }).catch(this.networkErrorHandler);
+        },
         search: async (name: string):
-            Promise<components["schemas"]["PFSkillSearch.Models.MatchingResult"][] | WAIT_STATUS> => {
+            Promise<components["schemas"]["PFSkillSearch.Models.Payload.SearchPeopleResponse"][] | WAIT_STATUS> => {
+            if (!name || name.trim() === "") {
+                return IGNORE; // 空の名前の場合はIGNOREを返す
+            }
             if (await this.delay("person/search", 400)) {
                 return await this.client.GET("/people/{name}", {
                     params: {
@@ -38,7 +52,7 @@ export class ApiClient {
                     }
                 }).then((response) => {
                     if (!response.error) {
-                        return response.data as unknown as components["schemas"]["PFSkillSearch.Models.MatchingResult"][];
+                        return response.data as unknown as components["schemas"]["PFSkillSearch.Models.Payload.SearchPeopleResponse"][];
                     } else {
                         throw new Error(`Error fetching person: ${response}`);
                     }
@@ -103,6 +117,7 @@ const ApiClientContext = createContext<ApiClient>(apiClient);
 export default ApiClientContext;
 
 type WAIT_STATUS = string;
+export const IGNORE: WAIT_STATUS = "IGNORE";
 export const WAITING: WAIT_STATUS = "WAITING";
 export const REFRESHED: WAIT_STATUS = "REFRESHED";
 export const FINISHED: WAIT_STATUS = "FINISHED";

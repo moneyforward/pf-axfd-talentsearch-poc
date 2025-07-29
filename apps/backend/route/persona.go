@@ -11,7 +11,7 @@ import (
 )
 
 func SearchPeopleMock(c *gin.Context) {
-	results := []schema.PFSkillSearchModelsMatchingResult{
+	results := []schema.PFSkillSearchModelsPayloadSearchPeopleResponse{
 		{
 			Person: schema.PFSkillSearchModelsPerson{
 				EmployeeId:                     "1",
@@ -69,6 +69,12 @@ func SearchPeopleMock(c *gin.Context) {
 // returns: 200 OK with search results or 404 Not Found if no results found
 func SearchPeople(c *gin.Context) {
 	query := c.Param("query")
+	// Validate query
+	if query == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter is required"})
+		return
+	}
+
 	var apiKey string
 	if os.Getenv("AISEARCH_API_KEY") != "" {
 		apiKey = os.Getenv("AISEARCH_API_KEY")
@@ -76,7 +82,7 @@ func SearchPeople(c *gin.Context) {
 		apiKey = "" // 認証されたKeyを使用する場合は、ここで取得する必要があります
 	}
 
-	client, err := vertex.NewVertexAISearch(apiKey, "us")
+	client, err := vertex.NewVertexAISearch(apiKey, "us", vertex.DS_EMPLOYEE_INFO)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client", "details": err.Error()})
 		return
@@ -95,8 +101,15 @@ func SearchPeople(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "No results found"})
 		return
 	}
+	var response []schema.PFSkillSearchModelsPayloadSearchPeopleResponse
+	for _, person := range results {
+		response = append(response, schema.PFSkillSearchModelsPayloadSearchPeopleResponse{
+			Person: person,
+			Score:  1.0, // Assuming a score of 1.0
+		})
+	}
 
-	c.JSON(http.StatusOK, results)
+	c.JSON(http.StatusOK, response)
 }
 
 func GeneratePersona(c *gin.Context) {
@@ -153,7 +166,7 @@ func FindPerson(c *gin.Context) {
 		apiKey = "" // 認証されたKeyを使用する場合は、ここで取得する必要があります
 	}
 
-	client, err := vertex.NewVertexAISearch(apiKey, "us")
+	client, err := vertex.NewVertexAISearch(apiKey, "us", vertex.DS_EMPLOYEE_INFO)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client", "details": err.Error()})
 		return
