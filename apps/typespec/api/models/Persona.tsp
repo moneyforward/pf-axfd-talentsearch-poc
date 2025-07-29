@@ -10,13 +10,18 @@ namespace PFSkillSearch.Models {
         end_month?: int16;
         company: string;
         position: string;
-        role: string;
+        role: "Business" | "Engineer" | "Manager" | "Other";
         description?: string;
     }
 
     model Skill {
+        @doc("Skill name")
         name: string;
+
+        @doc("Skill experience in years")
         experience: int16; // in years
+
+        @doc("Optional description of the skill")
         description?: string;
     }
 

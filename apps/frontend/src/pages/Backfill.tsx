@@ -14,6 +14,7 @@ const Backfill = () => {
   return (
     <VStack
       direction="column"
+      height={"100%"}
     >
       {/* Main Header */}
       <MainHeader

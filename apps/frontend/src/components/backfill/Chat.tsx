@@ -1,21 +1,18 @@
 import {
-    HStack,
     IconButton, Spacer, Textarea,
+    Flex,
     VStack,
+    HStack
 } from "@chakra-ui/react";
 import { LuSend } from "react-icons/lu";
 import UserMessage from "../messages/UserMessage";
 
 const Chat = () => {
     return (
-        <VStack
+        <Flex
+            direction={"column"}
             width={"100%"}
             height={"100%"}
-            alignItems={"left"}
-            justifyContent={"left"}
-            justify={"left"}
-            alignContent={"left"}
-            justifyItems={"left"}
         >
             <VStack
                 w="100%"
@@ -23,10 +20,6 @@ const Chat = () => {
                 borderRadius={0}
                 flexGrow={1}
                 overflowY="scroll"
-                justifyContent={"left"}
-                justify={"left"}
-                alignContent={"left"}
-                justifyItems={"left"}
             >
                 ここにmessage
                 <UserMessage
@@ -38,6 +31,7 @@ const Chat = () => {
             />
             <HStack
                 w="100%"
+                alignItems={"flex-end"}
             >
 
                 <Textarea
@@ -52,7 +46,7 @@ const Chat = () => {
                 </IconButton>
 
             </HStack>
-        </VStack>
+        </Flex>
     );
 }
 export default Chat;

@@ -36,11 +36,11 @@ const Sidebar = () => {
             >
                 <IconButton
                     variant={"ghost"}
-                    colorPalette={"primary"}
                     onClick={() => setIsOpen(!isOpen)}
                     aria-label="Toggle Sidebar"
                 >
-                    {isOpen ? <LuPanelLeftClose /> : <LuPanelLeftOpen />}
+                    {isOpen ? <LuPanelLeftClose
+                    /> : <LuPanelLeftOpen />}
                 </IconButton>
             </Flex>
             <Box

@@ -1,6 +1,6 @@
 import React from "react";
-import PersonCard from "./PersonCard";
 import { Flex } from "@chakra-ui/react";
+import PersonCard from "./PersonCard";
 
 const PersonFinder: React.FC = () => (
   <Flex

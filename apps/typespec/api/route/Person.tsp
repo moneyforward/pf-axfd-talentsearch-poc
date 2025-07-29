@@ -4,7 +4,6 @@ import "../models/index.tsp";
 
 using PFSkillSearch.Models;
 using Http;
-using Rest;
 
 namespace PFSkillSearch.Routes {
   @route("/people/{name}")
@@ -51,5 +50,16 @@ namespace PFSkillSearch.Routes {
     @doc("Find people matching the provided persona")
     @body
     body: MatchingResult[];
+  };
+
+  @route("/person/{personId}/face")
+  @get
+  @doc("Get the face image(jpg) of a person by their ID")
+  op getPersonFace(@path personId: string): {
+    @statusCode statusCode: 200;
+    @header
+    contentType: "image/jpeg";
+
+    @body data: bytes;
   };
 }

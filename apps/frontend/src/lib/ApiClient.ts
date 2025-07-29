@@ -28,7 +28,7 @@ export class ApiClient {
 
     person = {
         search: async (name: string):
-            Promise<components["schemas"]["PFSkillSearch.Models.Person"][] | WAIT_STATUS> => {
+            Promise<components["schemas"]["PFSkillSearch.Models.MatchingResult"][] | WAIT_STATUS> => {
             if (await this.delay("person/search", 400)) {
                 return await this.client.GET("/people/{name}", {
                     params: {
@@ -38,7 +38,7 @@ export class ApiClient {
                     }
                 }).then((response) => {
                     if (!response.error) {
-                        return response.data as components["schemas"]["PFSkillSearch.Models.Person"][];
+                        return response.data as unknown as components["schemas"]["PFSkillSearch.Models.MatchingResult"][];
                     } else {
                         throw new Error(`Error fetching person: ${response}`);
                     }

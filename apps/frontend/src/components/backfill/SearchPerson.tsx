@@ -27,13 +27,23 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
         itemToString: (item) => item.person.employee_name,
         itemToValue: (item) => item.person.employee_id,
     });
+    const [people, setPeople] = useState<components["schemas"]["PFSkillSearch.Models.MatchingResult"][]>([]);
     const state = useAsync(async () => {
+        if (!searchTerm) {
+            set([]);
+            return;
+        }
+
         await apiClient.person.search(searchTerm)
             .then((result) => {
                 if (result === REFRESHED) {
                     return;
                 } else {
-                    set(result as unknown as components["schemas"]["PFSkillSearch.Models.MatchingResult"][]);
+                    console.log("SearchPerson result:", result);
+                    if (Array.isArray(result)) {
+                        set(result);
+                        setPeople(result);
+                    }
                 }
             })
             .catch((error) => {
@@ -44,6 +54,7 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
     return (
         <VStack
             width="100%"
+            marginBottom={"12px"}
         >
             <Combobox.Root
                 collection={collection}
@@ -52,7 +63,13 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
                 positioning={{ sameWidth: true, placement: "bottom-start" }}
                 onSelect={(item => {
                     if (item) {
-                        setPerson(item as unknown as components["schemas"]["PFSkillSearch.Models.Person"]);
+                        console.log("Selected item:", item);
+                        const found = people.find(
+                            (i) => (i.person.employee_id === item.itemValue)
+                        );
+                        if (found) {
+                            setPerson(found.person);
+                        }
                     }
                 })}
             >

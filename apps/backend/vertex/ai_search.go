@@ -8,6 +8,7 @@ import (
 	discoveryengine "cloud.google.com/go/discoveryengine/apiv1"
 	"cloud.google.com/go/discoveryengine/apiv1/discoveryenginepb"
 	"google.golang.org/api/option"
+	"google.golang.org/protobuf/types/known/structpb"
 	"jp.co.moneyforward/pf-skillsearch/schema"
 )
 
@@ -17,11 +18,24 @@ type VertexAISearch struct {
 	servingConfig string
 }
 
-func NewVertexAISearch(apiKey string, location string) (*VertexAISearch, error) {
+type DATASTORE string
+
+const (
+	DS_HALF_REVIEW    DATASTORE = "pf-ai-app-half-review_1753251488660"
+	DS_MONTHLY_REVIEW DATASTORE = "pf-ai-app-monthly-review_1753251177238"
+	DS_EMPLOYEE_INFO  DATASTORE = "pf-ai-app-employee-info_1753251393945"
+	DS_RESUME         DATASTORE = "pf-ai-app-resume_1753250812679"
+	DS_CV             DATASTORE = "pf-ai-app-cv_1751509417434"
+)
+
+func NewVertexAISearch(apiKey string, location string, ds DATASTORE) (*VertexAISearch, error) {
 	var servingConfig = "projects/" + os.Getenv("GOOGLE_CLOUD_PROJECT")
 	servingConfig += "/locations/" + location
 	servingConfig += "/collections/default_collection"
-	servingConfig += "/engines/" + os.Getenv("GOOGLE_CLOUD_ENGINE")
+	// servingConfig += "/collections/pf-ai-app-employee-info_1753251393945"
+	// servingConfig += "/engines/" + os.Getenv("GOOGLE_CLOUD_ENGINE")
+	servingConfig += "/dataStores/pf-ai-app-employee-info_1753251393945"
+
 	servingConfig += "/servingConfigs/default_search"
 
 	// projects/'218635233545'/locations/us/collections/default_collection/engines/pf-ai-app-skillsearch_1753251538165/servingConfigs/default_search
@@ -50,7 +64,9 @@ func (s *VertexAISearch) client() (*discoveryengine.SearchClient, error) {
 
 	log.Println("servingConfig:", s.servingConfig)
 	if os.Getenv("GOOGLE_APPLICATION_CREDENTIALS") == "" {
-		c, err := discoveryengine.NewSearchClient(ctx)
+		c, err := discoveryengine.NewSearchClient(ctx,
+			option.WithEndpoint("us-discoveryengine.googleapis.com:443"),
+		)
 		if err != nil {
 			log.Fatalf("Failed to create discovery engine client: %v", err)
 			return nil, err
@@ -59,6 +75,7 @@ func (s *VertexAISearch) client() (*discoveryengine.SearchClient, error) {
 	} else {
 		log.Println("Credentials file:", os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
 		c, err := discoveryengine.NewSearchClient(ctx,
+			option.WithEndpoint("us-discoveryengine.googleapis.com:443"),
 			option.WithCredentialsFile(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")),
 		)
 		if err != nil {
@@ -106,6 +123,20 @@ func (s *VertexAISearch) FindPerson(persona schema.PFSkillSearchModelsPersona) (
 	}
 	return results, nil
 }
+func getStringOrEmpty(fields map[string]*structpb.Value, key string) string {
+	if val, ok := fields[key]; ok {
+		return val.GetStringValue()
+	}
+	return ""
+}
+
+func getStringPointerOrNil(fields map[string]*structpb.Value, key string) *string {
+	if val, ok := fields[key]; ok {
+		s := val.GetStringValue()
+		return &s
+	}
+	return nil
+}
 
 func (s *VertexAISearch) SearchPeople(query string) ([]schema.PFSkillSearchModelsPerson, error) {
 	c, err := s.client()
@@ -117,7 +148,7 @@ func (s *VertexAISearch) SearchPeople(query string) ([]schema.PFSkillSearchModel
 	req := &discoveryenginepb.SearchRequest{
 		ServingConfig: s.servingConfig + ":search",
 		Query:         query,
-		PageSize:      10,
+		PageSize:      5,
 		LanguageCode:  "ja",
 		UserInfo: &discoveryenginepb.UserInfo{
 			TimeZone: "Asia/Tokyo",
@@ -145,9 +176,39 @@ func (s *VertexAISearch) SearchPeople(query string) ([]schema.PFSkillSearchModel
 			log.Printf("Error getting next search result: %v", err)
 			return nil, err
 		}
-		log.Printf("Found document: %v", resp.Document)
+		structData := resp.Document.GetStructData()
+		log.Printf("Found document.GetStructData: %v\n", structData)
+		log.Printf("Found document.AsMap: %v\n", structData.AsMap())
+		log.Printf("Found document.String(): %v\n", resp.Document.String())
 		// ここでschema.PFSkillSearchModelsPersonに変換してappend
+		person := schema.PFSkillSearchModelsPerson{
+			EmployeeId:            getStringOrEmpty(structData.Fields, "employee_id"),
+			EmployeeName:          getStringOrEmpty(structData.Fields, "employee_name"),
+			Age:                   getStringOrEmpty(structData.Fields, "age"),
+			Birthday:              getStringOrEmpty(structData.Fields, "birthday"),
+			CurrentEmployeeFlag:   getStringOrEmpty(structData.Fields, "current_employee_flag"),
+			Dept1:                 getStringOrEmpty(structData.Fields, "dept_1"),
+			Dept2:                 getStringOrEmpty(structData.Fields, "dept_2"),
+			Dept3:                 getStringPointerOrNil(structData.Fields, "dept_3"),
+			Dept4:                 getStringPointerOrNil(structData.Fields, "dept_4"),
+			Dept5:                 getStringPointerOrNil(structData.Fields, "dept_5"),
+			Dept6:                 getStringPointerOrNil(structData.Fields, "dept_6"),
+			EmploymentCategory:    getStringPointerOrNil(structData.Fields, "employment_category"),
+			EmploymentType:        getStringOrEmpty(structData.Fields, "employment_type"),
+			EnteredAt:             getStringOrEmpty(structData.Fields, "entered_at"),
+			Gender:                getStringOrEmpty(structData.Fields, "gender"),
+			GradeCombined:         getStringPointerOrNil(structData.Fields, "grade_combined"),
+			JobFamily:             getStringOrEmpty(structData.Fields, "job_family"),
+			JpNonJpClassification: getStringOrEmpty(structData.Fields, "jp_non_jp_classification"),
+			JobTitle:              getStringOrEmpty(structData.Fields, "job_title"),
+			Mail:                  getStringOrEmpty(structData.Fields, "mail"),
+			YearsOfService:        getStringOrEmpty(structData.Fields, "years_of_service"),
+			SalaryTable:           getStringOrEmpty(structData.Fields, "salary_table"),
+		}
+
+		results = append(results, person)
 		// results = append(results, person)
+
 	}
 	return results, nil
 }
