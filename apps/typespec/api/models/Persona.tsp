@@ -75,7 +75,7 @@ namespace PFSkillSearch.Models {
         row_num: string;
         employment_type: string;
     }
-    
+
     model MonthlyReview {
         fy_cycle: string;
         cycle_start_date: string; // Format: YYYY-MM-DD
@@ -97,18 +97,20 @@ namespace PFSkillSearch.Models {
             person?: Person; // The person object to search for
         }
 
+        model FindPersonResult {
+            @doc("The person object that was matched")
+            person: Person;
+
+            @doc("Optional description of the match")
+            description?: string; // Optional description of the match
+
+            @doc("Similarity score between 0.0 and 1.0")
+            score: float32;
+        }
+
         model FindPersonResponse {
             @doc("The status of the search operation")
-            result: {
-                @doc("The person object that was matched")
-                person: Person;
-
-                @doc("Optional description of the match")
-                description?: string; // Optional description of the match
-
-                @doc("Similarity score between 0.0 and 1.0")
-                score: float32;
-            }[];
+            result: FindPersonResult[];
         }
 
         model SearchPeopleResponse {

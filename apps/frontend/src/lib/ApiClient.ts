@@ -74,10 +74,16 @@ export class ApiClient {
         faceUrl: (employeeId: string): string => {
             return `${import.meta.env.VITE_APP_API_URL}/person/${employeeId}/face`;
         },
-        find: async (request: components["schemas"]["PFSkillSearch.Models.Payload.FindPersonRequest"]):
-            Promise<components["schemas"]["PFSkillSearch.Models.Payload.FindPersonResponse"]> => {
+        find: async (
+            person: components["schemas"]["PFSkillSearch.Models.Person"],
+            persona: components["schemas"]["PFSkillSearch.Models.Persona"]
+        ): Promise<components["schemas"]["PFSkillSearch.Models.Payload.FindPersonResponse"]> => {
             return await this.client.POST("/person/find", {
-                body: request,
+                body: {
+                    person: person,
+                    persona: persona,
+                    instructions: "Find the person based on the provided details.",
+                },
             }).then((response) => {
                 if (!response.error) {
                     return response.data as unknown as components["schemas"]["PFSkillSearch.Models.Payload.FindPersonResponse"];

@@ -85,16 +85,19 @@ type PFSkillSearchModelsPayloadFindPersonRequest struct {
 // PFSkillSearchModelsPayloadFindPersonResponse defines model for PFSkillSearch.Models.Payload.FindPersonResponse.
 type PFSkillSearchModelsPayloadFindPersonResponse struct {
 	// Result The status of the search operation
-	Result []struct {
-		// Description Optional description of the match
-		Description *string `json:"description,omitempty"`
+	Result []PFSkillSearchModelsPayloadFindPersonResult `json:"result"`
+}
 
-		// Person The person object that was matched
-		Person PFSkillSearchModelsPerson `json:"person"`
+// PFSkillSearchModelsPayloadFindPersonResult defines model for PFSkillSearch.Models.Payload.FindPersonResult.
+type PFSkillSearchModelsPayloadFindPersonResult struct {
+	// Description Optional description of the match
+	Description *string `json:"description,omitempty"`
 
-		// Score Similarity score between 0.0 and 1.0
-		Score float32 `json:"score"`
-	} `json:"result"`
+	// Person The person object that was matched
+	Person PFSkillSearchModelsPerson `json:"person"`
+
+	// Score Similarity score between 0.0 and 1.0
+	Score float32 `json:"score"`
 }
 
 // PFSkillSearchModelsPayloadSearchPeopleResponse defines model for PFSkillSearch.Models.Payload.SearchPeopleResponse.

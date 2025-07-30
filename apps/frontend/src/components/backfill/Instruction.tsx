@@ -3,15 +3,15 @@ import {
   Heading,
   IconButton,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useState, type JSX } from "react";
+import {
+  useEffect, useState, type JSX
+} from "react";
 import type { components } from "@mfskillsearch/typespec"
 import PersonaCard from "./PersonaCard";
 import SearchPerson from "./SearchPerson";
 import {
   LuSendHorizontal,
 } from "react-icons/lu";
-import ApiClientContext from "../../lib/ApiClient";
-import { toaster } from "../ui/toaster";
 // import Chat from "./Chat";
 
 interface InstructionProps {
@@ -41,6 +41,8 @@ const Instruction = ({ search }: InstructionProps): JSX.Element => {
       align="start" minW="340px" maxW="340px" w="340px"
       height="100%"
       direction="column"
+      borderRight="1px solid"
+      borderColor="primary.300"
     >
 
       {/* Input */}
@@ -80,7 +82,6 @@ const Instruction = ({ search }: InstructionProps): JSX.Element => {
                 if (person && persona) {
                   search(person, persona);
                 }
-
               }}
             >
               <LuSendHorizontal />
