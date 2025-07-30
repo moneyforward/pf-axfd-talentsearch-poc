@@ -43,6 +43,38 @@ type PFSkillSearchModelsCareer struct {
 // PFSkillSearchModelsCareerRole defines model for PFSkillSearchModelsCareer.Role.
 type PFSkillSearchModelsCareerRole string
 
+// PFSkillSearchModelsHalfReview defines model for PFSkillSearch.Models.HalfReview.
+type PFSkillSearchModelsHalfReview struct {
+	CycleStartDate                      string `json:"cycle_start_date"`
+	EmployeeId                          string `json:"employee_id"`
+	EmploymentType                      string `json:"employment_type"`
+	FyCycle                             string `json:"fy_cycle"`
+	HalfYearSelfReviewAchievementGrowth string `json:"half_year_self_review_achievement_growth"`
+	JobFamily                           string `json:"job_family"`
+	MedTerm23yr                         string `json:"med_term_2_3yr"`
+	Org1                                string `json:"org1"`
+	Org2                                string `json:"org2"`
+	RowNum                              string `json:"row_num"`
+	SelfAssessmentScore                 string `json:"self_assessment_score"`
+	ShortTerm1yr                        string `json:"short_term_1yr"`
+	UploadYearMonth                     string `json:"upload_year_month"`
+}
+
+// PFSkillSearchModelsMonthlyReview defines model for PFSkillSearch.Models.MonthlyReview.
+type PFSkillSearchModelsMonthlyReview struct {
+	CycleStartDate string  `json:"cycle_start_date"`
+	EmployeeId     string  `json:"employee_id"`
+	EmploymentType string  `json:"employment_type"`
+	FyCycle        string  `json:"fy_cycle"`
+	JobFamily      string  `json:"job_family"`
+	MonthlyGoal    string  `json:"monthly_goal"`
+	MonthlyReview  string  `json:"monthly_review"`
+	Org1           string  `json:"org1"`
+	Org2           string  `json:"org2"`
+	Org3           *string `json:"org3,omitempty"`
+	YearMonth      string  `json:"year_month"`
+}
+
 // PFSkillSearchModelsPayloadFindPersonRequest defines model for PFSkillSearch.Models.Payload.FindPersonRequest.
 type PFSkillSearchModelsPayloadFindPersonRequest struct {
 	Instructions string                     `json:"instructions"`

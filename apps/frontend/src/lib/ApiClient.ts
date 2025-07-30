@@ -24,8 +24,56 @@ export class ApiClient {
     public networkErrorHandler = (error: Error) => {
         throw error;
     }
+    persona = {
+        generate: async (person: components["schemas"]["PFSkillSearch.Models.Person"]):
+            Promise<components["schemas"]["PFSkillSearch.Models.Persona"]> => {
+            return await this.client.POST("/persona", {
+                body: person,
+            }).then((response) => {
+                if (!response.error) {
+                    return response.data as unknown as components["schemas"]["PFSkillSearch.Models.Persona"];
+                } else {
+                    throw new Error(`Error generating persona: ${response}`);
+                }
+            }).catch(this.networkErrorHandler);
+        }
+    }
 
     person = {
+
+        cvExists: async (employeeId: string): Promise<boolean> => {
+            return await this.client.GET("/person/{employeeId}/cv/exists", {
+                params: {
+                    path: {
+                        employeeId: employeeId
+                    }
+                }
+            }).then((response) => {
+                if (!response.error) {
+                    return response.data as unknown as boolean;
+                } else {
+                    throw new Error(`Error checking CV existence: ${response}`);
+                }
+            }).catch(this.networkErrorHandler);
+        },
+        resumeExists: async (employeeId: string): Promise<boolean> => {
+            return await this.client.GET("/person/{employeeId}/resume/exists", {
+                params: {
+                    path: {
+                        employeeId: employeeId
+                    }
+                }
+            }).then((response) => {
+                if (!response.error) {
+                    return response.data as unknown as boolean;
+                } else {
+                    throw new Error(`Error checking resume existence: ${response}`);
+                }
+            }).catch(this.networkErrorHandler);
+        },
+        faceUrl: (employeeId: string): string => {
+            return `${import.meta.env.VITE_APP_API_URL}/person/${employeeId}/face`;
+        },
         find: async (request: components["schemas"]["PFSkillSearch.Models.Payload.FindPersonRequest"]):
             Promise<components["schemas"]["PFSkillSearch.Models.Payload.FindPersonResponse"]> => {
             return await this.client.POST("/person/find", {

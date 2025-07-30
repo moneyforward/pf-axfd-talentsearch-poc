@@ -11,6 +11,13 @@ import Instruction from "../components/backfill/Instruction";
 
 
 const Backfill = () => {
+  const search = (
+    person: components["schemas"]["PFSkillSearch.Models.Person"]
+    persona: components["schemas"]["PFSkillSearch.Models.Persona"]
+  ) => {
+
+  }
+
   return (
     <VStack
       direction="column"
@@ -30,7 +37,9 @@ const Backfill = () => {
         w="100%"
       >
         {/* Left: BasePerson */}
-        <Instruction />
+        <Instruction
+          search={search}
+        />
         {/* Right: Finder */}
         <VStack align="start" flex={1} minW={0}>
           <Box w="100%" maxW="817px" bg="#fff" borderRadius="sm" p={4}>

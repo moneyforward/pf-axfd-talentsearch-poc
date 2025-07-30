@@ -14,8 +14,15 @@ import ApiClientContext from "../../lib/ApiClient";
 import { toaster } from "../ui/toaster";
 // import Chat from "./Chat";
 
-const Instruction = (): JSX.Element => {
-  const apiClient = useContext(ApiClientContext);
+interface InstructionProps {
+  search: (
+    person: components["schemas"]["PFSkillSearch.Models.Person"],
+    persona: components["schemas"]["PFSkillSearch.Models.Persona"]
+  ) => void;
+}
+
+
+const Instruction = ({ search }: InstructionProps): JSX.Element => {
   const [persona, setPersona] = useState<components["schemas"]["PFSkillSearch.Models.Persona"]>();
   const [person, setPerson] = useState<components["schemas"]["PFSkillSearch.Models.Person"]>();
 
@@ -23,42 +30,10 @@ const Instruction = (): JSX.Element => {
     console.log(person);
   }
 
-  const findPerson = () => {
-    if (person) {
-      apiClient.person.find({
-        instructions: "Please find the person with the given employee ID.",
-        persona: persona,
-        person: person
-      }).then((response) => {
-        if (response === "IGNORE") {
-          console.log("No person found, returning IGNORE.");
-          return;
-        }
-        if (response === "REFRESHED") {
-          console.log("Person search was refreshed, returning REFRESHED.");
-          return;
-        }
-        if (response && response.data) {
-          console.log("Found person:", response.data);
-          return response.data;
-        } else {
-          return undefined;
-        }
-      }).catch((error) => {
-        toaster.create({
-          title: "Error",
-          description: `${error.message}`,
-          type: "error",
-        });
-        console.error("Error finding person:", error);
-        return undefined;
-      });
-    }
-  }
 
   useEffect(() => {
     console.log("Selected person:", person);
-    setPersona(person);
+
   }, [person]);
 
   return (
@@ -81,9 +56,11 @@ const Instruction = (): JSX.Element => {
         borderRadius={"8px"}
       >
         <PersonaCard
+          person={person}
           persona={persona}
+          setPersona={setPersona}
         />
-        {persona ?
+        {person ?
           <Flex
             direction="row"
             bgColor={"primary.700"}
@@ -99,6 +76,12 @@ const Instruction = (): JSX.Element => {
               marginLeft={"auto"}
               variant={"subtle"}
               bgColor={"primary.300"}
+              onClick={() => {
+                if (person && persona) {
+                  search(person, persona);
+                }
+
+              }}
             >
               <LuSendHorizontal />
             </IconButton>

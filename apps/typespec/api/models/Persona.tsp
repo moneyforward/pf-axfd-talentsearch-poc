@@ -60,6 +60,36 @@ namespace PFSkillSearch.Models {
         description?: string;
     }
 
+    model HalfReview {
+        fy_cycle: string;
+        upload_year_month: string;
+        cycle_start_date: string;
+        employee_id: string;
+        org1: string;
+        org2: string;
+        job_family: string;
+        half_year_self_review_achievement_growth: string; // Self review of achievements and growth
+        self_assessment_score: string; // Self assessment score
+        short_term_1yr: string;
+        med_term_2_3yr: string;
+        row_num: string;
+        employment_type: string;
+    }
+    
+    model MonthlyReview {
+        fy_cycle: string;
+        cycle_start_date: string; // Format: YYYY-MM-DD
+        year_month: string; // Format: YYYY-MM
+        employee_id: string;
+        org1: string;
+        org2: string;
+        org3?: string;
+        job_family: string;
+        employment_type: string;
+        monthly_goal: string; // Monthly goal description
+        monthly_review: string; // Monthly review description
+    }
+
     namespace Payload {
         model FindPersonRequest {
             persona: Persona; // The persona to search for
