@@ -33,8 +33,18 @@ func GeneratePersona(c *gin.Context) {
 		return
 	}
 
+	personaGen, err := vertex.NewLLM().GeneratePersona(
+		halfReview,
+		monthlyReview,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate persona", "details": err.Error()})
+		return
+	}
+
 	// persona 情報を生成
 	c.JSON(http.StatusOK, gin.H{
+		"personaGen":     personaGen,
 		"persona":        persona,
 		"half_review":    halfReview,
 		"monthly_review": monthlyReview,

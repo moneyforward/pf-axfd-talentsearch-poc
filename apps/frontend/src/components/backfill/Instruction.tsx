@@ -79,9 +79,14 @@ const Instruction = ({ search }: InstructionProps): JSX.Element => {
               variant={"subtle"}
               bgColor={"primary.300"}
               onClick={() => {
-                if (person && persona) {
-                  search(person, persona);
+                if (person) {
+                  search(person, persona || {
+                    name: "",
+                    skills: [],
+                    career: [],
+                  });
                 }
+
               }}
             >
               <LuSendHorizontal />

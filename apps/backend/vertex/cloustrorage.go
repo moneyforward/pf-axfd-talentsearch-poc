@@ -54,7 +54,12 @@ func (cs *CloudStorage) HalfReview(employee_id string) (schema.PFSkillSearchMode
 	defer reader.Close()
 
 	// Read the data line by line
+
 	scanner := bufio.NewScanner(reader)
+	const maxCapacity = 10 * 1024 * 1024 // 10MB
+	buf := make([]byte, 0, 64*1024)
+	scanner.Buffer(buf, maxCapacity)
+
 	for scanner.Scan() {
 		line := scanner.Bytes()
 		var halfReview schema.PFSkillSearchModelsHalfReview
@@ -91,6 +96,10 @@ func (cs *CloudStorage) MonthlyReview(employee_id string) (schema.PFSkillSearchM
 
 	// Read the data line by line
 	scanner := bufio.NewScanner(reader)
+	const maxCapacity = 10 * 1024 * 1024 // 10MB
+	buf := make([]byte, 0, 64*1024)
+	scanner.Buffer(buf, maxCapacity)
+
 	for scanner.Scan() {
 		line := scanner.Bytes()
 		var monthlyReview schema.PFSkillSearchModelsMonthlyReview

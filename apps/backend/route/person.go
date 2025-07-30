@@ -24,7 +24,7 @@ func FindPerson(c *gin.Context) {
 		apiKey = "" // 認証されたKeyを使用する場合は、ここで取得する必要があります
 	}
 
-	client, err := vertex.NewVertexAISearch(apiKey, "us", vertex.DS_EMPLOYEE_INFO)
+	client, err := vertex.NewVertexAISearch(apiKey, "us", vertex.DS_ALL)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client", "details": err.Error()})
 		return
@@ -175,7 +175,8 @@ func IsExistsCV(c *gin.Context) {
 	exists, err := cs.IsExistsCV(employee_id)
 	if err != nil {
 		log.Printf("Error checking CV existence for employee ID %s: %v", employee_id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check CV existence", "details": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Failed to check CV existence", "details": err.Error()})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"exists": exists})
 }
@@ -186,7 +187,7 @@ func IsExistsResume(c *gin.Context) {
 	exists, err := cs.IsExistsResume(employee_id)
 	if err != nil {
 		log.Printf("Error checking Resume existence for employee ID %s: %v", employee_id, err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check Resume existence", "details": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Failed to check Resume existence", "details": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"exists": exists})

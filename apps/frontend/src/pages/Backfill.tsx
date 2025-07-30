@@ -23,6 +23,7 @@ const Backfill = () => {
     person: components["schemas"]["PFSkillSearch.Models.Person"],
     persona: components["schemas"]["PFSkillSearch.Models.Persona"]
   ) => {
+    console.log("Searching for person:", person, "with persona:", persona);
     setLoading(true);
     client.person.find(
       person,

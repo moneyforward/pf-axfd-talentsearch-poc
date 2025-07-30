@@ -4,6 +4,7 @@ import {
   HStack,
   Image,
   List,
+  Spinner,
   Tag,
   Text,
 } from "@chakra-ui/react";
@@ -29,12 +30,19 @@ const PersonaCard = ({ person, persona, setPersona }: PersonaCardProps) => {
   const client = useContext(ApiClientContext);
   const [isExistsCV, setIsExistsCV] = useState<boolean>(false);
   const [isExistsResume, setIsExistsResume] = useState<boolean>(false);
+  const [generating, setGenerating] = useState<boolean>(false);
 
   useEffect(() => {
     if (person) {
       client.person.cvExists(person.employee_id).then(setIsExistsCV);
       client.person.resumeExists(person.employee_id).then(setIsExistsResume);
-      client.persona.generate(person).then(setPersona);
+      setGenerating(true);
+      client.persona.generate(person).then(setPersona).finally(() => {
+        setGenerating(false);
+      });
+      if (persona) {
+        console.log("Generated persona:", persona);
+      }
     }
   }, [person]);
 
@@ -99,11 +107,15 @@ const PersonaCard = ({ person, persona, setPersona }: PersonaCardProps) => {
           alignItems="center"
           justifyContent="flex-start"
           width="100%">
-          <Tag.Root>
+          <Tag.Root
+            bgColor={"primary.300"}
+          >
             <Tag.Label
             >履歴書：{isExistsResume ? "o" : "x"}</Tag.Label>
           </Tag.Root>
-          <Tag.Root>
+          <Tag.Root
+            bgColor={"primary.300"}
+          >
             <Tag.Label>職務経歴書：{isExistsCV ? "o" : "x"}</Tag.Label>
           </Tag.Root>
         </Flex>
@@ -112,7 +124,11 @@ const PersonaCard = ({ person, persona, setPersona }: PersonaCardProps) => {
             グレード：{person.grade_combined || "グレード情報なし"}
           </List.Item>
         </List.Root>
-
+        {generating && (
+          <>スキルと経歴を取得中...
+            <Spinner size="sm" />
+          </>
+        )}
         {persona && (
           <>
             経歴などのまとめがここに入ります。

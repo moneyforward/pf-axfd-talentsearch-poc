@@ -5,7 +5,7 @@ export interface PersonCardProps {
     person?: components["schemas"]["PFSkillSearch.Models.Person"];
 }
 
-const PersonCard = ({ persona: person }: PersonCardProps) => {
+const PersonCard = ({ person }: PersonCardProps) => {
 
 
     return (
