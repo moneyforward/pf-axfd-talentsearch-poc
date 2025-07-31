@@ -1,6 +1,7 @@
 package route
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -15,7 +16,6 @@ func GeneratePersona(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body", "details": err.Error()})
 		return
 	}
-	var persona schema.PFSkillSearchModelsPersona
 	employeeId := person.EmployeeId
 	log.Println("Generating persona for employeeId:", employeeId)
 	csClient := vertex.NewCloudStorage()
@@ -42,13 +42,13 @@ func GeneratePersona(c *gin.Context) {
 		return
 	}
 
+	var persona schema.PFSkillSearchModelsPersona
+	if err := json.Unmarshal([]byte(personaGen), &persona); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal persona", "details": err.Error()})
+		return
+	}
+
 	// persona 情報を生成
-	c.JSON(http.StatusOK, gin.H{
-		"personaGen":     personaGen,
-		"persona":        persona,
-		"half_review":    halfReview,
-		"monthly_review": monthlyReview,
-		"employee_id":    employeeId,
-	})
+	c.JSON(http.StatusOK, persona)
 
 }

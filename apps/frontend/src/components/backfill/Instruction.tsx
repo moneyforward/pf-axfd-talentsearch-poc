@@ -12,6 +12,7 @@ import SearchPerson from "./SearchPerson";
 import {
   LuSendHorizontal,
 } from "react-icons/lu";
+import Chat from "./Chat";
 // import Chat from "./Chat";
 
 interface InstructionProps {
@@ -94,7 +95,7 @@ const Instruction = ({ search }: InstructionProps): JSX.Element => {
           </Flex>
           : ""}
       </Flex>
-      {/* <Chat /> */}
+      <Chat />
     </Flex>
   );
 };

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"strings"
 
 	discoveryengine "cloud.google.com/go/discoveryengine/apiv1"
 	"cloud.google.com/go/discoveryengine/apiv1/discoveryenginepb"
@@ -12,11 +13,6 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 	"jp.co.moneyforward/pf-skillsearch/schema"
 )
-
-type VertexAISearch struct {
-	apiVersion string
-	apiKey     string
-}
 
 type DATASTORE string
 
@@ -48,12 +44,18 @@ func servingConfig(
 	return config
 }
 
+type VertexAISearch struct {
+	apiVersion string
+	apiKey     string
+	csClient   *CloudStorage
+}
+
 func NewVertexAISearch(apiKey string, location string, ds DATASTORE) (*VertexAISearch, error) {
 
 	vertexAI := &VertexAISearch{
 		apiVersion: "v1",
 		apiKey:     apiKey,
-		// projects/PROJECT_ID/locations/global/collections/default_collection/engines/APP_ID/servingConfigs/default_search
+		csClient:   NewCloudStorage(),
 	}
 	return vertexAI, nil
 }
@@ -84,22 +86,30 @@ func (s *VertexAISearch) client() (*discoveryengine.SearchClient, error) {
 	}
 
 }
-func (s *VertexAISearch) FindPerson(persona schema.PFSkillSearchModelsPersona) ([]schema.PFSkillSearchModelsPerson, error) {
+func (s *VertexAISearch) FindPerson(
+	// person schema.PFSkillSearchModelsPerson,
+	persona schema.PFSkillSearchModelsPersona,
+) ([]schema.PFSkillSearchModelsPerson, error) {
 	c, err := s.client()
 	if err != nil {
 		log.Printf("Failed to create discovery engine client: %v", err)
 	}
 	defer c.Close()
-	query := person.EmployeeName + " " + person.EmployeeId
+
+	var query string
+	for _, skill := range persona.Skills {
+		query += skill.Name + " "
+	}
 	iter := c.Search(context.Background(), &discoveryenginepb.SearchRequest{
 		ServingConfig: servingConfig("us", "default_collection", DS_ALL) + ":search",
-		Query:         *query,
+		Query:         query,
 		PageSize:      10,
 		LanguageCode:  "ja",
 	})
 	var results []schema.PFSkillSearchModelsPerson
 	var counter = 0
-	for counter < 10 {
+	var employeeIds []string
+	for counter < 12 {
 		counter++
 		resp, err := iter.Next()
 		if err != nil {
@@ -109,12 +119,50 @@ func (s *VertexAISearch) FindPerson(persona schema.PFSkillSearchModelsPersona) (
 			log.Printf("Error getting next search result: %v", err)
 			return nil, err
 		}
+		log.Println("===========================================================================")
 		log.Printf("Found document: %v", resp.Document)
-		// ここでschema.PFSkillSearchModelsPersonに変換してappend
-		// results = append(results, person)
+		log.Printf("ModelScores: %v\n", resp.ModelScores)
+		log.Printf("Chunk: %v\n", resp.Chunk)
+		log.Printf("Document ID: %v\n", resp.Document.Name)
+		// projects/218635233545/locations/us/collections/default_collection/dataStores/pf-ai-app-half-review_1753251488660/branches/0/documents/484e6943c6d4c81fb43f9fb66a800f2b
+		serving := strings.Split(resp.Document.Name, "/")
+		var dataStore string
+		for i, v := range serving {
+			log.Printf("Serving: %v\n", v)
+			if v == "dataStores" {
+				dataStore = serving[i+1]
+				log.Printf("DataStore: %v\n", dataStore)
+				break
+			}
+		}
+
+		if dataStore == string(DS_EMPLOYEE_INFO) {
+			log.Printf("Skipping document from dataStore: %v", dataStore)
+			results = append(results, parsePerson(resp))
+		} else if dataStore == string(DS_HALF_REVIEW) {
+			// Handle DS_HALF_REVIEW case
+			halfReview := parseHalfReview(resp)
+			if !contains(employeeIds, halfReview.EmployeeId) {
+				employeeIds = append(employeeIds, halfReview.EmployeeId)
+			}
+		} else if dataStore == string(DS_MONTHLY_REVIEW) {
+			// Handle DS_MONTHLY_REVIEW case
+			monthlyReview := parseMonthlyReview(resp)
+			if !contains(employeeIds, monthlyReview.EmployeeId) {
+				employeeIds = append(employeeIds, monthlyReview.EmployeeId)
+			}
+		}
+	}
+	if len(employeeIds) > 0 {
+		employeeInfos, err := s.csClient.EmployeeInfo(employeeIds)
+		if err != nil {
+			log.Printf("Failed to get employee info: %v", err)
+		}
+		results = append(results, employeeInfos...)
 	}
 	return results, nil
 }
+
 func getStringOrEmpty(fields map[string]*structpb.Value, key string) string {
 	if val, ok := fields[key]; ok {
 		return val.GetStringValue()
@@ -219,36 +267,11 @@ func (s *VertexAISearch) SearchPeople(query string) ([]schema.PFSkillSearchModel
 			log.Printf("Error getting next search result: %v", err)
 			return nil, err
 		}
-		structData := resp.Document.GetStructData()
 		// log.Printf("Found document.GetStructData: %v\n", structData)
 		// log.Printf("Found document.AsMap: %v\n", structData.AsMap())
 		// log.Printf("Found document.String(): %v\n", resp.Document.String())
 		// ここでschema.PFSkillSearchModelsPersonに変換してappend
-		person := schema.PFSkillSearchModelsPerson{
-			EmployeeId:            getStringOrEmpty(structData.Fields, "employee_id"),
-			EmployeeName:          getStringOrEmpty(structData.Fields, "employee_name"),
-			Age:                   getStringOrEmpty(structData.Fields, "age"),
-			Birthday:              getStringOrEmpty(structData.Fields, "birthday"),
-			CurrentEmployeeFlag:   getStringOrEmpty(structData.Fields, "current_employee_flag"),
-			Dept1:                 getStringOrEmpty(structData.Fields, "dept_1"),
-			Dept2:                 getStringOrEmpty(structData.Fields, "dept_2"),
-			Dept3:                 getStringPointerOrNil(structData.Fields, "dept_3"),
-			Dept4:                 getStringPointerOrNil(structData.Fields, "dept_4"),
-			Dept5:                 getStringPointerOrNil(structData.Fields, "dept_5"),
-			Dept6:                 getStringPointerOrNil(structData.Fields, "dept_6"),
-			EmploymentCategory:    getStringPointerOrNil(structData.Fields, "employment_category"),
-			EmploymentType:        getStringOrEmpty(structData.Fields, "employment_type"),
-			EnteredAt:             getStringOrEmpty(structData.Fields, "entered_at"),
-			Gender:                getStringOrEmpty(structData.Fields, "gender"),
-			GradeCombined:         getStringPointerOrNil(structData.Fields, "grade_combined"),
-			JobFamily:             getStringOrEmpty(structData.Fields, "job_family"),
-			JpNonJpClassification: getStringOrEmpty(structData.Fields, "jp_non_jp_classification"),
-			JobTitle:              getStringOrEmpty(structData.Fields, "job_title"),
-			Mail:                  getStringOrEmpty(structData.Fields, "mail"),
-			YearsOfService:        getStringOrEmpty(structData.Fields, "years_of_service"),
-			SalaryTable:           getStringOrEmpty(structData.Fields, "salary_table"),
-		}
-
+		person := parsePerson(resp)
 		results = append(results, person)
 		// results = append(results, person)
 
@@ -367,4 +390,72 @@ func (s *VertexAISearch) GetMonthlyReview(employeeId string) (schema.PFSkillSear
 		return review, nil
 	}
 	return schema.PFSkillSearchModelsMonthlyReview{}, nil
+}
+
+func parseMonthlyReview(resp *discoveryenginepb.SearchResponse_SearchResult) schema.PFSkillSearchModelsMonthlyReview {
+	structData := resp.Document.GetStructData()
+	// log.Printf("Found document.GetStructData: %v\n", structData)
+	// log.Printf("Found document.AsMap: %v\n", structData.AsMap())
+	// log.Printf("Found document.String(): %v\n", resp.Document.String())
+	return schema.PFSkillSearchModelsMonthlyReview{
+		EmployeeId:    getStringOrEmpty(structData.Fields, "employee_id"),
+		MonthlyGoal:   getStringOrEmpty(structData.Fields, "monthly_goal"),
+		MonthlyReview: getStringOrEmpty(structData.Fields, "monthly_review"),
+	}
+}
+
+func parseHalfReview(resp *discoveryenginepb.SearchResponse_SearchResult) schema.PFSkillSearchModelsHalfReview {
+	structData := resp.Document.GetStructData()
+	// log.Printf("Found document.GetStructData: %v\n", structData)
+	// log.Printf("Found document.AsMap: %v\n", structData.AsMap())
+	// log.Printf("Found document.String(): %v\n", resp.Document.String())
+	return schema.PFSkillSearchModelsHalfReview{
+		EmployeeId:                          getStringOrEmpty(structData.Fields, "employee_id"),
+		HalfYearSelfReviewAchievementGrowth: getStringOrEmpty(structData.Fields, "half_year_self_review_achievement_growth"),
+		SelfAssessmentScore:                 getStringOrEmpty(structData.Fields, "self_assessment_score"),
+		MedTerm23yr:                         getStringOrEmpty(structData.Fields, "med_term_2_3yr"),
+		ShortTerm1yr:                        getStringOrEmpty(structData.Fields, "short_term_1yr"),
+		CycleStartDate:                      getStringOrEmpty(structData.Fields, "cycle_start_date"),
+		EmploymentType:                      getStringOrEmpty(structData.Fields, "employment_type"),
+		FyCycle:                             getStringOrEmpty(structData.Fields, "fy_cycle"),
+		JobFamily:                           getStringOrEmpty(structData.Fields, "job_family"),
+		Org1:                                getStringOrEmpty(structData.Fields, "org1"),
+		Org2:                                getStringOrEmpty(structData.Fields, "org2"),
+		RowNum:                              getStringOrEmpty(structData.Fields, "row_num"),
+		UploadYearMonth:                     getStringOrEmpty(structData.Fields, "upload_year_month"),
+	}
+}
+
+func parsePerson(resp *discoveryenginepb.SearchResponse_SearchResult) schema.PFSkillSearchModelsPerson {
+	structData := resp.Document.GetStructData()
+	// log.Printf("Found document.GetStructData: %v\n", structData)
+	// log.Printf("Found document.AsMap: %v\n", structData.AsMap())
+	// log.Printf("Found document.String(): %v\n", resp.Document.String())
+	// ここでschema.PFSkillSearchModelsPersonに変換してappend
+	person := schema.PFSkillSearchModelsPerson{
+		EmployeeId:            getStringOrEmpty(structData.Fields, "employee_id"),
+		EmployeeName:          getStringOrEmpty(structData.Fields, "employee_name"),
+		Age:                   getStringOrEmpty(structData.Fields, "age"),
+		Birthday:              getStringOrEmpty(structData.Fields, "birthday"),
+		CurrentEmployeeFlag:   getStringOrEmpty(structData.Fields, "current_employee_flag"),
+		Dept1:                 getStringOrEmpty(structData.Fields, "dept_1"),
+		Dept2:                 getStringOrEmpty(structData.Fields, "dept_2"),
+		Dept3:                 getStringPointerOrNil(structData.Fields, "dept_3"),
+		Dept4:                 getStringPointerOrNil(structData.Fields, "dept_4"),
+		Dept5:                 getStringPointerOrNil(structData.Fields, "dept_5"),
+		Dept6:                 getStringPointerOrNil(structData.Fields, "dept_6"),
+		EmploymentCategory:    getStringPointerOrNil(structData.Fields, "employment_category"),
+		EmploymentType:        getStringOrEmpty(structData.Fields, "employment_type"),
+		EnteredAt:             getStringOrEmpty(structData.Fields, "entered_at"),
+		Gender:                getStringOrEmpty(structData.Fields, "gender"),
+		GradeCombined:         getStringPointerOrNil(structData.Fields, "grade_combined"),
+		JobFamily:             getStringOrEmpty(structData.Fields, "job_family"),
+		JpNonJpClassification: getStringOrEmpty(structData.Fields, "jp_non_jp_classification"),
+		JobTitle:              getStringOrEmpty(structData.Fields, "job_title"),
+		Mail:                  getStringOrEmpty(structData.Fields, "mail"),
+		YearsOfService:        getStringOrEmpty(structData.Fields, "years_of_service"),
+		SalaryTable:           getStringOrEmpty(structData.Fields, "salary_table"),
+	}
+	return person
+
 }

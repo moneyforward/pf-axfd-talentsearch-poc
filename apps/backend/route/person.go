@@ -43,7 +43,18 @@ func FindPerson(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, results)
+	var response schema.PFSkillSearchModelsPayloadFindPersonResponse
+	var result []schema.PFSkillSearchModelsPayloadFindPersonResult
+	for _, person := range results {
+		result = append(result, schema.PFSkillSearchModelsPayloadFindPersonResult{
+			Person: person,
+			Score:  1.0, // Assuming a score of 1.0
+		})
+	}
+
+	response.Result = result
+	response.Count = int32(len(result))
+	c.JSON(http.StatusOK, response)
 }
 
 func FaceImage(c *gin.Context) {

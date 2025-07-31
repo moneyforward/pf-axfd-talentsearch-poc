@@ -30,6 +30,7 @@ const pfThemeConfig = defineConfig({
                     padding: "8px",
                     boxShadow: "md",
                     maxWidth: "200px",
+                    minWidth: "30%",
                 }
             },
             message: {

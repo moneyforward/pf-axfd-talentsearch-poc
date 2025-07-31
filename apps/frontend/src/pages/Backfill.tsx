@@ -51,7 +51,7 @@ const Backfill = () => {
       {/* Main Body */}
       <HStack
         flex={1}
-        gap={3}
+        gap={6}
         p={4}
         align="flex-start"
         minH={0}
@@ -68,6 +68,9 @@ const Backfill = () => {
           width="100%"
           height="100%"
           overflowY="auto"
+          flexWrap="wrap"
+          gap={4}
+          marginLeft={"auto"}
         >
           {loading && <Spinner />}
           {!loading && matchedPeople.length === 0 && (

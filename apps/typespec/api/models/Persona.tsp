@@ -41,8 +41,8 @@ namespace PFSkillSearch.Models {
     }
 
     model Career {
-        start_month: int16;
-        end_month?: int16;
+        start_month: int32;
+        end_month?: int32;
         company: string;
         position: string;
         role: "Business" | "Engineer" | "Manager" | "Other";
@@ -111,6 +111,9 @@ namespace PFSkillSearch.Models {
         model FindPersonResponse {
             @doc("The status of the search operation")
             result: FindPersonResult[];
+
+            @doc("The number of results found")
+            count: int32; // The number of results found
         }
 
         model SearchPeopleResponse {

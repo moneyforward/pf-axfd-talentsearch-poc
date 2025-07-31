@@ -5,7 +5,6 @@ import {
     HStack
 } from "@chakra-ui/react";
 import { LuSend } from "react-icons/lu";
-import UserMessage from "../messages/UserMessage";
 
 const Chat = () => {
     return (
@@ -21,10 +20,6 @@ const Chat = () => {
                 flexGrow={1}
                 overflowY="scroll"
             >
-                ここにmessage
-                <UserMessage
-                    message="こんにちは！"
-                />
             </VStack>
             <Spacer
 

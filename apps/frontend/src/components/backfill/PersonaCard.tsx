@@ -3,14 +3,17 @@ import {
   Flex,
   HStack,
   Image,
-  List,
+  Skeleton,
   Spinner,
   Tag,
   Text,
+  VStack,
+
 } from "@chakra-ui/react";
 import type { components } from "@mfskillsearch/typespec";
 import { useContext, useEffect, useState } from "react";
 import ApiClientContext from "../../lib/ApiClient";
+import { Tooltip } from "../ui/tooltip";
 
 export type Skill = { name: string; value: number };
 export type Person = {
@@ -19,6 +22,8 @@ export type Person = {
   sub: string;
   skills: Skill[];
 };
+
+
 
 export type PersonaCardProps = {
   person?: components["schemas"]["PFSkillSearch.Models.Person"];
@@ -119,24 +124,72 @@ const PersonaCard = ({ person, persona, setPersona }: PersonaCardProps) => {
             <Tag.Label>職務経歴書：{isExistsCV ? "o" : "x"}</Tag.Label>
           </Tag.Root>
         </Flex>
-        <List.Root>
+        {/* <List.Root>
           <List.Item>
             グレード：{person.grade_combined || "グレード情報なし"}
           </List.Item>
-        </List.Root>
+        </List.Root> */}
         {generating && (
           <>スキルと経歴を取得中...
             <Spinner size="sm" />
           </>
         )}
-        {persona && (
+        {persona ? (
           <>
-            経歴などのまとめがここに入ります。
+            <VStack
+              overflowY={"scroll"}
+            >
+              {persona.career.map((career) => (
+                <Box
+                  key={career.company}
+                  border="1px solid"
+                  borderColor="primary.300"
+                  borderRadius="8px"
+                  padding="4px"
+                  width="100%"
+                >
+                  <Text key={career.company}>
+                    {career.company} | {career.position} | {career.role}
+                  </Text>
+                  <Text>
+                    {career.description || "職務内容情報なし"}
+                  </Text>
+                </Box>
+              ))}
+            </VStack>
+
+            <HStack
+              flexWrap={"wrap"}
+              overflowY="scroll"
+              height={"50px"}
+            >
+              {persona.skills.map((skill, index) => (
+                <Tooltip
+                  content={skill.description}
+                  key={index}
+                >
+                  <Tag.Root
+                    key={index}
+                    display={"flex"}
+                    direction={"row"}
+                    gap={"5px"}
+                    flexWrap={"wrap"}
+                  >
+                    <Tag.Label>{skill.name}</Tag.Label>
+                  </Tag.Root>
+                </Tooltip>
+              ))}
+            </HStack>
+          </>
+        ) : (
+          <>
+
             <HStack
               flexWrap={"wrap"}
               overflowY="scroll"
               height={"37px"}
             >
+              スキル:
               <Tag.Root
                 display={"flex"}
                 direction={"row"}
@@ -144,7 +197,13 @@ const PersonaCard = ({ person, persona, setPersona }: PersonaCardProps) => {
                 flexWrap={"wrap"}
               >
                 <Tag.Label
-                >aaa</Tag.Label>
+
+                >
+                  <Skeleton
+                    height={"16px"}
+                    width="40px"
+                  />
+                </Tag.Label>
               </Tag.Root>
               <Tag.Root
                 display={"flex"}
@@ -153,7 +212,13 @@ const PersonaCard = ({ person, persona, setPersona }: PersonaCardProps) => {
                 flexWrap={"wrap"}
               >
                 <Tag.Label
-                >BBBB</Tag.Label>
+
+                >
+                  <Skeleton
+                    height={"16px"}
+                    width="40px"
+                  />
+                </Tag.Label>
               </Tag.Root>        <Tag.Root
                 display={"flex"}
                 direction={"row"}
@@ -161,7 +226,13 @@ const PersonaCard = ({ person, persona, setPersona }: PersonaCardProps) => {
                 flexWrap={"wrap"}
               >
                 <Tag.Label
-                >CCCCCC</Tag.Label>
+
+                >
+                  <Skeleton
+                    height={"16px"}
+                    width="40px"
+                  />
+                </Tag.Label>
               </Tag.Root>        <Tag.Root
                 display={"flex"}
                 direction={"row"}
@@ -169,7 +240,12 @@ const PersonaCard = ({ person, persona, setPersona }: PersonaCardProps) => {
                 flexWrap={"wrap"}
               >
                 <Tag.Label
-                >DD</Tag.Label>
+                >
+                  <Skeleton
+                    height={"16px"}
+                    width="40px"
+                  />
+                </Tag.Label>
               </Tag.Root>
             </HStack>
           </>

@@ -1,7 +1,5 @@
 import React from "react";
 import { Flex } from "@chakra-ui/react";
-import PersonCard from "./PersonCard";
-
 const PersonFinder: React.FC = () => (
   <Flex
     direction={"row"}
@@ -13,11 +11,6 @@ const PersonFinder: React.FC = () => (
     <div className="finder-section-title">スキルの一致度が高い</div>
 
     <div className="finder-section-body">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <PersonCard
-          key={i}
-        />
-      ))}
     </div>
 
     <div className="finder-note">

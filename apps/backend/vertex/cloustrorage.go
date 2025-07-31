@@ -36,6 +36,49 @@ const (
 	EMPLOYEE_INFO_FILE  = "kaoanavi_employee_info.jsonl.json"
 )
 
+func (cs *CloudStorage) EmployeeInfo(employee_ids []string) ([]schema.PFSkillSearchModelsPerson, error) {
+	var employeeInfos []schema.PFSkillSearchModelsPerson
+	if len(employee_ids) == 0 {
+		return employeeInfos, nil // Return empty slice if no employee IDs are provided
+	}
+	client, err := cs.client()
+	if err != nil {
+		return nil, err
+	}
+
+	bucket := client.Bucket("pf_ai_app")
+	blob := bucket.Object(EMPLOYEE_INFO_FILE)
+
+	reader, err := blob.NewReader(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+
+	scanner := bufio.NewScanner(reader)
+	const maxCapacity = 10 * 1024 * 1024 // 10MB
+	buf := make([]byte, 0, 64*1024)
+	scanner.Buffer(buf, maxCapacity)
+	for scanner.Scan() {
+		line := scanner.Bytes()
+		var employeeInfo schema.PFSkillSearchModelsPerson
+		if err := json.Unmarshal(line, &employeeInfo); err != nil {
+			return nil, err
+		}
+		// Check if the employee ID is in the provided list
+		if len(employee_ids) > 0 && contains(employee_ids, employeeInfo.EmployeeId) {
+			employeeInfos = append(employeeInfos, employeeInfo)
+		}
+
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return employeeInfos, nil
+}
+
 func (cs *CloudStorage) HalfReview(employee_id string) (schema.PFSkillSearchModelsHalfReview, error) {
 	client, err := cs.client()
 	if err != nil {
@@ -192,4 +235,12 @@ func (cs *CloudStorage) GetFaceImage(personID string) (image.Image, error) {
 
 	// Return the image
 	return img, nil
+}
+func contains(slice []string, target string) bool {
+	for _, s := range slice {
+		if s == target {
+			return true
+		}
+	}
+	return false
 }

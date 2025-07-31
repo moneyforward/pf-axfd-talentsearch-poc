@@ -34,10 +34,10 @@ type PFSkillSearchBaseResponse struct {
 type PFSkillSearchModelsCareer struct {
 	Company     string                        `json:"company"`
 	Description *string                       `json:"description,omitempty"`
-	EndMonth    *int16                        `json:"end_month,omitempty"`
+	EndMonth    *int32                        `json:"end_month,omitempty"`
 	Position    string                        `json:"position"`
 	Role        PFSkillSearchModelsCareerRole `json:"role"`
-	StartMonth  int16                         `json:"start_month"`
+	StartMonth  int32                         `json:"start_month"`
 }
 
 // PFSkillSearchModelsCareerRole defines model for PFSkillSearchModelsCareer.Role.
@@ -84,6 +84,9 @@ type PFSkillSearchModelsPayloadFindPersonRequest struct {
 
 // PFSkillSearchModelsPayloadFindPersonResponse defines model for PFSkillSearch.Models.Payload.FindPersonResponse.
 type PFSkillSearchModelsPayloadFindPersonResponse struct {
+	// Count The number of results found
+	Count int32 `json:"count"`
+
 	// Result The status of the search operation
 	Result []PFSkillSearchModelsPayloadFindPersonResult `json:"result"`
 }
