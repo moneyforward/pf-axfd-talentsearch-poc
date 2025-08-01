@@ -10,4 +10,7 @@ run:
 	export GOOGLE_CLOUD_PROJECT="$(GOOGLE_CLOUD_PROJECT)" ; \
 	export GOOGLE_GENAI_USE_VERTEXAI="$(GOOGLE_GENAI_USE_VERTEXAI)" ; \
 	export GOOGLE_APPLICATION_CREDENTIALS="$(shell pwd)/employee-data-mfw-e6ec68678768.json" ; \
+	export GOOGLE_CLOUD_ENGINE="$(GOOGLE_CLOUD_ENGINE)" ; \
+	export AOAI_ENDPOINT="$(AOAI_ENDPOINT)" ; \
+	export AOAI_API_KEY="$(AOAI_API_KEY)" ; \
 	go run ./main.go

@@ -22,18 +22,28 @@ interface SearchPersonProps {
 const SearchPerson = ({ setPerson }: SearchPersonProps) => {
     const apiClient = useContext(ApiClientContext);
     const [searchTerm, setSearchTerm] = useState("");
-    const { collection, set } = useListCollection<components["schemas"]["PFSkillSearch.Models.Person"]>({
+    const { collection, set } = useListCollection<components["schemas"]["PFSkillSearch.Models.Payload.SearchPeopleResponse"]>({
         initialItems: [],
-        itemToString: (item) => item.employee_name,
-        itemToValue: (item) => item.employee_id,
+        itemToString: (item) => item.person.employee_name,
+        itemToValue: (item) => item.person.employee_id,
     });
+    const [people, setPeople] = useState<components["schemas"]["PFSkillSearch.Models.Payload.SearchPeopleResponse"][]>([]);
     const state = useAsync(async () => {
+        if (!searchTerm) {
+            set([]);
+            return;
+        }
+
         await apiClient.person.search(searchTerm)
             .then((result) => {
                 if (result === REFRESHED) {
                     return;
                 } else {
-                    set(result as components["schemas"]["PFSkillSearch.Models.Person"][]);
+                    console.log("SearchPerson result:", result);
+                    if (Array.isArray(result)) {
+                        set(result);
+                        setPeople(result);
+                    }
                 }
             })
             .catch((error) => {
@@ -44,6 +54,7 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
     return (
         <VStack
             width="100%"
+            marginBottom={"12px"}
         >
             <Combobox.Root
                 collection={collection}
@@ -52,11 +63,16 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
                 positioning={{ sameWidth: true, placement: "bottom-start" }}
                 onSelect={(item => {
                     if (item) {
-                        setPerson(item as unknown as components["schemas"]["PFSkillSearch.Models.Person"]);
+                        console.log("Selected item:", item);
+                        const found = people.find(
+                            (i) => (i.person.employee_id === item.itemValue)
+                        );
+                        if (found) {
+                            setPerson(found.person);
+                        }
                     }
                 })}
             >
-
                 <Combobox.Control>
                     <Combobox.Input
                         placeholder="名前、メールアドレスで検索"
@@ -79,20 +95,20 @@ const SearchPerson = ({ setPerson }: SearchPersonProps) => {
                                     エラーが発生しました {state.error.message}
                                 </Span>
                             ) : (
-                                collection.items?.map((person) => (
-                                    <Combobox.Item key={person.employee_id} item={person}>
+                                collection.items?.map((item) => (
+                                    <Combobox.Item key={item.person.employee_id} item={item}>
                                         <HStack justify="space-between" textStyle="sm">
                                             <Span fontWeight="medium" truncate>
-                                                {person.employee_name}
+                                                {item.person.employee_name}
                                             </Span>
                                             <Span color="fg.muted" truncate>
                                                 {[
-                                                    person.dept_1,
-                                                    person.dept_2,
-                                                    person.dept_3,
-                                                    person.dept_4,
-                                                    person.dept_5,
-                                                    person.dept_6
+                                                    item.person.dept_1,
+                                                    item.person.dept_2,
+                                                    item.person.dept_3,
+                                                    item.person.dept_4,
+                                                    item.person.dept_5,
+                                                    item.person.dept_6
                                                 ].filter((d) => {
                                                     return d && d.length > 0;
                                                 }).join(" / ")}

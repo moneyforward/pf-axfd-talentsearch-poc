@@ -3,6 +3,7 @@ import TwoPaneMainHeader from "./layouts/TwoPaneMainHeader";
 import Backfill from "./pages/Backfill";
 import JdCreate from "./pages/jd/Create";
 import JdTemplates from "./pages/jd/Template";
+import Vertex from "./pages/Vertex";
 
 
 const PFTRouter = createBrowserRouter([
@@ -14,6 +15,10 @@ const PFTRouter = createBrowserRouter([
                 path: "/backfill",
                 element: <Backfill />,
 
+            },
+            {
+                path: "/vertex",
+                element: <Vertex />,
             },
             {
                 path: "/jd/template",

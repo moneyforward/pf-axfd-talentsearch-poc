@@ -52,7 +52,12 @@ func main() {
 	router.NoRoute(route.Frontend)
 	router.GET("/api/health", route.HealthCheck)
 	router.GET("/api/people/:query", route.SearchPeople)
-	router.POST("/api/persona", route.GeneratePersona)
+	router.GET("/api/mock/people/:query", route.SearchPeopleMock)
 	router.POST("/api/person/find", route.FindPerson)
+	router.GET("/api/person/:employeeId/face", route.FaceImage)
+	router.GET("/api/person/:employeeId/cv/exists", route.IsExistsCV)
+	router.GET("/api/person/:employeeId/resume/exists", route.IsExistsResume)
+	router.POST("/api/persona", route.GeneratePersona)
 	router.Run(":8080")
+
 }

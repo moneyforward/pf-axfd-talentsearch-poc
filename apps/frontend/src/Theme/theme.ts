@@ -12,6 +12,16 @@ const pfThemeConfig = defineConfig({
                     boxShadow: "sm",
                 }
             },
+            basePerson: {
+                description: "Style for base person cards",
+                value: {
+                    borderRadius: "4px",
+                    padding: "8px",
+                    boxShadow: "md",
+                    width: "100%",
+                    bgColor: "white",
+                }
+            },
             personCard: {
                 description: "Style for person cards",
                 value: {
@@ -20,6 +30,7 @@ const pfThemeConfig = defineConfig({
                     padding: "8px",
                     boxShadow: "md",
                     maxWidth: "200px",
+                    minWidth: "30%",
                 }
             },
             message: {

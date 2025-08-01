@@ -1,7 +1,5 @@
 import React from "react";
-import PersonCard from "./PersonCard";
 import { Flex } from "@chakra-ui/react";
-
 const PersonFinder: React.FC = () => (
   <Flex
     direction={"row"}
@@ -11,13 +9,10 @@ const PersonFinder: React.FC = () => (
     overflowY={"scroll"}
   >
     <div className="finder-section-title">スキルの一致度が高い</div>
+
     <div className="finder-section-body">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <PersonCard
-          key={i}
-        />
-      ))}
     </div>
+
     <div className="finder-note">
       <p>過去の業界、業種があっても良いかも。</p>
       <p>職種も？ エンジニアならエンジニア、営業なら営業</p>

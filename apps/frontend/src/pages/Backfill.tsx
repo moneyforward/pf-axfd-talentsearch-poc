@@ -1,19 +1,48 @@
 
 import {
-  Box,
   Flex,
   HStack,
-  Text,
+  Spinner,
   VStack,
 } from "@chakra-ui/react";
 import MainHeader from "../components/misc/MainHeader";
 import Instruction from "../components/backfill/Instruction";
+import type { components } from "@mfskillsearch/typespec";
+import ApiClientContext from "../lib/ApiClient";
+import { useContext, useState } from "react";
+import PersonCard from "../components/backfill/PersonCard";
 
 
 const Backfill = () => {
+  const client = useContext(ApiClientContext);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [matchedPeople, setMatchedPeople] = useState<components["schemas"]["PFSkillSearch.Models.Payload.FindPersonResult"][]>([]);
+
+
+  const search = (
+    person: components["schemas"]["PFSkillSearch.Models.Person"],
+    persona: components["schemas"]["PFSkillSearch.Models.Persona"]
+  ) => {
+    console.log("Searching for person:", person, "with persona:", persona);
+    setLoading(true);
+    client.person.find(
+      person,
+      persona
+    ).then((result) => {
+      if (result === null) {
+        setMatchedPeople([]);
+      } else {
+        setMatchedPeople(result.result);
+      }
+    }).finally(() => {
+      setLoading(false);
+    });
+  }
+
   return (
     <VStack
       direction="column"
+      height={"100%"}
     >
       {/* Main Header */}
       <MainHeader
@@ -22,30 +51,40 @@ const Backfill = () => {
       {/* Main Body */}
       <HStack
         flex={1}
-        gap={3}
+        gap={6}
         p={4}
         align="flex-start"
         minH={0}
         w="100%"
       >
         {/* Left: BasePerson */}
-        <Instruction />
+        <Instruction
+          search={search}
+        />
         {/* Right: Finder */}
-        <VStack align="start" flex={1} minW={0}>
-          <Box w="100%" maxW="817px" bg="#fff" borderRadius="sm" p={4}>
-            <Text fontSize="14px" fontWeight="bold" color="#000" fontFamily="'Noto Sans JP', sans-serif" mb={1}>
-              スキルの一致度が高い
-            </Text>
-            <Flex wrap="wrap" gap={2.5}>
-            </Flex>
-          </Box>
-          <Box w="589px" fontSize="14px" color="#000" fontFamily="'Noto Sans JP', sans-serif" lineHeight="24px">
-            <Text mb={0}>過去の業界、業種があっても良いかも。</Text>
-            <Text mb={0}>職種も？ エンジニアならエンジニア、営業なら営業</Text>
-            <Text mb={0}>作っているプロダクトのカテゴリ的な</Text>
-            <Text>売る製品の ターゲット、製品のカテゴリ、価格帯</Text>
-          </Box>
-        </VStack>
+        <Flex
+          direction="row"
+          flex={1} minW={0}
+          width="100%"
+          height="100%"
+          overflowY="auto"
+          flexWrap="wrap"
+          gap={4}
+          marginLeft={"auto"}
+        >
+          {loading && <Spinner />}
+          {!loading && matchedPeople.length === 0 && (
+            <>見つかりませんでした。</>
+          )}
+          {!loading && matchedPeople.length > 0 && (
+            matchedPeople.map((person, index) => (
+              <PersonCard
+                key={person.person.employee_id || index}
+                person={person.person}
+              />
+            ))
+          )}
+        </Flex>
       </HStack>
     </VStack>
   );

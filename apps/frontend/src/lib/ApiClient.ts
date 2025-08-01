@@ -9,10 +9,10 @@ export class ApiClient {
     constructor() {
         console.log("Environment mode :", import.meta.env.MODE);
         console.log("ApiClient constructor called. baseUrl:", import.meta.env.VITE_APP_API_URL);
+        const mock = (import.meta.env.VITE_APP_API_MOCK ? "/mock" : "");
         this.client = createClient<paths>({
-            baseUrl: `${import.meta.env.VITE_APP_API_URL}`,
+            baseUrl: `${import.meta.env.VITE_APP_API_URL}${mock}`,
             headers: {
-
                 "Content-Type": "application/json",
                 // ここで必要な認証トークンなどを設定できます。
                 "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
@@ -24,10 +24,79 @@ export class ApiClient {
     public networkErrorHandler = (error: Error) => {
         throw error;
     }
+    persona = {
+        generate: async (person: components["schemas"]["PFSkillSearch.Models.Person"]):
+            Promise<components["schemas"]["PFSkillSearch.Models.Persona"]> => {
+            return await this.client.POST("/persona", {
+                body: person,
+            }).then((response) => {
+                if (!response.error) {
+                    return response.data as unknown as components["schemas"]["PFSkillSearch.Models.Persona"];
+                } else {
+                    throw new Error(`Error generating persona: ${response}`);
+                }
+            }).catch(this.networkErrorHandler);
+        }
+    }
 
     person = {
+
+        cvExists: async (employeeId: string): Promise<boolean> => {
+            return await this.client.GET("/person/{employeeId}/cv/exists", {
+                params: {
+                    path: {
+                        employeeId: employeeId
+                    }
+                }
+            }).then((response) => {
+                if (!response.error) {
+                    return response.data as unknown as boolean;
+                } else {
+                    throw new Error(`Error checking CV existence: ${response}`);
+                }
+            }).catch(this.networkErrorHandler);
+        },
+        resumeExists: async (employeeId: string): Promise<boolean> => {
+            return await this.client.GET("/person/{employeeId}/resume/exists", {
+                params: {
+                    path: {
+                        employeeId: employeeId
+                    }
+                }
+            }).then((response) => {
+                if (!response.error) {
+                    return response.data as unknown as boolean;
+                } else {
+                    throw new Error(`Error checking resume existence: ${response}`);
+                }
+            }).catch(this.networkErrorHandler);
+        },
+        faceUrl: (employeeId: string): string => {
+            return `${import.meta.env.VITE_APP_API_URL}/person/${employeeId}/face`;
+        },
+        find: async (
+            person: components["schemas"]["PFSkillSearch.Models.Person"],
+            persona: components["schemas"]["PFSkillSearch.Models.Persona"]
+        ): Promise<components["schemas"]["PFSkillSearch.Models.Payload.FindPersonResponse"]> => {
+            return await this.client.POST("/person/find", {
+                body: {
+                    person: person,
+                    persona: persona,
+                    instructions: "Find the person based on the provided details.",
+                },
+            }).then((response) => {
+                if (!response.error) {
+                    return response.data as unknown as components["schemas"]["PFSkillSearch.Models.Payload.FindPersonResponse"];
+                } else {
+                    throw new Error(`Error finding person: ${response}`);
+                }
+            }).catch(this.networkErrorHandler);
+        },
         search: async (name: string):
-            Promise<components["schemas"]["PFSkillSearch.Models.Person"][] | WAIT_STATUS> => {
+            Promise<components["schemas"]["PFSkillSearch.Models.Payload.SearchPeopleResponse"][] | WAIT_STATUS> => {
+            if (!name || name.trim() === "") {
+                return IGNORE; // 空の名前の場合はIGNOREを返す
+            }
             if (await this.delay("person/search", 400)) {
                 return await this.client.GET("/people/{name}", {
                     params: {
@@ -37,7 +106,7 @@ export class ApiClient {
                     }
                 }).then((response) => {
                     if (!response.error) {
-                        return response.data as components["schemas"]["PFSkillSearch.Models.Person"][];
+                        return response.data as unknown as components["schemas"]["PFSkillSearch.Models.Payload.SearchPeopleResponse"][];
                     } else {
                         throw new Error(`Error fetching person: ${response}`);
                     }
@@ -102,6 +171,7 @@ const ApiClientContext = createContext<ApiClient>(apiClient);
 export default ApiClientContext;
 
 type WAIT_STATUS = string;
+export const IGNORE: WAIT_STATUS = "IGNORE";
 export const WAITING: WAIT_STATUS = "WAITING";
 export const REFRESHED: WAIT_STATUS = "REFRESHED";
 export const FINISHED: WAIT_STATUS = "FINISHED";

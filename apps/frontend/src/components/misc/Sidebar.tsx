@@ -36,11 +36,11 @@ const Sidebar = () => {
             >
                 <IconButton
                     variant={"ghost"}
-                    colorPalette={"primary"}
                     onClick={() => setIsOpen(!isOpen)}
                     aria-label="Toggle Sidebar"
                 >
-                    {isOpen ? <LuPanelLeftClose /> : <LuPanelLeftOpen />}
+                    {isOpen ? <LuPanelLeftClose
+                    /> : <LuPanelLeftOpen />}
                 </IconButton>
             </Flex>
             <Box
@@ -64,6 +64,13 @@ const Sidebar = () => {
                         補填検索
                     </Box>
                 </Link>
+                {/* <Link to="/vertex">
+                    <Box
+                        layerStyle="sidebarItem"
+                    >
+                        直Vertex
+                    </Box>
+                </Link> */}
                 <Link to="/jd/template"
                 >
                     <Box
