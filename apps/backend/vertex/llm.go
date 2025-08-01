@@ -53,8 +53,8 @@ func (llm *LLM) ChatCompletion(
 		return nil, err
 	}
 
-	log.Println("ChatCompletion URL:", url)
-	log.Println("ChatCompletion payload:", string(payload))
+	// log.Println("ChatCompletion URL:", url)
+	// log.Println("ChatCompletion payload:", string(payload))
 
 	req, err := http.NewRequest("POST", url, bytes.NewReader(payload))
 	req.Header.Add("Content-Type", "application/json")
@@ -78,7 +78,7 @@ func (llm *LLM) ChatCompletion(
 		log.Println("Error decoding response:", err)
 		return nil, err
 	}
-	log.Println("ChatCompletion response:", response)
+	// log.Println("ChatCompletion response:", response)
 
 	return &response, nil
 }
@@ -119,6 +119,7 @@ func (llm *LLM) GeneratePersona(
 	json形式は以下の通りです。
 出力はJSONのみを出力し、他の情報は一切出力しないでください。
 markdownやHTMLなどのフォーマットは使用しないでください。
+出力は日本語でお願いします。
 	` + jsonSchema
 
 	var prompt = ""
@@ -175,7 +176,7 @@ monthlyReview.MonthlyReview:
 		return "", nil
 	}
 	content := response.Choices[0].Message.Content
-	log.Println("Generated Persona:", content)
+	// log.Println("Generated Persona:", content)
 	return content, nil
 }
 

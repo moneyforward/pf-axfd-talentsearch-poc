@@ -27,6 +27,7 @@ func GeneratePersona(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get half review", "details": err.Error()})
 		return
 	}
+
 	monthlyReview, err := csClient.MonthlyReview(employeeId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get monthly review", "details": err.Error()})

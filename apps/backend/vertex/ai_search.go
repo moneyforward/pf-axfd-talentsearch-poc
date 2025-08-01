@@ -97,15 +97,20 @@ func (s *VertexAISearch) FindPerson(
 	defer c.Close()
 
 	var query string
+	log.Println("Generating query for persona:", persona)
 	for _, skill := range persona.Skills {
 		query += skill.Name + " "
 	}
+
+	log.Println("Searching for people with query:", query)
+
 	iter := c.Search(context.Background(), &discoveryenginepb.SearchRequest{
 		ServingConfig: servingConfig("us", "default_collection", DS_ALL) + ":search",
 		Query:         query,
 		PageSize:      10,
 		LanguageCode:  "ja",
 	})
+
 	var results []schema.PFSkillSearchModelsPerson
 	var counter = 0
 	var employeeIds []string
@@ -119,25 +124,23 @@ func (s *VertexAISearch) FindPerson(
 			log.Printf("Error getting next search result: %v", err)
 			return nil, err
 		}
-		log.Println("===========================================================================")
-		log.Printf("Found document: %v", resp.Document)
-		log.Printf("ModelScores: %v\n", resp.ModelScores)
-		log.Printf("Chunk: %v\n", resp.Chunk)
-		log.Printf("Document ID: %v\n", resp.Document.Name)
+		// log.Println("===========================================================================")
+		// log.Printf("Found document: %v", resp.Document)
+		// log.Printf("ModelScores: %v\n", resp.ModelScores)
+		// log.Printf("Chunk: %v\n", resp.Chunk)
+		// log.Printf("Document ID: %v\n", resp.Document.Name)
 		// projects/218635233545/locations/us/collections/default_collection/dataStores/pf-ai-app-half-review_1753251488660/branches/0/documents/484e6943c6d4c81fb43f9fb66a800f2b
 		serving := strings.Split(resp.Document.Name, "/")
 		var dataStore string
 		for i, v := range serving {
-			log.Printf("Serving: %v\n", v)
 			if v == "dataStores" {
 				dataStore = serving[i+1]
-				log.Printf("DataStore: %v\n", dataStore)
 				break
 			}
 		}
 
 		if dataStore == string(DS_EMPLOYEE_INFO) {
-			log.Printf("Skipping document from dataStore: %v", dataStore)
+			// log.Printf("Skipping document from dataStore: %v", dataStore)
 			results = append(results, parsePerson(resp))
 		} else if dataStore == string(DS_HALF_REVIEW) {
 			// Handle DS_HALF_REVIEW case
@@ -151,6 +154,9 @@ func (s *VertexAISearch) FindPerson(
 			if !contains(employeeIds, monthlyReview.EmployeeId) {
 				employeeIds = append(employeeIds, monthlyReview.EmployeeId)
 			}
+		} else {
+			log.Printf("Skipping document from dataStore: %v", dataStore)
+			continue // Skip other dataStores
 		}
 	}
 	if len(employeeIds) > 0 {

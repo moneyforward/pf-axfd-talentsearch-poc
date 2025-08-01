@@ -35,13 +35,7 @@ namespace PFSkillSearch.Routes {
     @body body: Person;
   };
 
-  @route("/persona")
-  @post
-  @doc("Generate a persona based on the provided data")
-  op generatePersona(@body body: Person): {
-    @statusCode statusCode: 200;
-    @body body: Persona;
-  };
+  
 
   @route("/person/find")
   @post

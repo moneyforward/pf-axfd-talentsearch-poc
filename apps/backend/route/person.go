@@ -12,11 +12,12 @@ import (
 )
 
 func FindPerson(c *gin.Context) {
-	var persona schema.PFSkillSearchModelsPersona
-	if err := c.ShouldBindJSON(&persona); err != nil {
+	var payload schema.PFSkillSearchModelsPayloadFindPersonRequest
+	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body", "details": err.Error()})
 		return
 	}
+	persona := payload.Persona
 	var apiKey string
 	if os.Getenv("AISEARCH_API_KEY") != "" {
 		apiKey = os.Getenv("AISEARCH_API_KEY")
@@ -25,6 +26,7 @@ func FindPerson(c *gin.Context) {
 	}
 
 	client, err := vertex.NewVertexAISearch(apiKey, "us", vertex.DS_ALL)
+	// -----------------------------
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client", "details": err.Error()})
 		return
@@ -33,7 +35,10 @@ func FindPerson(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create Vertex AI client"})
 		return
 	}
+	// -----------------------------
 	results, err := client.FindPerson(persona)
+	// -----------------------------
+	// find error handling
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Search failed", "details": err.Error()})
 		return
@@ -42,7 +47,7 @@ func FindPerson(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"message": "No results found"})
 		return
 	}
-
+	// -----------------------------
 	var response schema.PFSkillSearchModelsPayloadFindPersonResponse
 	var result []schema.PFSkillSearchModelsPayloadFindPersonResult
 	for _, person := range results {

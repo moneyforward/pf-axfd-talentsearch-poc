@@ -34,7 +34,13 @@ const Instruction = ({ search }: InstructionProps): JSX.Element => {
 
   useEffect(() => {
     console.log("Selected person:", person);
-
+    if (person) {
+      setPersona({
+        name: "",
+        skills: [],
+        career: [],
+      });
+    }
   }, [person]);
 
   return (

@@ -64,6 +64,13 @@ const Sidebar = () => {
                         補填検索
                     </Box>
                 </Link>
+                {/* <Link to="/vertex">
+                    <Box
+                        layerStyle="sidebarItem"
+                    >
+                        直Vertex
+                    </Box>
+                </Link> */}
                 <Link to="/jd/template"
                 >
                     <Box
