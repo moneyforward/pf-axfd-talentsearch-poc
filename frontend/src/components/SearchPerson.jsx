@@ -130,8 +130,15 @@ const SearchPerson = ({ onPersonSelect, selectedPerson, onClear }) => {
                 <div className="search-person-avatar-placeholder"></div>
               </div>
               <div className="search-person-result-content">
-                <div className="search-person-result-name">
-                  {item.person?.employee_name || t('noName')}
+                <div className="search-person-result-name-wrapper">
+                  <div className="search-person-result-name">
+                    {item.person?.employee_name || t('noName')}
+                  </div>
+                  {item.person?.employee_id && (
+                    <span className="search-person-result-id-badge">
+                      {item.person.employee_id}
+                    </span>
+                  )}
                 </div>
                 <div className="search-person-result-meta">
                   <span className="search-person-result-dept">
