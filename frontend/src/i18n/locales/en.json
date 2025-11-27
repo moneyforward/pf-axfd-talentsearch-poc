@@ -7,7 +7,7 @@
     "jdCreate": "JD Create"
   },
   "search": {
-    "placeholder": "Search by name or email address.",
+    "placeholder": "Search employee by name or email address.",
     "searching": "Searching...",
     "findSimilar": "Find Similar Employees"
   },

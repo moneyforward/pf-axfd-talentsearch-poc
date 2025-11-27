@@ -16,6 +16,7 @@ function App() {
   const { t } = useLanguage()
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [selectedPerson, setSelectedPerson] = useState(null)
   const [matchedPeople, setMatchedPeople] = useState([])
   const [similarSearchStage, setSimilarSearchStage] = useState('idle') // idle, analyzing, filtering, evaluating, complete
   const [thinkingLines, setThinkingLines] = useState([])
@@ -52,6 +53,14 @@ function App() {
   const handleLogout = () => {
     setUser(null)
     localStorage.removeItem('user')
+  }
+
+  const handleClearSelection = () => {
+    setSelectedPerson(null)
+    setMatchedPeople([])
+    setSimilarSearchStage('idle')
+    setTopSimilarCandidates([])
+    setThinkingLines([])
   }
 
   const handleSearch = async (person, persona) => {
@@ -469,10 +478,19 @@ function App() {
             </div>
           </header>
 
-          <MainHeader breadcrumbs={[t('backfillSearch')]} />
+          <MainHeader 
+            breadcrumbs={[t('backfillSearch')]} 
+            onPersonSelect={setSelectedPerson}
+            selectedPerson={selectedPerson}
+            onClear={handleClearSelection}
+          />
 
           <div className="app-content">
-            <Instruction onSearch={handleSearch} onSimilarSearch={handleSimilarSearch} />
+            <Instruction 
+              selectedPerson={selectedPerson}
+              onSearch={handleSearch} 
+              onSimilarSearch={handleSimilarSearch} 
+            />
             <div className="app-results">
               {/* Similar Employee Search Results */}
               {similarSearchStage !== 'idle' && (

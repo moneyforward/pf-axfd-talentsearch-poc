@@ -1,7 +1,15 @@
 .main-header {
   background: white;
   border-bottom: 1px solid #e5e7eb;
-  padding: 12px 20px;
+  padding: 8px 20px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}
+
+.main-header-breadcrumbs {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -17,5 +25,17 @@
   content: ' / ';
   margin-left: 8px;
   color: #999;
+}
+
+.main-header-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.main-header-search .search-person {
+  width: 100%;
+  max-width: 600px;
 }
 

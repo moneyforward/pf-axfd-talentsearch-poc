@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
-import SearchPerson from './SearchPerson'
 import PersonCard from './PersonCard'
 import FilterModal from './FilterModal'
 import './Instruction.css'
 
 const API_BASE_URL = '/api'
 
-const Instruction = ({ onSearch, onSimilarSearch }) => {
+const Instruction = ({ selectedPerson, onSearch, onSimilarSearch }) => {
   const { t } = useLanguage()
-  const [selectedPerson, setSelectedPerson] = useState(null)
   const [persona, setPersona] = useState(null)
   const [generatingPersona, setGeneratingPersona] = useState(false)
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
@@ -97,9 +95,7 @@ const Instruction = ({ onSearch, onSimilarSearch }) => {
 
   return (
     <div className="instruction-panel">
-      <SearchPerson onPersonSelect={setSelectedPerson} />
-
-      {selectedPerson && (
+      {selectedPerson ? (
         <div className="instruction-content">
           <div className="instruction-persona">
             <PersonCard person={selectedPerson} persona={persona} />
@@ -114,6 +110,12 @@ const Instruction = ({ onSearch, onSimilarSearch }) => {
               </button>
             </div>
           )}
+        </div>
+      ) : (
+        <div className="instruction-empty">
+          <p className="instruction-empty-text">
+            {t('search.selectPerson') || 'Select a person from the search bar above to view their details'}
+          </p>
         </div>
       )}
 

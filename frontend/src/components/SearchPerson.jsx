@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
+import { Input } from './ui/input'
+import { Search, X, Building2, Briefcase } from 'lucide-react'
 import './SearchPerson.css'
 
 const API_BASE_URL = '/api'
 
-const SearchPerson = ({ onPersonSelect }) => {
+const SearchPerson = ({ onPersonSelect, selectedPerson, onClear }) => {
   const { t } = useLanguage()
   const [searchTerm, setSearchTerm] = useState('')
   const [results, setResults] = useState([])
@@ -81,17 +83,39 @@ const SearchPerson = ({ onPersonSelect }) => {
     }
   }
 
+  const handleClear = () => {
+    setSearchTerm('')
+    setShowResults(false)
+    setResults([])
+    if (onClear) {
+      onClear()
+    }
+  }
+
   return (
     <div className="search-person">
       <div className="search-person-input-wrapper">
-        <input
-          type="text"
+        <div className="search-person-icon-left">
+          <Search size={16} strokeWidth={2} />
+        </div>
+        <Input
+          type="search"
           className="search-person-input"
           placeholder={t('searchPlaceholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onFocus={() => searchTerm && setShowResults(true)}
         />
+        {(selectedPerson || searchTerm) && (
+          <button
+            className="search-person-clear-button"
+            onClick={handleClear}
+            aria-label="Clear selection"
+            type="button"
+          >
+            <X size={16} strokeWidth={2} />
+          </button>
+        )}
         {loading && <span className="search-person-loading">{t('searching')}</span>}
       </div>
       {showResults && results.length > 0 && (
@@ -111,6 +135,7 @@ const SearchPerson = ({ onPersonSelect }) => {
                 </div>
                 <div className="search-person-result-meta">
                   <span className="search-person-result-dept">
+                    <Building2 size={12} strokeWidth={2} className="search-person-meta-icon" />
                     {[item.person?.dept_1, item.person?.dept_2, item.person?.dept_3]
                       .filter(Boolean)
                       .join(' / ') || t('noDepartment')}
@@ -119,6 +144,7 @@ const SearchPerson = ({ onPersonSelect }) => {
                     <>
                       <span className="search-person-result-separator">•</span>
                       <span className="search-person-result-role">
+                        <Briefcase size={12} strokeWidth={2} className="search-person-meta-icon" />
                         {item.person.job_title}
                       </span>
                     </>
