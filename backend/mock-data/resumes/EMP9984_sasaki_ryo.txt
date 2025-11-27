@@ -1,0 +1,33 @@
+履歴書
+
+佐々木 亮
+シニアフロントエンドエンジニア
+Email: sasaki.ryo@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+Next.jsとTypeScriptに精通したシニアフロントエンドエンジニア。モダンなWebアプリケーション開発に5年以上の経験を持つ。
+パフォーマンス最適化とユーザーエクスペリエンスの向上を専門とする。
+
+職務経歴
+
+シニアフロントエンドエンジニア | 株式会社マネーフォワード | 2024年2月 - 現在
+- Next.jsとTypeScriptを使用したモダンなフロントエンド開発
+- パフォーマンス最適化
+- GraphQL APIとの連携
+- Tailwind CSSを使用したスタイリング
+- サーバーサイドレンダリングの実装
+- チームメンバーの技術指導
+
+技術スキル
+- フレームワーク: Next.js, React, TypeScript
+- スタイリング: Tailwind CSS, CSS Modules
+- API: GraphQL, Apollo Client
+- ツール: npm, Webpack, Vite, Git
+- テスト: Jest, React Testing Library
+- 最適化: Code splitting, Lazy loading
+
+教育
+情報工学専攻
+大学名 | 2016年 - 2020年
+

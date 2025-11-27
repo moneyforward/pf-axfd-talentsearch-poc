@@ -1,0 +1,33 @@
+履歴書
+
+渡辺 大輔
+DevOpsエンジニア
+Email: watanabe.daisuke@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+KubernetesとAWSに精通したDevOpsエンジニア。インフラ自動化とCI/CDパイプライン構築に5年以上の経験を持つ。
+クラウドネイティブなインフラの設計と運用を専門とする。
+
+職務経歴
+
+DevOpsエンジニア | 株式会社マネーフォワード | 2022年4月 - 現在
+- Kubernetesクラスターの管理
+- CI/CDパイプラインの構築
+- Terraformを使用したインフラの自動化
+- AWSサービスの設計と運用
+- 監視とログ管理システムの構築
+- インフラのセキュリティ対策
+
+技術スキル
+- コンテナ: Kubernetes, Docker
+- クラウド: AWS (EC2, EKS, S3, RDS)
+- IaC: Terraform, CloudFormation
+- CI/CD: Jenkins, GitHub Actions, GitLab CI
+- 監視: Prometheus, Grafana, CloudWatch
+- ツール: Git, Ansible
+
+教育
+情報工学専攻
+大学名 | 2014年 - 2018年
+

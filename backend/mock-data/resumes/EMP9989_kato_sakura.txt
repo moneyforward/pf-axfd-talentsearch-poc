@@ -1,0 +1,33 @@
+履歴書
+
+加藤 さくら
+iOSエンジニア
+Email: kato.sakura@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+SwiftとSwiftUIに精通したiOSエンジニア。ネイティブiOSアプリケーション開発に2年以上の経験を持つ。
+モダンなiOSアプリケーションの設計と実装を専門とする。
+
+職務経歴
+
+iOSエンジニア | 株式会社マネーフォワード | 2024年4月 - 現在
+- SwiftとSwiftUIを使用したiOSアプリケーションの開発
+- Core Dataを使用したデータ永続化
+- RESTful APIとの連携
+- UI/UXデザインの実装
+- アプリのパフォーマンス最適化
+- App Storeへのリリース
+
+技術スキル
+- プログラミング言語: Swift
+- フレームワーク: SwiftUI, UIKit, Combine
+- データベース: Core Data, Realm
+- ツール: Xcode, CocoaPods, Swift Package Manager
+- テスト: XCTest, Quick/Nimble
+- API: URLSession, Alamofire
+
+教育
+情報工学専攻
+大学名 | 2018年 - 2022年
+

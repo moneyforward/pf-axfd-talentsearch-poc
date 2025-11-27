@@ -1,0 +1,19 @@
+.language-toggle {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 60px;
+}
+
+.language-toggle:hover {
+  background: #fff5f0;
+  border-color: #FF6B35;
+  color: #FF6B35;
+}
+

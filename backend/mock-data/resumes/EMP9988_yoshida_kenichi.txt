@@ -1,0 +1,33 @@
+履歴書
+
+吉田 健一
+Androidエンジニア
+Email: yoshida.kenichi@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+KotlinとJetpack Composeに精通したAndroidエンジニア。ネイティブAndroidアプリケーション開発に3年以上の経験を持つ。
+モダンなAndroidアプリケーションの設計と実装を専門とする。
+
+職務経歴
+
+Androidエンジニア | 株式会社マネーフォワード | 2023年7月 - 現在
+- KotlinとJetpack Composeを使用したAndroidアプリケーションの開発
+- Roomを使用したデータベース管理
+- Retrofitを使用したAPI連携
+- Material Designの実装
+- アプリのパフォーマンス最適化
+- Google Play Storeへのリリース
+
+技術スキル
+- プログラミング言語: Kotlin, Java
+- フレームワーク: Jetpack Compose, Android Jetpack
+- データベース: Room, SQLite
+- ネットワーク: Retrofit, OkHttp
+- ツール: Android Studio, Gradle
+- テスト: JUnit, Espresso
+
+教育
+情報工学専攻
+大学名 | 2017年 - 2021年
+

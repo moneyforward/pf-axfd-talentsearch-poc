@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "PF Talent Search",
+    "logout": "ログアウト",
+    "backfillSearch": "補填検索",
+    "jdTemplate": "JDテンプレート",
+    "jdCreate": "JD作成"
+  },
+  "search": {
+    "placeholder": "名前やメールアドレスで検索できます。",
+    "searching": "検索中...",
+    "findSimilar": "類似従業員を検索"
+  },
+  "personCard": {
+    "noDepartment": "部署情報なし",
+    "noJobTitle": "職種情報なし",
+    "noName": "名前なし",
+    "noEmployeeId": "社員ID情報なし",
+    "resume": "履歴書",
+    "cv": "職務経歴書",
+    "generatingSkills": "スキルと経歴を取得中...",
+    "noJobDescription": "職務内容情報なし"
+  },
+  "instruction": {
+    "findSimilar": "この社員に似た人を探す"
+  },
+  "results": {
+    "searching": "検索中...",
+    "noResults": "見つかりませんでした。"
+  },
+  "login": {
+    "subtitle": "スキルベースの人材検索システム",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "rememberMe": "ログイン状態を保持",
+    "forgotPassword": "パスワードを忘れた場合",
+    "login": "ログイン",
+    "loggingIn": "ログイン中...",
+    "error": "メールアドレスとパスワードを入力してください",
+    "demoMode": "デモモード: 任意のメールアドレスとパスワードでログインできます"
+  },
+  "filterModal": {
+    "title": "条件で絞り込む",
+    "close": "×",
+    "gender": {
+      "title": "性別",
+      "male": "男性",
+      "female": "女性"
+    },
+    "experience": {
+      "title": "経験年数",
+      "lessThan3": "入社3年以下",
+      "lessThan5": "入社5年以下",
+      "moreThan5": "入社5年以上"
+    },
+    "database": "データベース",
+    "dates": {
+      "joinDate": "入社日",
+      "birthDate": "生年月日",
+      "employmentPeriod": "在籍期間",
+      "departureDate": "離職日",
+      "from": "From",
+      "to": "To",
+      "noInput": "入力なし"
+    },
+    "additionalOptions": {
+      "title": "追加オプション"
+    },
+    "skills": {
+      "title": "スキル/ドメイン",
+      "SAP_大塚商事": "SAP_大塚商事",
+      "MFL_業務統括": "MFL_業務統括",
+      "財務_MFクレジット": "財務_MFクレジット",
+      "経理_MFクレジット": "経理_MFクレジット",
+      "レシート一般顧客": "レシート一般顧客",
+      "社会保険労務": "社会保険労務",
+      "SAP_業務統括": "SAP_業務統括",
+      "MF_人事給与統括": "MF_人事給与統括",
+      "経営統括": "経営統括",
+      "商流分析": "商流分析",
+      "監査法人": "監査法人",
+      "MFCL_業務統括": "MFCL_業務統括",
+      "財務_人事給与統括": "財務_人事給与統括",
+      "公会計/自治体": "公会計/自治体",
+      "債権": "債権",
+      "預金連携": "預金連携",
+      "アパレル": "アパレル",
+      "債務/支払": "債務/支払",
+      "小売/EC": "小売/EC",
+      "債権回収": "債権回収",
+      "確定申告": "確定申告",
+      "個品別管理(飲食・小売)": "個品別管理(飲食・小売)",
+      "個品別管理(大量、EC)": "個品別管理(大量、EC)",
+      "経理職員_経理職員": "経理職員_経理職員"
+    },
+    "footer": {
+      "skip": "スキップ",
+      "apply": "適用",
+      "cancel": "キャンセル"
+    }
+  }
+}
+

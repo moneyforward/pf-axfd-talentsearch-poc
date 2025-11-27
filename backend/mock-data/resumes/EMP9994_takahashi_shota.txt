@@ -1,0 +1,33 @@
+履歴書
+
+高橋 翔太
+AIエンジニア
+Email: takahashi.shota@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+自然言語処理とAI技術に特化したAIエンジニア。PyTorch、Python、Azureに3年以上の経験を持つ。
+NLPモデルの開発からチャットボット、テキスト分析システムの構築まで幅広く対応。
+
+職務経歴
+
+AIエンジニア | 株式会社マネーフォワード | 2024年1月 - 現在
+- 自然言語処理モデルの開発
+- チャットボットやテキスト分析システムの構築
+- PyTorchを使用した深層学習モデルの実装
+- Azureを活用したAIサービスのデプロイ
+- トランスフォーマーモデルのファインチューニング
+- 多言語対応NLPシステムの開発
+
+技術スキル
+- プログラミング言語: Python
+- MLフレームワーク: PyTorch, Transformers, Hugging Face
+- NLP: BERT, GPT, テキスト分類、感情分析
+- クラウド: Microsoft Azure (Cognitive Services)
+- ツール: Git, Docker, Jupyter
+- API: RESTful API, FastAPI
+
+教育
+情報工学専攻
+大学名 | 2017年 - 2021年
+

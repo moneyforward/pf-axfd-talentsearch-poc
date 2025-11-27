@@ -1,0 +1,14 @@
+.shining-text {
+  background: linear-gradient(110deg, #404040 35%, #fff 50%, #404040 75%, #404040);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: inherit;
+  font-weight: 400;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
+}
+

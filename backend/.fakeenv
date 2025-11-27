@@ -1,0 +1,9 @@
+# Azure OpenAI Configuration
+# These are example values - replace with your actual credentials
+# In production, these should be set as environment variables in Azure Web App
+
+AZURE_OPENAI_ENDPOINT=https://mf-genai-poc-apim.azure-api.net/fmbccoo/
+AZURE_OPENAI_API_KEY=312d35320b16459aa870b18e997be688
+AZURE_OPENAI_API_VERSION=2024-10-21
+AZURE_OPENAI_DEPLOYMENT=gpt-4o
+

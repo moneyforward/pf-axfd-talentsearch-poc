@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "PF Talent Search",
+    "logout": "Logout",
+    "backfillSearch": "Backfill Search",
+    "jdTemplate": "JD Template",
+    "jdCreate": "JD Create"
+  },
+  "search": {
+    "placeholder": "Search by name or email address.",
+    "searching": "Searching...",
+    "findSimilar": "Find Similar Employees"
+  },
+  "personCard": {
+    "noDepartment": "No department information",
+    "noJobTitle": "No job title information",
+    "noName": "No name",
+    "noEmployeeId": "No employee ID",
+    "resume": "Resume",
+    "cv": "CV",
+    "generatingSkills": "Generating skills and career...",
+    "noJobDescription": "No job description"
+  },
+  "instruction": {
+    "findSimilar": "Find people similar to this employee"
+  },
+  "results": {
+    "searching": "Searching...",
+    "noResults": "No results found."
+  },
+  "login": {
+    "subtitle": "Skill-based talent search system",
+    "email": "Email Address",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "login": "Login",
+    "loggingIn": "Logging in...",
+    "error": "Please enter email and password",
+    "demoMode": "Demo mode: You can login with any email and password"
+  },
+  "filterModal": {
+    "title": "Filter by Conditions",
+    "close": "×",
+    "gender": {
+      "title": "Gender",
+      "male": "Male",
+      "female": "Female"
+    },
+    "experience": {
+      "title": "Experience Level",
+      "lessThan3": "Less than 3 years",
+      "lessThan5": "Less than 5 years",
+      "moreThan5": "More than 5 years"
+    },
+    "database": "Database",
+    "dates": {
+      "joinDate": "Join Date",
+      "birthDate": "Birth Date",
+      "employmentPeriod": "Employment Period",
+      "departureDate": "Departure Date",
+      "from": "From",
+      "to": "To",
+      "noInput": "No input"
+    },
+    "additionalOptions": {
+      "title": "Additional Options"
+    },
+    "skills": {
+      "title": "Skills/Domain",
+      "SAP_大塚商事": "SAP_Otsuka Corporation",
+      "MFL_業務統括": "MFL_Business Management",
+      "財務_MFクレジット": "Finance_MF Credit",
+      "経理_MFクレジット": "Accounting_MF Credit",
+      "レシート一般顧客": "Receipt General Customer",
+      "社会保険労務": "Social Insurance Labor",
+      "SAP_業務統括": "SAP_Business Management",
+      "MF_人事給与統括": "MF_HR Payroll Management",
+      "経営統括": "Management",
+      "商流分析": "Business Flow Analysis",
+      "監査法人": "Audit Firm",
+      "MFCL_業務統括": "MFCL_Business Management",
+      "財務_人事給与統括": "Finance_HR Payroll Management",
+      "公会計/自治体": "Public Accounting/Municipality",
+      "債権": "Claims",
+      "預金連携": "Deposit Integration",
+      "アパレル": "Apparel",
+      "債務/支払": "Debt/Payment",
+      "小売/EC": "Retail/EC",
+      "債権回収": "Claims Collection",
+      "確定申告": "Tax Return",
+      "個品別管理(飲食・小売)": "Item Management (Food/Retail)",
+      "個品別管理(大量、EC)": "Item Management (Bulk, EC)",
+      "経理職員_経理職員": "Accounting Staff_Accounting Staff"
+    },
+    "footer": {
+      "skip": "Skip",
+      "apply": "Apply",
+      "cancel": "Cancel"
+    }
+  }
+}
+

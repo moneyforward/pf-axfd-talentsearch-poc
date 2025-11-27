@@ -1,0 +1,18 @@
+.text-shimmer {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(
+    90deg,
+    #9ca3af calc(50% - var(--spread, 20px)),
+    #e5e7eb calc(50% - var(--spread, 20px)),
+    #e5e7eb calc(50% + var(--spread, 20px)),
+    #9ca3af calc(50% + var(--spread, 20px))
+  );
+  background-size: 250% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-repeat: no-repeat;
+  color: #9ca3af;
+}
+

@@ -1,0 +1,617 @@
+{
+  "9999": {
+    "name": "得上 竜一",
+    "skills": [
+      {
+        "name": "Python",
+        "description": "Python programming language expertise"
+      },
+      {
+        "name": "AI/ML",
+        "description": "Artificial Intelligence and Machine Learning"
+      },
+      {
+        "name": "Azure",
+        "description": "Microsoft Azure cloud platform"
+      },
+      {
+        "name": "データ分析",
+        "description": "Data analysis and processing"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "シニアエンジニア",
+        "role": "AI推進室",
+        "description": "AI関連プロジェクトの推進と技術リーダーシップを担当"
+      }
+    ]
+  },
+  "9998": {
+    "name": "山田 太郎",
+    "skills": [
+      {
+        "name": "JavaScript",
+        "description": "JavaScript programming"
+      },
+      {
+        "name": "React",
+        "description": "React framework"
+      },
+      {
+        "name": "テスト",
+        "description": "Software testing and QA"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "エンジニア",
+        "role": "テスト部",
+        "description": "ソフトウェアテストと品質保証を担当"
+      }
+    ]
+  },
+  "9997": {
+    "name": "佐藤 花子",
+    "skills": [
+      {
+        "name": "React",
+        "description": "React framework"
+      },
+      {
+        "name": "TypeScript",
+        "description": "TypeScript programming language"
+      },
+      {
+        "name": "UI/UX",
+        "description": "User interface and user experience design"
+      },
+      {
+        "name": "CSS",
+        "description": "CSS styling"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "フロントエンドエンジニア",
+        "role": "テスト２部",
+        "description": "フロントエンド開発とUI実装を担当"
+      }
+    ]
+  },
+  "9996": {
+    "name": "田中 健太",
+    "skills": [
+      {
+        "name": "Python",
+        "description": "Python programming language expertise"
+      },
+      {
+        "name": "TensorFlow",
+        "description": "TensorFlow deep learning framework"
+      },
+      {
+        "name": "Azure ML",
+        "description": "Azure Machine Learning platform"
+      },
+      {
+        "name": "機械学習",
+        "description": "Machine learning model development"
+      },
+      {
+        "name": "データ分析",
+        "description": "Data analysis and processing"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "MLエンジニア",
+        "role": "機械学習チーム",
+        "description": "機械学習モデルの開発と実装、Azure MLを活用したMLOpsパイプライン構築"
+      }
+    ]
+  },
+  "9995": {
+    "name": "鈴木 美咲",
+    "skills": [
+      {
+        "name": "Python",
+        "description": "Python programming language expertise"
+      },
+      {
+        "name": "AI/ML",
+        "description": "Artificial Intelligence and Machine Learning"
+      },
+      {
+        "name": "Azure",
+        "description": "Microsoft Azure cloud platform"
+      },
+      {
+        "name": "Big Data",
+        "description": "Big data processing and analytics"
+      },
+      {
+        "name": "データ分析",
+        "description": "Data analysis and processing"
+      },
+      {
+        "name": "SQL",
+        "description": "SQL database querying"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "データサイエンティスト",
+        "role": "分析チーム",
+        "description": "大規模データの分析、予測モデルの構築、Azureを活用したデータ分析基盤の構築"
+      }
+    ]
+  },
+  "9994": {
+    "name": "高橋 翔太",
+    "skills": [
+      {
+        "name": "Python",
+        "description": "Python programming language expertise"
+      },
+      {
+        "name": "PyTorch",
+        "description": "PyTorch deep learning framework"
+      },
+      {
+        "name": "NLP",
+        "description": "Natural Language Processing"
+      },
+      {
+        "name": "Azure",
+        "description": "Microsoft Azure cloud platform"
+      },
+      {
+        "name": "AI/ML",
+        "description": "Artificial Intelligence and Machine Learning"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "AIエンジニア",
+        "role": "NLPチーム",
+        "description": "自然言語処理モデルの開発、チャットボットやテキスト分析システムの構築"
+      }
+    ]
+  },
+  "9993": {
+    "name": "伊藤 優子",
+    "skills": [
+      {
+        "name": "Java",
+        "description": "Java programming language"
+      },
+      {
+        "name": "Spring Boot",
+        "description": "Spring Boot framework"
+      },
+      {
+        "name": "PostgreSQL",
+        "description": "PostgreSQL database"
+      },
+      {
+        "name": "Docker",
+        "description": "Docker containerization"
+      },
+      {
+        "name": "RESTful API",
+        "description": "RESTful API design and development"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "バックエンドエンジニア",
+        "role": "バックエンドチーム",
+        "description": "Java/Spring Bootを使用したバックエンドAPI開発、マイクロサービスアーキテクチャの実装"
+      }
+    ]
+  },
+  "9992": {
+    "name": "渡辺 大輔",
+    "skills": [
+      {
+        "name": "Kubernetes",
+        "description": "Kubernetes container orchestration"
+      },
+      {
+        "name": "AWS",
+        "description": "Amazon Web Services"
+      },
+      {
+        "name": "Docker",
+        "description": "Docker containerization"
+      },
+      {
+        "name": "Terraform",
+        "description": "Infrastructure as Code with Terraform"
+      },
+      {
+        "name": "CI/CD",
+        "description": "Continuous Integration and Deployment"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "DevOpsエンジニア",
+        "role": "インフラチーム",
+        "description": "Kubernetesクラスターの管理、CI/CDパイプラインの構築、インフラの自動化"
+      }
+    ]
+  },
+  "9991": {
+    "name": "中村 麻衣",
+    "skills": [
+      {
+        "name": "Vue.js",
+        "description": "Vue.js framework"
+      },
+      {
+        "name": "TypeScript",
+        "description": "TypeScript programming language"
+      },
+      {
+        "name": "JavaScript",
+        "description": "JavaScript programming"
+      },
+      {
+        "name": "CSS/SCSS",
+        "description": "CSS and SCSS styling"
+      },
+      {
+        "name": "UI/UX",
+        "description": "User interface and user experience design"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "フロントエンドエンジニア",
+        "role": "フロントエンドチーム",
+        "description": "Vue.jsを使用したフロントエンド開発、レスポンシブUIの実装"
+      }
+    ]
+  },
+  "9990": {
+    "name": "小林 直樹",
+    "skills": [
+      {
+        "name": "Node.js",
+        "description": "Node.js runtime"
+      },
+      {
+        "name": "React",
+        "description": "React framework"
+      },
+      {
+        "name": "TypeScript",
+        "description": "TypeScript programming language"
+      },
+      {
+        "name": "PostgreSQL",
+        "description": "PostgreSQL database"
+      },
+      {
+        "name": "GraphQL",
+        "description": "GraphQL API"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "フルスタックエンジニア",
+        "role": "フルスタックチーム",
+        "description": "フロントエンドとバックエンドの両方を担当、ReactとNode.jsを使用したフルスタック開発"
+      }
+    ]
+  },
+  "9989": {
+    "name": "加藤 さくら",
+    "skills": [
+      {
+        "name": "Swift",
+        "description": "Swift programming language"
+      },
+      {
+        "name": "iOS",
+        "description": "iOS app development"
+      },
+      {
+        "name": "SwiftUI",
+        "description": "SwiftUI framework"
+      },
+      {
+        "name": "Xcode",
+        "description": "Xcode development environment"
+      },
+      {
+        "name": "Core Data",
+        "description": "Core Data framework"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "iOSエンジニア",
+        "role": "iOSチーム",
+        "description": "SwiftとSwiftUIを使用したiOSアプリケーションの開発"
+      }
+    ]
+  },
+  "9988": {
+    "name": "吉田 健一",
+    "skills": [
+      {
+        "name": "Kotlin",
+        "description": "Kotlin programming language"
+      },
+      {
+        "name": "Android",
+        "description": "Android app development"
+      },
+      {
+        "name": "Jetpack Compose",
+        "description": "Jetpack Compose UI framework"
+      },
+      {
+        "name": "Room",
+        "description": "Room database library"
+      },
+      {
+        "name": "Retrofit",
+        "description": "Retrofit networking library"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "Androidエンジニア",
+        "role": "Androidチーム",
+        "description": "KotlinとJetpack Composeを使用したAndroidアプリケーションの開発"
+      }
+    ]
+  },
+  "9987": {
+    "name": "松本 愛美",
+    "skills": [
+      {
+        "name": "Python",
+        "description": "Python programming language"
+      },
+      {
+        "name": "Apache Spark",
+        "description": "Apache Spark big data processing"
+      },
+      {
+        "name": "Airflow",
+        "description": "Apache Airflow workflow management"
+      },
+      {
+        "name": "BigQuery",
+        "description": "Google BigQuery data warehouse"
+      },
+      {
+        "name": "ETL",
+        "description": "Extract, Transform, Load processes"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "データエンジニア",
+        "role": "データパイプラインチーム",
+        "description": "データパイプラインの設計と構築、ETLプロセスの実装、BigQueryを活用したデータウェアハウス構築"
+      }
+    ]
+  },
+  "9986": {
+    "name": "井上 雄太",
+    "skills": [
+      {
+        "name": "セキュリティ",
+        "description": "Information security"
+      },
+      {
+        "name": "OWASP",
+        "description": "OWASP security standards"
+      },
+      {
+        "name": "Penetration Testing",
+        "description": "Penetration testing and vulnerability assessment"
+      },
+      {
+        "name": "SIEM",
+        "description": "Security Information and Event Management"
+      },
+      {
+        "name": "暗号化",
+        "description": "Encryption and cryptography"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "セキュリティエンジニア",
+        "role": "セキュリティチーム",
+        "description": "セキュリティ監査、脆弱性評価、セキュリティポリシーの策定と実装"
+      }
+    ]
+  },
+  "9985": {
+    "name": "斎藤 美香",
+    "skills": [
+      {
+        "name": "Go",
+        "description": "Go programming language"
+      },
+      {
+        "name": "gRPC",
+        "description": "gRPC framework"
+      },
+      {
+        "name": "PostgreSQL",
+        "description": "PostgreSQL database"
+      },
+      {
+        "name": "Redis",
+        "description": "Redis in-memory data store"
+      },
+      {
+        "name": "マイクロサービス",
+        "description": "Microservices architecture"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "シニアバックエンドエンジニア",
+        "role": "バックエンドチーム",
+        "description": "Go言語を使用した高性能バックエンドAPI開発、マイクロサービスアーキテクチャの設計"
+      }
+    ]
+  },
+  "9984": {
+    "name": "佐々木 亮",
+    "skills": [
+      {
+        "name": "Next.js",
+        "description": "Next.js React framework"
+      },
+      {
+        "name": "TypeScript",
+        "description": "TypeScript programming language"
+      },
+      {
+        "name": "React",
+        "description": "React framework"
+      },
+      {
+        "name": "Tailwind CSS",
+        "description": "Tailwind CSS utility framework"
+      },
+      {
+        "name": "GraphQL",
+        "description": "GraphQL API"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "シニアフロントエンドエンジニア",
+        "role": "フロントエンドチーム",
+        "description": "Next.jsとTypeScriptを使用したモダンなフロントエンド開発、パフォーマンス最適化"
+      }
+    ]
+  },
+  "9983": {
+    "name": "橋本 由美",
+    "skills": [
+      {
+        "name": "Selenium",
+        "description": "Selenium test automation"
+      },
+      {
+        "name": "Cypress",
+        "description": "Cypress end-to-end testing"
+      },
+      {
+        "name": "Jest",
+        "description": "Jest testing framework"
+      },
+      {
+        "name": "テスト自動化",
+        "description": "Test automation"
+      },
+      {
+        "name": "品質保証",
+        "description": "Quality assurance"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "QAエンジニア",
+        "role": "QAチーム",
+        "description": "テスト自動化の実装、E2Eテストの設計と実行、品質保証プロセスの改善"
+      }
+    ]
+  },
+  "9982": {
+    "name": "山本 拓也",
+    "skills": [
+      {
+        "name": "Kubernetes",
+        "description": "Kubernetes container orchestration"
+      },
+      {
+        "name": "AWS",
+        "description": "Amazon Web Services"
+      },
+      {
+        "name": "Terraform",
+        "description": "Infrastructure as Code with Terraform"
+      },
+      {
+        "name": "Ansible",
+        "description": "Ansible automation"
+      },
+      {
+        "name": "監視",
+        "description": "System monitoring and observability"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "シニアDevOpsエンジニア",
+        "role": "インフラチーム",
+        "description": "大規模インフラの設計と運用、Kubernetesクラスターの最適化、監視システムの構築"
+      }
+    ]
+  },
+  "9981": {
+    "name": "森 智子",
+    "skills": [
+      {
+        "name": "プロダクトマネジメント",
+        "description": "Product management"
+      },
+      {
+        "name": "アジャイル",
+        "description": "Agile methodology"
+      },
+      {
+        "name": "データ分析",
+        "description": "Data analysis for product decisions"
+      },
+      {
+        "name": "ユーザーリサーチ",
+        "description": "User research"
+      },
+      {
+        "name": "ロードマップ",
+        "description": "Product roadmap planning"
+      }
+    ],
+    "career": [
+      {
+        "company": "株式会社マネーフォワード",
+        "position": "プロダクトマネージャー",
+        "role": "プロダクトマネジメントチーム",
+        "description": "プロダクト戦略の策定、機能要件の定義、エンジニアチームとの協力による開発推進"
+      }
+    ]
+  }
+}

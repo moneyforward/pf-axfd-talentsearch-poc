@@ -1,0 +1,33 @@
+履歴書
+
+鈴木 美咲
+データサイエンティスト
+Email: suzuki.misaki@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+大規模データ分析と予測モデリングに精通したデータサイエンティスト。Python、Azure、Big Data技術に5年以上の経験を持つ。
+ビジネス課題をデータドリブンで解決し、予測モデルの構築と分析基盤の設計を専門とする。
+
+職務経歴
+
+データサイエンティスト | 株式会社マネーフォワード | 2023年9月 - 現在
+- 大規模データの分析と予測モデルの構築
+- Azureを活用したデータ分析基盤の構築
+- SQLを使用したデータ抽出と分析
+- 統計分析と機械学習モデルの開発
+- ビジネスステークホルダーへの分析結果の報告
+- データドリブンな意思決定の支援
+
+技術スキル
+- プログラミング言語: Python, SQL
+- データ分析: Pandas, NumPy, scikit-learn
+- クラウド: Microsoft Azure (Data Factory, Databricks)
+- Big Data: Spark, Hadoop
+- 可視化: Matplotlib, Seaborn, Power BI
+- ツール: Jupyter, Git
+
+教育
+統計学専攻
+大学名 | 2015年 - 2019年
+

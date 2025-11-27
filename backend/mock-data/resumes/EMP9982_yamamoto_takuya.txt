@@ -1,0 +1,33 @@
+履歴書
+
+山本 拓也
+シニアDevOpsエンジニア
+Email: yamamoto.takuya@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+大規模インフラの設計と運用に精通したシニアDevOpsエンジニア。Kubernetes、AWS、Terraformに6年以上の経験を持つ。
+クラウドネイティブなインフラの最適化と監視システムの構築を専門とする。
+
+職務経歴
+
+シニアDevOpsエンジニア | 株式会社マネーフォワード | 2022年12月 - 現在
+- 大規模インフラの設計と運用
+- Kubernetesクラスターの最適化
+- 監視システムの構築
+- Terraformを使用したインフラの自動化
+- AWSサービスの設計と運用
+- チームリーダーシップと技術指導
+
+技術スキル
+- コンテナ: Kubernetes, Docker
+- クラウド: AWS (EC2, EKS, S3, RDS, Lambda)
+- IaC: Terraform, Ansible, CloudFormation
+- 監視: Prometheus, Grafana, CloudWatch, Datadog
+- CI/CD: Jenkins, GitHub Actions, GitLab CI
+- ツール: Git, Helm, kubectl
+
+教育
+情報工学専攻
+大学名 | 2013年 - 2017年
+

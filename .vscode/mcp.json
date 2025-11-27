@@ -1,9 +1,0 @@
-{
-	"servers": {
-		"FigmaDevMCP": {
-			"url": "http://127.0.0.1:3845/sse",
-			"type": "http"
-		}
-	},
-	"inputs": []
-}

@@ -1,0 +1,33 @@
+履歴書
+
+伊藤 優子
+バックエンドエンジニア
+Email: ito.yuko@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+JavaとSpring Bootに精通したバックエンドエンジニア。RESTful API開発とマイクロサービスアーキテクチャに4年以上の経験を持つ。
+スケーラブルで保守性の高いバックエンドシステムの設計と実装を専門とする。
+
+職務経歴
+
+バックエンドエンジニア | 株式会社マネーフォワード | 2023年6月 - 現在
+- Java/Spring Bootを使用したバックエンドAPI開発
+- マイクロサービスアーキテクチャの実装
+- PostgreSQLデータベースの設計と最適化
+- Dockerを使用したコンテナ化
+- RESTful APIの設計と実装
+- コードレビューとチームメンバーのメンタリング
+
+技術スキル
+- プログラミング言語: Java, Kotlin
+- フレームワーク: Spring Boot, Spring Cloud
+- データベース: PostgreSQL, MySQL
+- ツール: Docker, Git, Maven, Gradle
+- アーキテクチャ: マイクロサービス, RESTful API
+- テスト: JUnit, Mockito
+
+教育
+情報工学専攻
+大学名 | 2016年 - 2020年
+

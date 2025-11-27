@@ -1,0 +1,33 @@
+履歴書
+
+小林 直樹
+フルスタックエンジニア
+Email: kobayashi.naoki@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+ReactとNode.jsに精通したフルスタックエンジニア。フロントエンドとバックエンドの両方を担当し、エンドツーエンドの開発に4年以上の経験を持つ。
+モダンなWebアプリケーションの設計と実装を専門とする。
+
+職務経歴
+
+フルスタックエンジニア | 株式会社マネーフォワード | 2023年3月 - 現在
+- フロントエンドとバックエンドの両方を担当
+- ReactとNode.jsを使用したフルスタック開発
+- GraphQL APIの設計と実装
+- PostgreSQLデータベースの設計
+- TypeScriptを使用した型安全な開発
+- アプリケーション全体のアーキテクチャ設計
+
+技術スキル
+- フロントエンド: React, TypeScript, Next.js
+- バックエンド: Node.js, Express, NestJS
+- データベース: PostgreSQL, MongoDB
+- API: GraphQL, RESTful API
+- ツール: Git, Docker, npm
+- テスト: Jest, React Testing Library
+
+教育
+情報工学専攻
+大学名 | 2016年 - 2020年
+

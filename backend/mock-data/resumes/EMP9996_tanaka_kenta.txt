@@ -1,0 +1,33 @@
+履歴書
+
+田中 健太
+MLエンジニア
+Email: tanaka.kenta@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+機械学習と深層学習に特化したMLエンジニア。TensorFlow、Azure ML、Pythonに4年以上の経験を持つ。
+機械学習モデルの開発から本番環境へのデプロイまで、MLOpsパイプラインの構築を専門とする。
+
+職務経歴
+
+MLエンジニア | 株式会社マネーフォワード | 2023年11月 - 現在
+- 機械学習モデルの開発と実装
+- Azure MLを活用したMLOpsパイプライン構築
+- TensorFlowを使用した深層学習モデルの開発
+- データ分析と前処理パイプラインの設計
+- モデルの評価と最適化
+- チームメンバーへの技術指導
+
+技術スキル
+- プログラミング言語: Python
+- MLフレームワーク: TensorFlow, Keras, scikit-learn
+- クラウド: Microsoft Azure ML
+- データ処理: Pandas, NumPy
+- ツール: Git, Docker, Jupyter
+- MLOps: モデルデプロイメント、パイプライン自動化
+
+教育
+情報工学専攻
+大学名 | 2016年 - 2020年
+

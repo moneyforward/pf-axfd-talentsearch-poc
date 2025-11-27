@@ -1,0 +1,33 @@
+履歴書
+
+松本 愛美
+データエンジニア
+Email: matsumoto.ami@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+データパイプラインとETLプロセスに精通したデータエンジニア。Apache Spark、Airflow、BigQueryに4年以上の経験を持つ。
+大規模データの処理とデータウェアハウス構築を専門とする。
+
+職務経歴
+
+データエンジニア | 株式会社マネーフォワード | 2022年10月 - 現在
+- データパイプラインの設計と構築
+- ETLプロセスの実装
+- BigQueryを活用したデータウェアハウス構築
+- Apache Sparkを使用した大規模データ処理
+- Airflowを使用したワークフロー管理
+- データ品質管理とモニタリング
+
+技術スキル
+- プログラミング言語: Python, SQL
+- Big Data: Apache Spark, Hadoop
+- データウェアハウス: Google BigQuery, Snowflake
+- ワークフロー: Apache Airflow
+- ETL: Pandas, PySpark
+- ツール: Git, Docker, Jupyter
+
+教育
+情報工学専攻
+大学名 | 2015年 - 2019年
+

@@ -1,0 +1,114 @@
+[
+  {
+    "job_id": "JD001",
+    "title": "Senior Backend Engineer",
+    "department": "Engineering - Backend Team",
+    "location": "Headquarters",
+    "employment_type": "Full-time",
+    "description": "We are looking for an experienced backend engineer to join our team. You will be responsible for designing and developing scalable backend systems, working with microservices architecture, and collaborating with cross-functional teams.",
+    "requirements": [
+      "5+ years of experience in backend development",
+      "Strong proficiency in Python and Django",
+      "Experience with PostgreSQL and database design",
+      "Knowledge of AWS cloud services",
+      "Understanding of microservices architecture",
+      "Excellent problem-solving skills"
+    ],
+    "preferred_skills": [
+      "Experience with Docker and Kubernetes",
+      "Knowledge of CI/CD pipelines",
+      "Agile development experience"
+    ],
+    "posted_date": "2025-01-15",
+    "status": "Open"
+  },
+  {
+    "job_id": "JD002",
+    "title": "Frontend Developer",
+    "department": "Engineering - Frontend Team",
+    "location": "Headquarters",
+    "employment_type": "Full-time",
+    "description": "Join our frontend team to build beautiful and responsive user interfaces. You will work with modern JavaScript frameworks, collaborate with designers, and ensure excellent user experience.",
+    "requirements": [
+      "3+ years of frontend development experience",
+      "Strong proficiency in React and TypeScript",
+      "Experience with modern CSS and responsive design",
+      "Understanding of state management (Redux)",
+      "Good eye for UI/UX design"
+    ],
+    "preferred_skills": [
+      "Experience with Next.js",
+      "Knowledge of testing frameworks",
+      "Experience with design systems"
+    ],
+    "posted_date": "2025-01-20",
+    "status": "Open"
+  },
+  {
+    "job_id": "JD003",
+    "title": "Product Manager",
+    "department": "Product - Product Team",
+    "location": "Headquarters",
+    "employment_type": "Full-time",
+    "description": "We are seeking a product manager to drive product strategy and execution. You will work closely with engineering, design, and business teams to deliver innovative products that meet customer needs.",
+    "requirements": [
+      "4+ years of product management experience",
+      "Strong analytical and problem-solving skills",
+      "Experience with Agile/Scrum methodologies",
+      "Excellent communication and leadership skills",
+      "Ability to work with cross-functional teams"
+    ],
+    "preferred_skills": [
+      "Technical background",
+      "Experience with data analysis tools",
+      "User research experience"
+    ],
+    "posted_date": "2025-01-18",
+    "status": "Open"
+  },
+  {
+    "job_id": "JD004",
+    "title": "Data Scientist",
+    "department": "Data Science - Data Team",
+    "location": "Headquarters",
+    "employment_type": "Full-time",
+    "description": "Join our data science team to build machine learning models, analyze data trends, and provide actionable insights. You will work on challenging problems and help drive data-driven decision making.",
+    "requirements": [
+      "3+ years of data science experience",
+      "Strong proficiency in Python for data analysis",
+      "Experience with machine learning frameworks",
+      "Knowledge of SQL and database systems",
+      "Strong statistical analysis skills"
+    ],
+    "preferred_skills": [
+      "Experience with deep learning",
+      "Knowledge of cloud ML platforms",
+      "Experience with data visualization tools"
+    ],
+    "posted_date": "2025-01-22",
+    "status": "Open"
+  },
+  {
+    "job_id": "JD005",
+    "title": "DevOps Engineer",
+    "department": "Engineering - Infrastructure Team",
+    "location": "Headquarters",
+    "employment_type": "Full-time",
+    "description": "We are looking for a DevOps engineer to manage our cloud infrastructure, automate deployments, and ensure system reliability. You will work with modern tools and technologies to build scalable infrastructure.",
+    "requirements": [
+      "3+ years of DevOps experience",
+      "Strong knowledge of Docker and Kubernetes",
+      "Experience with CI/CD pipelines",
+      "Knowledge of Infrastructure as Code (Terraform)",
+      "Experience with cloud platforms (AWS preferred)"
+    ],
+    "preferred_skills": [
+      "Experience with monitoring and logging tools",
+      "Knowledge of security best practices",
+      "Scripting skills (Bash, Python)"
+    ],
+    "posted_date": "2025-01-25",
+    "status": "Open"
+  }
+]
+

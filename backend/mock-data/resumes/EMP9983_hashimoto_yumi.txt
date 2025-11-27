@@ -1,0 +1,33 @@
+履歴書
+
+橋本 由美
+QAエンジニア
+Email: hashimoto.yumi@moneyforward.co.jp
+所在地: 本社
+
+プロフェッショナルサマリー
+テスト自動化と品質保証に精通したQAエンジニア。Selenium、Cypress、Jestに4年以上の経験を持つ。
+包括的なテスト戦略の策定とテスト自動化の実装を専門とする。
+
+職務経歴
+
+QAエンジニア | 株式会社マネーフォワード | 2023年8月 - 現在
+- テスト自動化の実装
+- E2Eテストの設計と実行
+- 品質保証プロセスの改善
+- バグの特定と報告
+- テスト計画の策定
+- 開発チームとの協力による品質向上
+
+技術スキル
+- テスト自動化: Selenium, Cypress, Playwright
+- テストフレームワーク: Jest, Mocha, Jasmine
+- プログラミング言語: JavaScript, TypeScript, Python
+- CI/CD: GitHub Actions, Jenkins
+- ツール: Git, JIRA, TestRail
+- 品質保証: テスト計画、バグ管理
+
+教育
+情報工学専攻
+大学名 | 2016年 - 2020年
+
