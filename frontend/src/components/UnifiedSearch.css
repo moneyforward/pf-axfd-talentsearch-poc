@@ -1,0 +1,223 @@
+.unified-search {
+  width: 100%;
+  position: relative;
+}
+
+.unified-search-container {
+  width: 100%;
+}
+
+.unified-search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.unified-search-input-wrapper:focus-within {
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.unified-search-icon-left {
+  display: flex;
+  align-items: center;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.unified-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  padding: 0;
+  color: #333;
+}
+
+.unified-search-input::placeholder {
+  color: #9ca3af;
+}
+
+.unified-search-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.unified-search-clear-button,
+.unified-search-filter-button,
+.unified-search-submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #9ca3af;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.unified-search-clear-button:hover,
+.unified-search-filter-button:hover {
+  color: #6b7280;
+}
+
+.unified-search-submit-button {
+  background: #FF6B35;
+  color: white;
+  border-radius: 6px;
+  padding: 8px 12px;
+  min-width: 40px;
+}
+
+.unified-search-submit-button:hover:not(:disabled) {
+  background: #FF8C42;
+}
+
+.unified-search-submit-button:active:not(:disabled) {
+  background: #E55A2B;
+}
+
+.unified-search-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.unified-search-loading-text {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Dropdown */
+.unified-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.unified-search-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.unified-search-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.unified-search-dropdown-item:hover {
+  background: #f9fafb;
+}
+
+.unified-search-dropdown-avatar {
+  flex-shrink: 0;
+}
+
+.unified-search-avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+}
+
+.unified-search-dropdown-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.unified-search-dropdown-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.unified-search-dropdown-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.unified-search-dropdown-id-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.unified-search-dropdown-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.unified-search-dropdown-dept,
+.unified-search-dropdown-role {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.unified-search-meta-icon {
+  color: #9ca3af;
+}
+
+.unified-search-dropdown-separator {
+  color: #d1d5db;
+}
+
+/* Thinking Process */
+.unified-search-thinking {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.unified-search-thinking-line {
+  margin: 4px 0;
+  padding: 4px 0;
+  color: #4b5563;
+}
+
+.unified-search-thinking-line.active {
+  color: #FF6B35;
+  font-weight: 500;
+}
+
+.unified-search-thinking-line.complete {
+  color: #059669;
+}
+
+.unified-search-thinking-line.error {
+  color: #dc2626;
+  font-weight: 500;
+}
+

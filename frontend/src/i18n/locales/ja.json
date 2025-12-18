@@ -9,7 +9,16 @@
   "search": {
     "placeholder": "名前やメールアドレスで検索できます。",
     "searching": "検索中...",
-    "findSimilar": "類似従業員を検索"
+    "findSimilar": "類似従業員を検索",
+    "byNameOrId": "名前または社員IDで検索",
+    "useNaturalLanguage": "自然言語で検索"
+  },
+  "naturalSearch": {
+    "placeholder": "自然言語で検索（例：「AI部門で2年未満の経験を持つ従業員を探す」）"
+  },
+  "unifiedSearch": {
+    "placeholder": "名前、ID、または自然言語で従業員を検索...",
+    "additionalFilters": "追加フィルター"
   },
   "personCard": {
     "noDepartment": "部署情報なし",
@@ -38,6 +47,10 @@
     "loggingIn": "ログイン中...",
     "error": "メールアドレスとパスワードを入力してください",
     "demoMode": "デモモード: 任意のメールアドレスとパスワードでログインできます"
+  },
+  "comingSoon": {
+    "title": "近日公開",
+    "message": "は近日公開予定です。"
   },
   "filterModal": {
     "title": "条件で絞り込む",

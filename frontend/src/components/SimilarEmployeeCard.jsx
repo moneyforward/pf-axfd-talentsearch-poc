@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
+import ReviewModal from './ReviewModal'
 import './SimilarEmployeeCard.css'
 
 const SimilarEmployeeCard = ({ result }) => {
   const { t } = useLanguage()
+  const [isExplanationExpanded, setIsExplanationExpanded] = useState(false)
+  const [showReviewModal, setShowReviewModal] = useState(false)
   
   if (!result) {
     console.error('SimilarEmployeeCard: result is missing')
@@ -124,9 +128,36 @@ const SimilarEmployeeCard = ({ result }) => {
         </div>
         
         <div className="explanation">
-          <p>{evaluation.explanation || 'No explanation available'}</p>
+          <div className="explanation-content">
+            <p className={isExplanationExpanded ? 'expanded' : ''}>
+              {evaluation.explanation || 'No explanation available'}
+            </p>
+            {evaluation.explanation && evaluation.explanation.length > 150 && (
+              <button 
+                className="expand-button"
+                onClick={() => setIsExplanationExpanded(!isExplanationExpanded)}
+              >
+                {isExplanationExpanded ? 'Show Less' : 'Show More'}
+              </button>
+            )}
+          </div>
         </div>
       </div>
+      
+      <div className="card-actions">
+        <button 
+          className="review-button"
+          onClick={() => setShowReviewModal(true)}
+        >
+          {t('viewReviews') || 'View Reviews'}
+        </button>
+      </div>
+      
+      <ReviewModal
+        employeeId={candidate?.employee_id}
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+      />
     </div>
   )
 }

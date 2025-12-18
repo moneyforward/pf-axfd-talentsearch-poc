@@ -232,6 +232,10 @@
   overflow: hidden;
 }
 
+.explanation-content {
+  position: relative;
+}
+
 .explanation p {
   margin: 0;
   line-height: 1.4;
@@ -239,12 +243,66 @@
   font-size: 11px;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  transition: max-height 0.3s ease;
+}
+
+.explanation p:not(.expanded) {
   max-height: 80px;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
+}
+
+.explanation p.expanded {
+  max-height: none;
+  display: block;
+}
+
+.expand-button {
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.expand-button:hover {
+  background: #0056b3;
+}
+
+.card-actions {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.review-button {
+  padding: 6px 12px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.review-button:hover {
+  background: #2563eb;
+}
+
+.review-button:active {
+  background: #1d4ed8;
 }
 
 /* Scrollbar styling */

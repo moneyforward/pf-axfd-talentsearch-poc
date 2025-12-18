@@ -104,18 +104,17 @@ export const MobileSidebar = ({ className, children, ...props }) => {
   )
 }
 
-export const SidebarLink = ({ link, className, onClick, ...props }) => {
+export const SidebarLink = ({ link, className, onClick, isActive = false, ...props }) => {
   const { open, animate } = useSidebar()
   return (
     <a
       href={link.href}
       onClick={(e) => {
         if (onClick) {
-          e.preventDefault()
-          onClick()
+          onClick(e)
         }
       }}
-      className={cn('sidebar-link', className)}
+      className={cn('sidebar-link', className, isActive && 'sidebar-link-active')}
       {...props}
     >
       <span className="sidebar-icon-wrapper">
@@ -138,7 +137,7 @@ export const SidebarLink = ({ link, className, onClick, ...props }) => {
   )
 }
 
-const Sidebar = ({ user, onLogout }) => {
+const Sidebar = ({ user, onLogout, currentPage, onPageChange }) => {
   const { t } = useLanguage()
   const [open, setOpen] = useState(false) // Start collapsed
 
@@ -146,16 +145,19 @@ const Sidebar = ({ user, onLogout }) => {
     {
       label: t('app.backfillSearch'),
       href: '#backfill',
+      page: 'backfill',
       icon: <Search className="sidebar-icon" />,
     },
     {
       label: t('app.jdTemplate'),
       href: '#jd-template',
+      page: 'jd-template',
       icon: <FileText className="sidebar-icon" />,
     },
     {
       label: t('app.jdCreate'),
       href: '#jd-create',
+      page: 'jd-create',
       icon: <Plus className="sidebar-icon" />,
     },
   ]
@@ -167,7 +169,17 @@ const Sidebar = ({ user, onLogout }) => {
           <SidebarLogo />
           <div className="sidebar-nav">
             {links.map((link, idx) => (
-              <SidebarLink key={idx} link={link} />
+              <SidebarLink 
+                key={idx} 
+                link={link}
+                isActive={currentPage === link.page}
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (onPageChange) {
+                    onPageChange(link.page)
+                  }
+                }}
+              />
             ))}
           </div>
         </div>

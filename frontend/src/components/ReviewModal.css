@@ -1,0 +1,138 @@
+.review-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.review-modal-content {
+  background: white;
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.review-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.review-modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1f2937;
+}
+
+.review-modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.review-modal-close:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.review-modal-body {
+  padding: 20px;
+}
+
+.review-loading,
+.review-error,
+.review-no-data {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+}
+
+.review-error {
+  color: #ef4444;
+}
+
+.review-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 6px;
+}
+
+.review-section h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.25rem;
+  color: #1f2937;
+  border-bottom: 2px solid #3b82f6;
+  padding-bottom: 8px;
+}
+
+.review-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-field strong {
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.review-text {
+  color: #4b5563;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  padding: 8px;
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .review-modal-content {
+    max-width: 95%;
+    max-height: 95vh;
+  }
+  
+  .review-modal-header {
+    padding: 15px;
+  }
+  
+  .review-modal-body {
+    padding: 15px;
+  }
+  
+  .review-section {
+    padding: 15px;
+  }
+}
+

@@ -9,7 +9,16 @@
   "search": {
     "placeholder": "Search employee by name or email address.",
     "searching": "Searching...",
-    "findSimilar": "Find Similar Employees"
+    "findSimilar": "Find Similar Employees",
+    "byNameOrId": "Search by name or employee ID",
+    "useNaturalLanguage": "Use natural language to search"
+  },
+  "naturalSearch": {
+    "placeholder": "Search with natural language (e.g., \"find employees with less than 2 years in AI department\")"
+  },
+  "unifiedSearch": {
+    "placeholder": "Search employees by name, ID, or use natural language...",
+    "additionalFilters": "Additional Filters"
   },
   "personCard": {
     "noDepartment": "No department information",
@@ -38,6 +47,10 @@
     "loggingIn": "Logging in...",
     "error": "Please enter email and password",
     "demoMode": "Demo mode: You can login with any email and password"
+  },
+  "comingSoon": {
+    "title": "Coming Soon",
+    "message": "will be available soon."
   },
   "filterModal": {
     "title": "Filter by Conditions",

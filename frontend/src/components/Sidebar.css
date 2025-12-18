@@ -118,6 +118,20 @@
   transform: translateX(4px);
 }
 
+.sidebar-link-active {
+  background: var(--orange-primary);
+  color: white;
+}
+
+.sidebar-link-active:hover {
+  background: var(--orange-secondary);
+  color: white;
+}
+
+.sidebar-link-active .sidebar-icon {
+  color: white;
+}
+
 .sidebar-icon-wrapper {
   display: flex;
   align-items: center;

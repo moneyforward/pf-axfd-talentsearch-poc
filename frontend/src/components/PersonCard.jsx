@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
+import ReviewModal from './ReviewModal'
 import './PersonCard.css'
 
 const API_BASE_URL = '/api'
@@ -10,6 +11,7 @@ const PersonCard = ({ person, persona: externalPersona }) => {
   const [isExistsResume, setIsExistsResume] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [persona, setPersona] = useState(externalPersona || null)
+  const [showReviewModal, setShowReviewModal] = useState(false)
 
   useEffect(() => {
     if (externalPersona) {
@@ -101,6 +103,13 @@ const PersonCard = ({ person, persona: externalPersona }) => {
       <div className="person-card-tags">
         <span className="person-tag">{t('resume')}：{isExistsResume ? 'o' : 'x'}</span>
         <span className="person-tag">{t('cv')}：{isExistsCV ? 'o' : 'x'}</span>
+        <button 
+          className="person-card-review-button"
+          onClick={() => setShowReviewModal(true)}
+          title={t('viewReviews') || 'View Reviews'}
+        >
+          {t('reviews') || 'Reviews'}
+        </button>
       </div>
 
       {generating && (
@@ -143,6 +152,12 @@ const PersonCard = ({ person, persona: externalPersona }) => {
           <span className="skill-tag skeleton">{t('generatingSkills')}</span>
         </div>
       )}
+
+      <ReviewModal
+        employeeId={person?.employee_id}
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+      />
     </div>
   )
 }

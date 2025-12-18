@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import logging
 import asyncio
+from review_service import ReviewService
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -110,6 +111,9 @@ if not AZURE_OPENAI_ENDPOINT or not AZURE_OPENAI_API_KEY:
 EMPLOYEES_FILE = BASE_DIR / "mock-data" / "employees" / "employees.json"
 PERSONAS_FILE = BASE_DIR / "mock-data" / "personas" / "personas.json"
 RESUMES_DIR = BASE_DIR / "mock-data" / "resumes"
+
+# Initialize review service
+review_service = ReviewService()
 
 # Load data on startup
 _employees_data = None
@@ -339,6 +343,67 @@ class EvaluateResponse(BaseModel):
     thinking_text: str
     progress_messages: List[str]
     top_3_candidates: List[CandidateResult]
+
+
+# Natural Language Search Models
+class NaturalLanguageSearchRequest(BaseModel):
+    query: str
+    language: Optional[str] = "ja"  # "ja" or "en"
+
+
+class NaturalLanguageSearchResponse(BaseModel):
+    stage: str  # "parsing", "filtering", "complete"
+    thinking_text: str
+    parsed_filters: dict
+    results: List[dict]
+    stats: dict
+
+
+# Review Models
+class HalfReview(BaseModel):
+    fy_cycle: str
+    upload_year_month: str
+    cycle_start_date: str
+    employee_id: str
+    org1: str
+    org2: str
+    job_family: str
+    half_year_self_review_achievement_growth: str
+    self_assessment_score: str
+    short_term_1yr: str
+    med_term_2_3yr: str
+    row_num: str
+    employment_type: str
+    # Additional fields that may be in the data
+    monthly_interview_owner_name: Optional[str] = None
+    first_evaluator_owner_name: Optional[str] = None
+    second_evaluator_owner_name: Optional[str] = None
+    second_evaluator2_employee_name: Optional[str] = None
+    half_year_goal: Optional[str] = None
+    half_year_goal_indicator: Optional[str] = None
+    action_plan: Optional[str] = None
+    values_to_embody: Optional[str] = None
+    strengths_and_skills_to_improve: Optional[str] = None
+    career_intentions: Optional[str] = None
+
+
+class MonthlyReview(BaseModel):
+    fy_cycle: str
+    cycle_start_date: str
+    year_month: str
+    employee_id: str
+    org1: str
+    org2: str
+    org3: Optional[str] = None
+    job_family: str
+    employment_type: str
+    monthly_goal: str
+    monthly_review: str
+
+
+class EmployeeReviewsResponse(BaseModel):
+    monthly: Optional[MonthlyReview] = None
+    half_year: Optional[HalfReview] = None
 
 
 # Azure OpenAI Client
@@ -1275,9 +1340,9 @@ Evaluate how similar this candidate is to the target employee across 5 dimension
             })
         
         if language == "en":
-            thinking_text = f"Resume analysis complete. Evaluated {len(evaluations)} candidates and selected the top 3 most similar employees."
+            thinking_text = f"Resume and review analysis complete. Evaluated {len(evaluations)} candidates and selected the top 3 most similar employees."
         else:
-            thinking_text = f"レジュメ分析が完了しました。{len(evaluations)}人の候補者を評価し、最も類似した3人を選出しました。"
+            thinking_text = f"レジュメとレビュー分析が完了しました。{len(evaluations)}人の候補者を評価し、最も類似した3人を選出しました。"
         
         # Send final results
         final_data = {
@@ -1460,13 +1525,171 @@ Evaluate how similar this candidate is to the target employee across 5 dimension
                     
                     try:
                         eval_data = json.loads(content)
+                        resume_scores = EvaluationScore(**eval_data.get("scores", {}))
+                        resume_strengths = eval_data.get("strengths", [])[:3]
+                        resume_gaps = eval_data.get("gaps", [])[:2]
+                        resume_explanation = eval_data.get("explanation", "")
                         
-                        scores = EvaluationScore(**eval_data.get("scores", {}))
+                        # Step 2: Analyze review data
+                        target_reviews = review_service.get_all_reviews_for_employee(target_id)
+                        candidate_reviews = review_service.get_all_reviews_for_employee(candidate_id)
+                        
+                        review_scores = None
+                        review_strengths = []
+                        review_gaps = []
+                        review_explanation = ""
+                        
+                        if target_reviews.get("monthly") or target_reviews.get("half_year") or \
+                           candidate_reviews.get("monthly") or candidate_reviews.get("half_year"):
+                            
+                            # Build review analysis prompt
+                            if language == "en":
+                                review_system_prompt = """You are an excellent HR evaluator. Analyze employee review data (monthly and half-year reviews) and evaluate similarity to the target employee's performance and growth trajectory.
+
+Output must be in JSON format following this structure:
+{
+  "scores": {
+    "performance_alignment": 85,
+    "growth_trajectory": 80,
+    "goal_achievement": 75,
+    "career_alignment": 90,
+    "overall": 82
+  },
+  "strengths": [
+    "Similar performance patterns",
+    "Aligned career goals"
+  ],
+  "gaps": [
+    "Different growth trajectory",
+    "Different performance focus"
+  ],
+  "explanation": "This candidate shows similar performance patterns and career alignment, but has a different growth trajectory."
+}
+
+Important:
+- Each score is an integer from 0-100
+- overall is the average of the 4 dimensions (rounded)
+- strengths: maximum 2, gaps: maximum 2
+- explanation: 1-2 sentences in natural English
+- Output JSON only, do not use markdown code blocks"""
+                            else:
+                                review_system_prompt = """あなたは優秀な人事評価者です。従業員のレビューデータ（月次レビューと半期レビュー）を分析し、ターゲット従業員のパフォーマンスと成長軌道との類似度を評価してください。
+
+出力は必ずJSON形式で、以下の構造に従ってください：
+{
+  "scores": {
+    "performance_alignment": 85,
+    "growth_trajectory": 80,
+    "goal_achievement": 75,
+    "career_alignment": 90,
+    "overall": 82
+  },
+  "strengths": [
+    "類似したパフォーマンスパターン",
+    "一致したキャリア目標"
+  ],
+  "gaps": [
+    "異なる成長軌道",
+    "異なるパフォーマンス焦点"
+  ],
+  "explanation": "この候補者は類似したパフォーマンスパターンとキャリアの一致を示していますが、成長軌道が異なります。"
+}
+
+重要：
+- 各スコアは0-100の整数
+- overallは4つの次元の平均（四捨五入）
+- strengthsは最大2つ、gapsは最大2つ
+- explanationは自然な日本語で1-2文
+- JSONのみを出力し、マークダウンコードブロックは使用しない"""
+                            
+                            # Format review data for prompt
+                            target_review_text = ""
+                            if target_reviews.get("monthly"):
+                                m = target_reviews["monthly"]
+                                target_review_text += f"Monthly Review: Goal: {m.get('monthly_goal', '')}, Review: {m.get('monthly_review', '')[:200]}\n"
+                            if target_reviews.get("half_year"):
+                                h = target_reviews["half_year"]
+                                target_review_text += f"Half-Year Review: Score: {h.get('self_assessment_score', '')}, Growth: {h.get('half_year_self_review_achievement_growth', '')[:200]}, Career: {h.get('career_intentions', '')}\n"
+                            
+                            candidate_review_text = ""
+                            if candidate_reviews.get("monthly"):
+                                m = candidate_reviews["monthly"]
+                                candidate_review_text += f"Monthly Review: Goal: {m.get('monthly_goal', '')}, Review: {m.get('monthly_review', '')[:200]}\n"
+                            if candidate_reviews.get("half_year"):
+                                h = candidate_reviews["half_year"]
+                                candidate_review_text += f"Half-Year Review: Score: {h.get('self_assessment_score', '')}, Growth: {h.get('half_year_self_review_achievement_growth', '')[:200]}, Career: {h.get('career_intentions', '')}\n"
+                            
+                            if language == "en":
+                                review_user_prompt = f"""Target Employee Reviews:
+{target_review_text if target_review_text else "No review data available"}
+
+Candidate Reviews:
+{candidate_review_text if candidate_review_text else "No review data available"}
+
+Evaluate how similar this candidate's performance and growth trajectory is to the target employee."""
+                            else:
+                                review_user_prompt = f"""ターゲット従業員のレビュー:
+{target_review_text if target_review_text else "レビューデータなし"}
+
+候補者のレビュー:
+{candidate_review_text if candidate_review_text else "レビューデータなし"}
+
+この候補者のパフォーマンスと成長軌道がターゲット従業員とどの程度類似しているか評価してください。"""
+                            
+                            try:
+                                review_messages = [
+                                    {"role": "system", "content": review_system_prompt},
+                                    {"role": "user", "content": review_user_prompt}
+                                ]
+                                
+                                review_response = await call_azure_openai(review_messages, temperature=0.2, use_json_format=True)
+                                
+                                if "choices" in review_response and len(review_response["choices"]) > 0:
+                                    review_content = review_response["choices"][0]["message"]["content"]
+                                    review_content = re.sub(r'```json\s*', '', review_content)
+                                    review_content = re.sub(r'```\s*', '', review_content)
+                                    review_content = review_content.strip()
+                                    
+                                    review_eval_data = json.loads(review_content)
+                                    review_scores = review_eval_data.get("scores", {})
+                                    review_strengths = review_eval_data.get("strengths", [])[:2]
+                                    review_gaps = review_eval_data.get("gaps", [])[:2]
+                                    review_explanation = review_eval_data.get("explanation", "")
+                            except Exception as e:
+                                logger.warning(f"Failed to analyze review data for {candidate_id}: {e}")
+                                # Continue without review scores if analysis fails
+                        
+                        # Combine resume and review scores (70% resume, 30% review)
+                        if review_scores and review_scores.get("overall"):
+                            resume_overall = resume_scores.overall
+                            review_overall = review_scores.get("overall", resume_overall)
+                            combined_overall = int((resume_overall * 0.7) + (review_overall * 0.3))
+                            
+                            # Update overall score
+                            resume_scores.overall = combined_overall
+                            
+                            # Combine explanations
+                            if review_explanation:
+                                if language == "en":
+                                    combined_explanation = f"{resume_explanation} Additionally, review analysis shows: {review_explanation}"
+                                else:
+                                    combined_explanation = f"{resume_explanation} さらに、レビュー分析では: {review_explanation}"
+                            else:
+                                combined_explanation = resume_explanation
+                            
+                            # Combine strengths and gaps
+                            all_strengths = resume_strengths + review_strengths
+                            all_gaps = resume_gaps + review_gaps
+                        else:
+                            combined_explanation = resume_explanation
+                            all_strengths = resume_strengths
+                            all_gaps = resume_gaps
+                        
                         evaluation = CandidateEvaluation(
-                            scores=scores,
-                            strengths=eval_data.get("strengths", [])[:3],
-                            gaps=eval_data.get("gaps", [])[:2],
-                            explanation=eval_data.get("explanation", "")
+                            scores=resume_scores,
+                            strengths=all_strengths[:3],
+                            gaps=all_gaps[:2],
+                            explanation=combined_explanation
                         )
                         
                         evaluations.append({
@@ -1474,13 +1697,26 @@ Evaluate how similar this candidate is to the target employee across 5 dimension
                             "evaluation": evaluation
                         })
                         
-                        # Send progress update after LLM analysis completes
-                        progress_data = {
+                        # Send progress update after resume analysis completes
+                        resume_progress_data = {
                             "type": "progress",
                             "current": idx,
-                            "total": total
+                            "total": total,
+                            "stage": "resume",
+                            "message": f"Analyzing resume ({idx}/{total})" if language == "en" else f"レジュメ分析中 ({idx}/{total})"
                         }
-                        yield f"data: {json.dumps(progress_data)}\n\n"
+                        yield f"data: {json.dumps(resume_progress_data)}\n\n"
+                        
+                        # Send progress update after review analysis completes (if review data exists)
+                        if review_scores and review_scores.get("overall"):
+                            review_progress_data = {
+                                "type": "progress",
+                                "current": idx,
+                                "total": total,
+                                "stage": "review",
+                                "message": f"Analyzing review data ({idx}/{total})" if language == "en" else f"レビューデータ分析中 ({idx}/{total})"
+                            }
+                            yield f"data: {json.dumps(review_progress_data)}\n\n"
                     except (json.JSONDecodeError, Exception) as e:
                         logger.error(f"Failed to parse evaluation for {candidate_id}: {e}")
                         # Still send progress update even if parsing fails
@@ -1525,9 +1761,9 @@ Evaluate how similar this candidate is to the target employee across 5 dimension
             })
         
         if language == "en":
-            thinking_text = f"Resume analysis complete. Evaluated {len(evaluations)} candidates and selected the top 3 most similar employees."
+            thinking_text = f"Resume and review analysis complete. Evaluated {len(evaluations)} candidates and selected the top 3 most similar employees."
         else:
-            thinking_text = f"レジュメ分析が完了しました。{len(evaluations)}人の候補者を評価し、最も類似した3人を選出しました。"
+            thinking_text = f"レジュメとレビュー分析が完了しました。{len(evaluations)}人の候補者を評価し、最も類似した3人を選出しました。"
         
         # Send final results
         final_data = {
@@ -1575,6 +1811,12 @@ async def evaluate_candidates(request: EvaluateRequest):
             progress_messages.append(f"Analyzing resume {idx} of {len(candidate_ids)}: {candidate_emp.get('employee_name', candidate_id)}")
         else:
             progress_messages.append(f"レジュメ {idx}/{len(candidate_ids)} を分析中: {candidate_emp.get('employee_name', candidate_id)}")
+        
+        # Also analyze review data after resume analysis
+        if language == "en":
+            progress_messages.append(f"Analyzing review data for {candidate_emp.get('employee_name', candidate_id)}")
+        else:
+            progress_messages.append(f"レビューデータを分析中: {candidate_emp.get('employee_name', candidate_id)}")
         
         # Build evaluation prompt based on language
         if language == "en":
@@ -1715,13 +1957,171 @@ Evaluate how similar this candidate is to the target employee across 5 dimension
                 
                 try:
                     eval_data = json.loads(content)
+                    resume_scores = EvaluationScore(**eval_data.get("scores", {}))
+                    resume_strengths = eval_data.get("strengths", [])[:3]
+                    resume_gaps = eval_data.get("gaps", [])[:2]
+                    resume_explanation = eval_data.get("explanation", "")
                     
-                    scores = EvaluationScore(**eval_data.get("scores", {}))
+                    # Step 2: Analyze review data
+                    target_reviews = review_service.get_all_reviews_for_employee(target_id)
+                    candidate_reviews = review_service.get_all_reviews_for_employee(candidate_id)
+                    
+                    review_scores = None
+                    review_strengths = []
+                    review_gaps = []
+                    review_explanation = ""
+                    
+                    if target_reviews.get("monthly") or target_reviews.get("half_year") or \
+                       candidate_reviews.get("monthly") or candidate_reviews.get("half_year"):
+                        
+                        # Build review analysis prompt
+                        if language == "en":
+                            review_system_prompt = """You are an excellent HR evaluator. Analyze employee review data (monthly and half-year reviews) and evaluate similarity to the target employee's performance and growth trajectory.
+
+Output must be in JSON format following this structure:
+{
+  "scores": {
+    "performance_alignment": 85,
+    "growth_trajectory": 80,
+    "goal_achievement": 75,
+    "career_alignment": 90,
+    "overall": 82
+  },
+  "strengths": [
+    "Similar performance patterns",
+    "Aligned career goals"
+  ],
+  "gaps": [
+    "Different growth trajectory",
+    "Different performance focus"
+  ],
+  "explanation": "This candidate shows similar performance patterns and career alignment, but has a different growth trajectory."
+}
+
+Important:
+- Each score is an integer from 0-100
+- overall is the average of the 4 dimensions (rounded)
+- strengths: maximum 2, gaps: maximum 2
+- explanation: 1-2 sentences in natural English
+- Output JSON only, do not use markdown code blocks"""
+                        else:
+                            review_system_prompt = """あなたは優秀な人事評価者です。従業員のレビューデータ（月次レビューと半期レビュー）を分析し、ターゲット従業員のパフォーマンスと成長軌道との類似度を評価してください。
+
+出力は必ずJSON形式で、以下の構造に従ってください：
+{
+  "scores": {
+    "performance_alignment": 85,
+    "growth_trajectory": 80,
+    "goal_achievement": 75,
+    "career_alignment": 90,
+    "overall": 82
+  },
+  "strengths": [
+    "類似したパフォーマンスパターン",
+    "一致したキャリア目標"
+  ],
+  "gaps": [
+    "異なる成長軌道",
+    "異なるパフォーマンス焦点"
+  ],
+  "explanation": "この候補者は類似したパフォーマンスパターンとキャリアの一致を示していますが、成長軌道が異なります。"
+}
+
+重要：
+- 各スコアは0-100の整数
+- overallは4つの次元の平均（四捨五入）
+- strengthsは最大2つ、gapsは最大2つ
+- explanationは自然な日本語で1-2文
+- JSONのみを出力し、マークダウンコードブロックは使用しない"""
+                        
+                        # Format review data for prompt
+                        target_review_text = ""
+                        if target_reviews.get("monthly"):
+                            m = target_reviews["monthly"]
+                            target_review_text += f"Monthly Review: Goal: {m.get('monthly_goal', '')}, Review: {m.get('monthly_review', '')[:200]}\n"
+                        if target_reviews.get("half_year"):
+                            h = target_reviews["half_year"]
+                            target_review_text += f"Half-Year Review: Score: {h.get('self_assessment_score', '')}, Growth: {h.get('half_year_self_review_achievement_growth', '')[:200]}, Career: {h.get('career_intentions', '')}\n"
+                        
+                        candidate_review_text = ""
+                        if candidate_reviews.get("monthly"):
+                            m = candidate_reviews["monthly"]
+                            candidate_review_text += f"Monthly Review: Goal: {m.get('monthly_goal', '')}, Review: {m.get('monthly_review', '')[:200]}\n"
+                        if candidate_reviews.get("half_year"):
+                            h = candidate_reviews["half_year"]
+                            candidate_review_text += f"Half-Year Review: Score: {h.get('self_assessment_score', '')}, Growth: {h.get('half_year_self_review_achievement_growth', '')[:200]}, Career: {h.get('career_intentions', '')}\n"
+                        
+                        if language == "en":
+                            review_user_prompt = f"""Target Employee Reviews:
+{target_review_text if target_review_text else "No review data available"}
+
+Candidate Reviews:
+{candidate_review_text if candidate_review_text else "No review data available"}
+
+Evaluate how similar this candidate's performance and growth trajectory is to the target employee."""
+                        else:
+                            review_user_prompt = f"""ターゲット従業員のレビュー:
+{target_review_text if target_review_text else "レビューデータなし"}
+
+候補者のレビュー:
+{candidate_review_text if candidate_review_text else "レビューデータなし"}
+
+この候補者のパフォーマンスと成長軌道がターゲット従業員とどの程度類似しているか評価してください。"""
+                        
+                        try:
+                            review_messages = [
+                                {"role": "system", "content": review_system_prompt},
+                                {"role": "user", "content": review_user_prompt}
+                            ]
+                            
+                            review_response = await call_azure_openai(review_messages, temperature=0.2, use_json_format=True)
+                            
+                            if "choices" in review_response and len(review_response["choices"]) > 0:
+                                review_content = review_response["choices"][0]["message"]["content"]
+                                review_content = re.sub(r'```json\s*', '', review_content)
+                                review_content = re.sub(r'```\s*', '', review_content)
+                                review_content = review_content.strip()
+                                
+                                review_eval_data = json.loads(review_content)
+                                review_scores = review_eval_data.get("scores", {})
+                                review_strengths = review_eval_data.get("strengths", [])[:2]
+                                review_gaps = review_eval_data.get("gaps", [])[:2]
+                                review_explanation = review_eval_data.get("explanation", "")
+                        except Exception as e:
+                            logger.warning(f"Failed to analyze review data for {candidate_id}: {e}")
+                            # Continue without review scores if analysis fails
+                    
+                    # Combine resume and review scores (70% resume, 30% review)
+                    if review_scores and review_scores.get("overall"):
+                        resume_overall = resume_scores.overall
+                        review_overall = review_scores.get("overall", resume_overall)
+                        combined_overall = int((resume_overall * 0.7) + (review_overall * 0.3))
+                        
+                        # Update overall score
+                        resume_scores.overall = combined_overall
+                        
+                        # Combine explanations
+                        if review_explanation:
+                            if language == "en":
+                                combined_explanation = f"{resume_explanation} Additionally, review analysis shows: {review_explanation}"
+                            else:
+                                combined_explanation = f"{resume_explanation} さらに、レビュー分析では: {review_explanation}"
+                        else:
+                            combined_explanation = resume_explanation
+                        
+                        # Combine strengths and gaps
+                        all_strengths = resume_strengths + review_strengths
+                        all_gaps = resume_gaps + review_gaps
+                    else:
+                        combined_explanation = resume_explanation
+                        all_strengths = resume_strengths
+                        all_gaps = resume_gaps
+                    
                     evaluation = CandidateEvaluation(
-                        scores=scores,
-                        strengths=eval_data.get("strengths", [])[:3],
-                        gaps=eval_data.get("gaps", [])[:2],
-                        explanation=eval_data.get("explanation", "")
+                        scores=resume_scores,
+                        strengths=all_strengths[:3],
+                        gaps=all_gaps[:2],
+                        explanation=combined_explanation
                     )
                     
                     evaluations.append({
@@ -1754,9 +2154,9 @@ Evaluate how similar this candidate is to the target employee across 5 dimension
         ))
     
     if language == "en":
-        thinking_text = f"Resume analysis complete. Evaluated {len(evaluations)} candidates and selected the top 3 most similar employees."
+        thinking_text = f"Resume and review analysis complete. Evaluated {len(evaluations)} candidates and selected the top 3 most similar employees."
     else:
-        thinking_text = f"レジュメ分析が完了しました。{len(evaluations)}人の候補者を評価し、最も類似した3人を選出しました。"
+        thinking_text = f"レジュメとレビュー分析が完了しました。{len(evaluations)}人の候補者を評価し、最も類似した3人を選出しました。"
     
     return EvaluateResponse(
         stage="evaluation",
@@ -1764,6 +2164,345 @@ Evaluate how similar this candidate is to the target employee across 5 dimension
         progress_messages=progress_messages,
         top_3_candidates=top_3_results
     )
+
+
+@app.post("/api/search/natural-language", response_model=NaturalLanguageSearchResponse)
+async def natural_language_search(request: NaturalLanguageSearchRequest):
+    """
+    Natural language search for employees
+    Layer 1: Parse natural language query into structured filters using LLM
+    Layer 2: Apply filters to search employees
+    """
+    employees = load_employees()
+    if not employees:
+        raise HTTPException(status_code=404, detail="No employee data available")
+    
+    query = request.query.strip()
+    language = request.language or "ja"
+    
+    if not query:
+        raise HTTPException(status_code=400, detail="Query is required")
+    
+    # Layer 1: Parse natural language query using LLM
+    if language == "en":
+        system_prompt = """You are an excellent HR search assistant. Parse natural language queries about employees into structured search filters.
+
+Output must be in JSON format following this structure:
+{
+  "filters": {
+    "job_family": "Engineer",
+    "dept_3": ["AI Division", "Data Science"],
+    "job_title": ["Senior Engineer"],
+    "years_of_service_min": 2,
+    "years_of_service_max": null,
+    "current_employee_flag": "●",
+    "gender": null,
+    "location": null,
+    "skills": ["Python", "AI/ML"]
+  },
+  "thinking_text": "I understood the query as: finding employees with less than 2 years of experience in the AI department. I'll search for current employees in AI-related departments with less than 2 years of service."
+}
+
+Available database fields:
+- employee_id, employee_name, mail
+- job_title, job_family
+- dept_1, dept_2, dept_3, dept_4, dept_5, dept_6
+- years_of_service (string format, e.g., "1 year 3 months" or "1年3ヵ月")
+- current_employee_flag ("●" for current employees, empty for former)
+- location, employment_type, gender ("男" for male, "女" for female)
+- entered_at (date format: YYYY-MM-DD)
+
+Important:
+- Parse the query carefully and extract all mentioned criteria
+- years_of_service_min/max: extract numeric years from phrases like "less than 2 years", "more than 5 years"
+- dept_3: map department names mentioned in query (e.g., "AI department" -> ["AI推進室", "AIアクセラレーション部"])
+- job_family: extract job family if mentioned (e.g., "Engineer", "エンジニア")
+- thinking_text: explain what you understood from the query in natural language
+- Output JSON only, do not use markdown code blocks"""
+    else:
+        system_prompt = """あなたは優秀な人事検索アシスタントです。従業員に関する自然言語クエリを構造化された検索フィルターに変換してください。
+
+出力は必ずJSON形式で、以下の構造に従ってください：
+{
+  "filters": {
+    "job_family": "エンジニア",
+    "dept_3": ["AI推進室", "データサイエンス部"],
+    "job_title": ["シニアエンジニア"],
+    "years_of_service_min": 2,
+    "years_of_service_max": null,
+    "current_employee_flag": "●",
+    "gender": null,
+    "location": null,
+    "skills": ["Python", "AI/ML"]
+  },
+  "thinking_text": "クエリを理解しました：AI部門で2年未満の経験を持つ従業員を探す。AI関連部署で2年未満の勤続年数の現役従業員を検索します。"
+}
+
+利用可能なデータベースフィールド：
+- employee_id, employee_name, mail
+- job_title, job_family
+- dept_1, dept_2, dept_3, dept_4, dept_5, dept_6
+- years_of_service (文字列形式、例: "1年3ヵ月")
+- current_employee_flag ("●" が現役従業員、空が退職者)
+- location, employment_type, gender ("男" が男性、"女" が女性)
+- entered_at (日付形式: YYYY-MM-DD)
+
+重要：
+- クエリを注意深く解析し、言及されているすべての条件を抽出
+- years_of_service_min/max: "2年未満"、"5年以上"などのフレーズから数値を抽出
+- dept_3: クエリで言及された部署名をマッピング（例: "AI部門" -> ["AI推進室", "AIアクセラレーション部"]）
+- job_family: 言及されていれば職種を抽出（例: "エンジニア"）
+- thinking_text: クエリから理解した内容を自然な日本語で説明
+- JSONのみを出力し、マークダウンコードブロックは使用しない"""
+    
+    user_prompt = f"""以下の自然言語クエリを解析して、構造化された検索フィルターに変換してください：
+
+"{query}"
+
+利用可能な部署の例：
+- AI推進室、AIアクセラレーション部
+- データサイエンス部
+- 経理部、財務部
+- 人事部、総務部
+など"""
+    
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt}
+    ]
+    
+    try:
+        # Parse query
+        if language == "en":
+            thinking_text_parsing = "🤔 Analyzing your search query..."
+        else:
+            thinking_text_parsing = "🤔 検索クエリを分析中..."
+        
+        response = await call_azure_openai(messages, temperature=0.1, use_json_format=True)
+        
+        if "choices" not in response or len(response["choices"]) == 0:
+            raise HTTPException(status_code=500, detail="No response from Azure OpenAI")
+        
+        content = response["choices"][0]["message"]["content"]
+        
+        # Clean JSON
+        content = re.sub(r'```json\s*', '', content)
+        content = re.sub(r'```\s*', '', content)
+        content = content.strip()
+        
+        # Parse JSON
+        try:
+            parsed_data = json.loads(content)
+            filters = parsed_data.get("filters", {})
+            thinking_text = parsed_data.get("thinking_text", thinking_text_parsing)
+        except json.JSONDecodeError as e:
+            raise HTTPException(status_code=500, detail=f"Failed to parse JSON response: {str(e)}")
+        
+        # Layer 2: Apply filters to search employees
+        if language == "en":
+            thinking_text_filtering = f"✅ Query understood: {thinking_text}\n🔍 Searching database..."
+        else:
+            thinking_text_filtering = f"✅ クエリを理解しました: {thinking_text}\n🔍 データベースを検索中..."
+        
+        filtered_employees = []
+        
+        for emp in employees:
+            # Check current employee flag
+            if filters.get("current_employee_flag"):
+                if emp.get("current_employee_flag") != filters.get("current_employee_flag"):
+                    continue
+            
+            # Check job_family
+            if filters.get("job_family"):
+                if emp.get("job_family") != filters.get("job_family"):
+                    continue
+            
+            # Check dept_3
+            if filters.get("dept_3"):
+                dept_3_list = filters.get("dept_3", [])
+                emp_dept_3 = emp.get("dept_3", "")
+                if emp_dept_3 not in dept_3_list:
+                    # Allow flexible matching for AI/data-related departments
+                    dept_3_lower = emp_dept_3.lower()
+                    is_related = False
+                    for filter_dept in dept_3_list:
+                        filter_lower = filter_dept.lower()
+                        ai_keywords = ["ai", "機械学習", "データ", "ml", "データサイエンス", "ai推進", "aiアクセラレーション"]
+                        if any(keyword in dept_3_lower or keyword in filter_lower for keyword in ai_keywords):
+                            is_related = True
+                            break
+                    if not is_related:
+                        continue
+            
+            # Check job_title
+            if filters.get("job_title"):
+                job_title_list = filters.get("job_title", [])
+                emp_job_title = emp.get("job_title", "")
+                if emp_job_title not in job_title_list:
+                    # Allow similar roles
+                    is_similar = False
+                    engineer_keywords = ["エンジニア", "engineer"]
+                    emp_title_lower = emp_job_title.lower()
+                    for filter_title in job_title_list:
+                        filter_title_lower = filter_title.lower()
+                        if any(kw in emp_title_lower and kw in filter_title_lower for kw in engineer_keywords):
+                            is_similar = True
+                            break
+                    if not is_similar:
+                        continue
+            
+            # Check years_of_service
+            if filters.get("years_of_service_min") is not None or filters.get("years_of_service_max") is not None:
+                years_str = emp.get("years_of_service", "")
+                entered_at = emp.get("entered_at")
+                years = 0.0
+                
+                if entered_at:
+                    years = calculate_years_of_experience(entered_at)
+                elif years_str:
+                    # Parse string like "1年3ヵ月" or "1 year 3 months"
+                    match = re.search(r'(\d+)年', years_str)
+                    if match:
+                        years = float(match.group(1))
+                
+                if filters.get("years_of_service_min") is not None:
+                    if years < filters.get("years_of_service_min"):
+                        continue
+                
+                if filters.get("years_of_service_max") is not None:
+                    if years > filters.get("years_of_service_max"):
+                        continue
+            
+            # Check gender
+            if filters.get("gender"):
+                emp_gender = emp.get("gender", "")
+                if emp_gender != filters.get("gender"):
+                    continue
+            
+            # Check location
+            if filters.get("location"):
+                emp_location = emp.get("location", "")
+                if filters.get("location").lower() not in emp_location.lower():
+                    continue
+            
+            filtered_employees.append(emp)
+        
+        # Limit results
+        filtered_employees = filtered_employees[:100]
+        
+        total_count = len(employees)
+        filtered_count = len(filtered_employees)
+        
+        if language == "en":
+            thinking_text_complete = f"{thinking_text_filtering}\n✅ Found {filtered_count} employees matching your criteria (from {total_count} total employees)."
+        else:
+            thinking_text_complete = f"{thinking_text_filtering}\n✅ {total_count}人の従業員から{filtered_count}人の結果が見つかりました。"
+        
+        return NaturalLanguageSearchResponse(
+            stage="complete",
+            thinking_text=thinking_text_complete,
+            parsed_filters=filters,
+            results=filtered_employees,
+            stats={
+                "total_employees": total_count,
+                "filtered_count": filtered_count,
+                "query": query
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in natural language search: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing natural language search: {str(e)}")
+
+
+# Review Endpoints
+@app.get("/api/reviews/half-year/{employee_id}", response_model=HalfReview)
+async def get_half_review(employee_id: str):
+    """
+    Get half-year review for a specific employee.
+    
+    - **employee_id**: Employee ID to search for
+    """
+    try:
+        review = review_service.get_half_review(employee_id)
+        if review is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Half-year review for employee {employee_id} not found"
+            )
+        return review
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching half-year review: {str(e)}")
+
+
+@app.get("/api/reviews/half-year", response_model=List[HalfReview])
+async def get_all_half_reviews():
+    """
+    Get all half-year reviews.
+    """
+    try:
+        reviews = review_service.get_all_half_reviews()
+        return reviews
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching half-year reviews: {str(e)}")
+
+
+@app.get("/api/reviews/monthly/{employee_id}", response_model=MonthlyReview)
+async def get_monthly_review(employee_id: str):
+    """
+    Get monthly review for a specific employee.
+    
+    - **employee_id**: Employee ID to search for
+    """
+    try:
+        review = review_service.get_monthly_review(employee_id)
+        if review is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Monthly review for employee {employee_id} not found"
+            )
+        return review
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching monthly review: {str(e)}")
+
+
+@app.get("/api/reviews/monthly", response_model=List[MonthlyReview])
+async def get_all_monthly_reviews():
+    """
+    Get all monthly reviews.
+    """
+    try:
+        reviews = review_service.get_all_monthly_reviews()
+        return reviews
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching monthly reviews: {str(e)}")
+
+
+@app.get("/api/reviews/{employee_id}", response_model=EmployeeReviewsResponse)
+async def get_all_reviews_for_employee(employee_id: str):
+    """
+    Get all reviews (both monthly and half-year) for a specific employee.
+    
+    - **employee_id**: Employee ID to search for
+    """
+    try:
+        reviews = review_service.get_all_reviews_for_employee(employee_id)
+        # Convert dict to models
+        monthly = None
+        half_year = None
+        if reviews.get("monthly"):
+            monthly = MonthlyReview(**reviews["monthly"])
+        if reviews.get("half_year"):
+            half_year = HalfReview(**reviews["half_year"])
+        return EmployeeReviewsResponse(monthly=monthly, half_year=half_year)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching reviews: {str(e)}")
 
 
 if __name__ == "__main__":

@@ -7,7 +7,9 @@ import Instruction from './components/Instruction'
 import PersonCard from './components/PersonCard'
 import SimilarEmployeeCard from './components/SimilarEmployeeCard'
 import LanguageToggle from './components/LanguageToggle'
+import ComingSoon from './components/ComingSoon'
 import { ShiningText } from './components/ShiningText'
+import UnifiedSearch from './components/UnifiedSearch'
 import './App.css'
 
 const API_BASE_URL = '/api'
@@ -15,9 +17,13 @@ const API_BASE_URL = '/api'
 function App() {
   const { t } = useLanguage()
   const [user, setUser] = useState(null)
+  const [currentPage, setCurrentPage] = useState('backfill') // backfill, jd-template, jd-create
   const [loading, setLoading] = useState(false)
   const [selectedPerson, setSelectedPerson] = useState(null)
   const [matchedPeople, setMatchedPeople] = useState([])
+  const [naturalLanguageResults, setNaturalLanguageResults] = useState([])
+  const [naturalLanguageThinking, setNaturalLanguageThinking] = useState([])
+  const [isNaturalLanguageSearch, setIsNaturalLanguageSearch] = useState(false)
   const [similarSearchStage, setSimilarSearchStage] = useState('idle') // idle, analyzing, filtering, evaluating, complete
   const [thinkingLines, setThinkingLines] = useState([])
   const [topSimilarCandidates, setTopSimilarCandidates] = useState([])
@@ -42,12 +48,26 @@ function App() {
     const savedUser = localStorage.getItem('user')
     if (savedUser) {
       setUser(JSON.parse(savedUser))
+      // Auto-select backfill page on login
+      setCurrentPage('backfill')
     }
   }, [])
 
   const handleLogin = (userData) => {
     setUser(userData)
     localStorage.setItem('user', JSON.stringify(userData))
+    // Auto-select backfill page on login
+    setCurrentPage('backfill')
+  }
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    // Clear selections when changing pages
+    setSelectedPerson(null)
+    setMatchedPeople([])
+    setSimilarSearchStage('idle')
+    setTopSimilarCandidates([])
+    setThinkingLines([])
   }
 
   const handleLogout = () => {
@@ -56,6 +76,22 @@ function App() {
   }
 
   const handleClearSelection = () => {
+    setSelectedPerson(null)
+    setMatchedPeople([])
+    setNaturalLanguageResults([])
+    setNaturalLanguageThinking([])
+    setIsNaturalLanguageSearch(false)
+    setSimilarSearchStage('idle')
+    setTopSimilarCandidates([])
+    setThinkingLines([])
+  }
+
+  const handleNaturalLanguageResults = (results, thinkingLines = []) => {
+    // Reset all previous search results and context
+    setNaturalLanguageResults(results)
+    setNaturalLanguageThinking(thinkingLines)
+    setIsNaturalLanguageSearch(true)
+    // Clear other search results and selection when natural language search is used
     setSelectedPerson(null)
     setMatchedPeople([])
     setSimilarSearchStage('idle')
@@ -111,10 +147,17 @@ function App() {
       return
     }
 
+    // Set the selected person so it shows in the sidebar
+    setSelectedPerson(targetEmployee)
+
+    // Reset all previous search results and context
+    setIsNaturalLanguageSearch(false)
     setSimilarSearchStage('analyzing')
     setThinkingLines([])
     setTopSimilarCandidates([])
     setMatchedPeople([])
+    setNaturalLanguageResults([])
+    setNaturalLanguageThinking([])
 
     const language = localStorage.getItem('language') || 'ja'
     const isEnglish = language === 'en'
@@ -374,18 +417,61 @@ function App() {
                 // Update progress in real-time
                 setResumeProgress({ current: data.current, total: data.total })
                 setThinkingLines(prevLines => {
-                  return prevLines.map((line, idx) => {
-                    if (line.isProgress) {
-                      const isEnglish = (localStorage.getItem('language') || 'ja') === 'en'
-                      return {
-                        ...line,
-                        text: isEnglish
-                          ? `💭 Analyzing resume (${data.current}/${data.total})`
-                          : `💭 レジュメ分析中 (${data.current}/${data.total})`
+                  const isEnglish = (localStorage.getItem('language') || 'ja') === 'en'
+                  
+                  // Handle resume progress
+                  if (data.stage === 'resume' || !data.stage) {
+                    return prevLines.map((line, idx) => {
+                      if (line.isProgress && (!line.stage || line.stage === 'resume')) {
+                        return {
+                          ...line,
+                          text: isEnglish
+                            ? `💭 Analyzing resume (${data.current}/${data.total})`
+                            : `💭 レジュメ分析中 (${data.current}/${data.total})`,
+                          stage: 'resume'
+                        }
+                      }
+                      return line
+                    })
+                  }
+                  
+                  // Handle review progress
+                  if (data.stage === 'review') {
+                    // Check if review progress line already exists
+                    const hasReviewProgress = prevLines.some(line => line.isProgress && line.stage === 'review')
+                    
+                    if (!hasReviewProgress) {
+                      // Add review progress line after resume progress
+                      const newLines = [...prevLines]
+                      const resumeProgressIdx = newLines.findIndex(line => line.isProgress && line.stage === 'resume')
+                      if (resumeProgressIdx >= 0) {
+                        newLines.splice(resumeProgressIdx + 1, 0, {
+                          text: isEnglish
+                            ? `💭 Analyzing review data (${data.current}/${data.total})`
+                            : `💭 レビューデータ分析中 (${data.current}/${data.total})`,
+                          status: 'active',
+                          isProgress: true,
+                          stage: 'review'
+                        })
+                        return newLines
                       }
                     }
-                    return line
-                  })
+                    
+                    // Update existing review progress line
+                    return prevLines.map((line, idx) => {
+                      if (line.isProgress && line.stage === 'review') {
+                        return {
+                          ...line,
+                          text: isEnglish
+                            ? `💭 Analyzing review data (${data.current}/${data.total})`
+                            : `💭 レビューデータ分析中 (${data.current}/${data.total})`
+                        }
+                      }
+                      return line
+                    })
+                  }
+                  
+                  return prevLines
                 })
               } else if (data.type === 'complete') {
                 // Final results received
@@ -398,7 +484,7 @@ function App() {
                 
                 setResumeProgress({ current: data.total, total: data.total })
                 
-                // Update thinking lines - mark progress as complete and add final message
+                // Update thinking lines - mark all progress as complete and add final message
                 setThinkingLines(prevLines => {
                   const updated = prevLines.map(line => {
                     if (line.isProgress) {
@@ -464,34 +550,78 @@ function App() {
     return <Login onLogin={handleLogin} />
   }
 
-  return (
-    <div className="app-container">
-      <div className="app-layout">
-        <Sidebar user={user} onLogout={handleLogout} />
-        <div className="app-main">
-          <header className="app-header">
-            <div className="header-content">
-              <h1 className="app-title">{t('appTitle')}</h1>
-              <div className="header-language">
-                <LanguageToggle />
+  // Get page title based on current page
+  const getPageTitle = () => {
+    switch (currentPage) {
+      case 'backfill':
+        return t('app.backfillSearch')
+      case 'jd-template':
+        return t('app.jdTemplate')
+      case 'jd-create':
+        return t('app.jdCreate')
+      default:
+        return t('app.backfillSearch')
+    }
+  }
+
+  // Check if any search has been performed
+  const hasSearchResults = 
+    selectedPerson || 
+    matchedPeople.length > 0 || 
+    naturalLanguageResults.length > 0 || 
+    isNaturalLanguageSearch ||
+    similarSearchStage !== 'idle' ||
+    topSimilarCandidates.length > 0 ||
+    thinkingLines.length > 0
+
+  // Render page content based on current page
+  const renderPageContent = () => {
+    if (currentPage === 'backfill') {
+      // Show centered search view when no search has been performed
+      if (!hasSearchResults) {
+        return (
+          <div className="centered-search-view">
+            <div className="centered-search-container">
+              <UnifiedSearch
+                onEmployeeSelect={setSelectedPerson}
+                selectedEmployee={selectedPerson}
+                onSimilarSearch={handleSimilarSearch}
+                onNaturalLanguageResults={handleNaturalLanguageResults}
+              />
+              <div className="search-suggestions">
+                <div className="suggestion-item">
+                  <span className="suggestion-icon">🔍</span>
+                  <span className="suggestion-text">{t('search.byNameOrId') || 'Search by name or employee ID'}</span>
+                </div>
+                <div className="suggestion-item">
+                  <span className="suggestion-icon">💬</span>
+                  <span className="suggestion-text">{t('search.useNaturalLanguage') || 'Use natural language to search'}</span>
+                </div>
               </div>
             </div>
-          </header>
+          </div>
+        )
+      }
 
+      return (
+        <>
           <MainHeader 
-            breadcrumbs={[t('backfillSearch')]} 
+            breadcrumbs={[t('app.backfillSearch')]} 
             onPersonSelect={setSelectedPerson}
             selectedPerson={selectedPerson}
             onClear={handleClearSelection}
+            onNaturalLanguageResults={handleNaturalLanguageResults}
+            onSimilarSearch={handleSimilarSearch}
           />
-
           <div className="app-content">
-            <Instruction 
-              selectedPerson={selectedPerson}
-              onSearch={handleSearch} 
-              onSimilarSearch={handleSimilarSearch} 
-            />
-            <div className="app-results">
+            {!isNaturalLanguageSearch && (
+              <Instruction 
+                selectedPerson={selectedPerson}
+                onSearch={handleSearch} 
+                onSimilarSearch={handleSimilarSearch} 
+              />
+            )}
+            <div className={`app-results ${isNaturalLanguageSearch ? 'app-results-full-width' : ''}`}>
               {/* Similar Employee Search Results */}
               {similarSearchStage !== 'idle' && (
                 <>
@@ -551,8 +681,42 @@ function App() {
                 </>
               )}
               
+              {/* Natural Language Search Thinking Process */}
+              {naturalLanguageThinking.length > 0 && (
+                <div className="thinking-process">
+                  {naturalLanguageThinking.map((line, index) => {
+                    // Show shimmer for active lines
+                    if (line.status === 'active') {
+                      return (
+                        <div key={index} className="thinking-line active">
+                          <ShiningText text={line.text} />
+                        </div>
+                      )
+                    }
+                    // Regular completed/error lines
+                    return (
+                      <div key={index} className={`thinking-line ${line.status}`}>
+                        {line.text}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+              
+              {/* Natural Language Search Results */}
+              {naturalLanguageResults.length > 0 && (
+                <div className="results-grid">
+                  {naturalLanguageResults.map((emp, index) => (
+                    <PersonCard
+                      key={emp.employee_id || index}
+                      person={emp}
+                    />
+                  ))}
+                </div>
+              )}
+              
               {/* Regular Search Results */}
-              {similarSearchStage === 'idle' && (
+              {similarSearchStage === 'idle' && naturalLanguageResults.length === 0 && (
                 <>
                   {loading && (
                     <div className="results-loading">{t('searchingResults')}</div>
@@ -574,6 +738,59 @@ function App() {
               )}
             </div>
           </div>
+        </>
+      )
+    } else if (currentPage === 'jd-template') {
+      return (
+        <>
+          <MainHeader 
+            breadcrumbs={[t('app.jdTemplate')]} 
+            onPersonSelect={setSelectedPerson}
+            selectedPerson={selectedPerson}
+            onClear={handleClearSelection}
+          />
+          <div className="app-content">
+            <ComingSoon pageName={t('app.jdTemplate')} />
+          </div>
+        </>
+      )
+    } else if (currentPage === 'jd-create') {
+      return (
+        <>
+          <MainHeader 
+            breadcrumbs={[t('app.jdCreate')]} 
+            onPersonSelect={setSelectedPerson}
+            selectedPerson={selectedPerson}
+            onClear={handleClearSelection}
+          />
+          <div className="app-content">
+            <ComingSoon pageName={t('app.jdCreate')} />
+          </div>
+        </>
+      )
+    }
+  }
+
+  return (
+    <div className="app-container">
+      <div className="app-layout">
+        <Sidebar 
+          user={user} 
+          onLogout={handleLogout}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+        <div className="app-main">
+          <header className="app-header">
+            <div className="header-content">
+              <h1 className="app-title">{t('app.title')}</h1>
+              <div className="header-language">
+                <LanguageToggle />
+              </div>
+            </div>
+          </header>
+
+          {renderPageContent()}
         </div>
       </div>
     </div>
