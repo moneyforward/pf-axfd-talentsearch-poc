@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import logging
 import asyncio
+from datetime import datetime
 from review_service import ReviewService
 
 # Setup logging
@@ -2190,33 +2191,86 @@ async def natural_language_search(request: NaturalLanguageSearchRequest):
 Output must be in JSON format following this structure:
 {
   "filters": {
-    "job_family": "Engineer",
-    "dept_3": ["AI Division", "Data Science"],
-    "job_title": ["Senior Engineer"],
-    "years_of_service_min": 2,
-    "years_of_service_max": null,
+    "employee_id": null,
+    "employee_name": null,
+    "mail": null,
+    "nickname": null,
+    "employment_type": null,
     "current_employee_flag": "●",
+    "entered_at_min": null,
+    "entered_at_max": null,
+    "last_day_at": null,
+    "retired_at": null,
+    "fulltime_employee_hired_at": null,
+    "fulltime_employee_retired_at": null,
+    "employment_category": null,
+    "recruitment_category_new_graduate": null,
     "gender": null,
+    "birthday_min": null,
+    "birthday_max": null,
+    "age_min": null,
+    "age_max": null,
+    "years_of_service_min": null,
+    "years_of_service_max": null,
+    "dept_1": null,
+    "dept_2": null,
+    "dept_3": null,
+    "dept_4": null,
+    "dept_5": null,
+    "dept_6": null,
     "location": null,
-    "skills": ["Python", "AI/ML"]
+    "job_title": null,
+    "job_family": null,
+    "latest_job_grade": null,
+    "latest_org_grade": null,
+    "grade_combined": null,
+    "salary_table": null,
+    "jp_non_jp_classification": null
   },
   "thinking_text": "I understood the query as: finding employees with less than 2 years of experience in the AI department. I'll search for current employees in AI-related departments with less than 2 years of service."
 }
 
-Available database fields:
-- employee_id, employee_name, mail
-- job_title, job_family
-- dept_1, dept_2, dept_3, dept_4, dept_5, dept_6
-- years_of_service (string format, e.g., "1 year 3 months" or "1年3ヵ月")
-- current_employee_flag ("●" for current employees, empty for former)
-- location, employment_type, gender ("男" for male, "女" for female)
-- entered_at (date format: YYYY-MM-DD)
+Available database fields (use exact field names):
+- employee_id (string): Employee ID
+- employee_name (string): Full name
+- mail (string): Email address
+- nickname (string or null): Nickname
+- employment_type (string): "正社員" (full-time), "業務委託" (contractor), etc.
+- current_employee_flag (string): "●" for current employees, empty/null for former
+- entered_at (date, YYYY-MM-DD): Employment start date
+- last_day_at (date or null): Last working day
+- retired_at (date or null): Retirement date
+- fulltime_employee_hired_at (date or null): Full-time hire date
+- fulltime_employee_retired_at (date or null): Full-time retirement date
+- employment_category (string or null): Employment category
+- recruitment_category_new_graduate (string or null): New graduate flag
+- gender (string): "男" (male), "女" (female)
+- birthday (date, YYYY-MM-DD): Birth date
+- age (number or null): Age
+- years_of_service (string): Service years, e.g., "1年3ヵ月" or "1 year 3 months"
+- dept_1, dept_2, dept_3, dept_4, dept_5, dept_6 (string): Department hierarchy levels
+- location (string): Office location, e.g., "本社" (headquarters)
+- job_title (string): Job title, e.g., "シニアエンジニア" (Senior Engineer)
+- job_family (string): Job family, e.g., "エンジニア" (Engineer)
+- latest_job_grade (string or null): Latest job grade
+- latest_org_grade (string or null): Latest organizational grade
+- grade_combined (string or null): Combined grade
+- salary_table (string or null): Salary table reference
+- jp_non_jp_classification (string): "JP" or "Non-JP" classification
+
+Filter field types:
+- String fields: Use exact string value or array of strings for multiple matches
+- Date fields: Use YYYY-MM-DD format, or use _min/_max for ranges (e.g., entered_at_min, entered_at_max)
+- Numeric fields: Use number or _min/_max for ranges (e.g., age_min, age_max, years_of_service_min, years_of_service_max)
+- Boolean-like: current_employee_flag uses "●" for current employees
 
 Important:
-- Parse the query carefully and extract all mentioned criteria
-- years_of_service_min/max: extract numeric years from phrases like "less than 2 years", "more than 5 years"
-- dept_3: map department names mentioned in query (e.g., "AI department" -> ["AI推進室", "AIアクセラレーション部"])
-- job_family: extract job family if mentioned (e.g., "Engineer", "エンジニア")
+- Parse the query carefully and extract ALL mentioned criteria using the exact field names above
+- For date ranges, use _min and _max suffixes (e.g., entered_at_min, birthday_max)
+- For numeric ranges, use _min and _max suffixes (e.g., age_min, years_of_service_max)
+- For department searches, you can use any dept_1 through dept_6 field
+- For list fields (like dept_3), use an array if multiple values should match
+- Set unused fields to null
 - thinking_text: explain what you understood from the query in natural language
 - Output JSON only, do not use markdown code blocks"""
     else:
@@ -2225,46 +2279,101 @@ Important:
 出力は必ずJSON形式で、以下の構造に従ってください：
 {
   "filters": {
-    "job_family": "エンジニア",
-    "dept_3": ["AI推進室", "データサイエンス部"],
-    "job_title": ["シニアエンジニア"],
-    "years_of_service_min": 2,
-    "years_of_service_max": null,
+    "employee_id": null,
+    "employee_name": null,
+    "mail": null,
+    "nickname": null,
+    "employment_type": null,
     "current_employee_flag": "●",
+    "entered_at_min": null,
+    "entered_at_max": null,
+    "last_day_at": null,
+    "retired_at": null,
+    "fulltime_employee_hired_at": null,
+    "fulltime_employee_retired_at": null,
+    "employment_category": null,
+    "recruitment_category_new_graduate": null,
     "gender": null,
+    "birthday_min": null,
+    "birthday_max": null,
+    "age_min": null,
+    "age_max": null,
+    "years_of_service_min": null,
+    "years_of_service_max": null,
+    "dept_1": null,
+    "dept_2": null,
+    "dept_3": null,
+    "dept_4": null,
+    "dept_5": null,
+    "dept_6": null,
     "location": null,
-    "skills": ["Python", "AI/ML"]
+    "job_title": null,
+    "job_family": null,
+    "latest_job_grade": null,
+    "latest_org_grade": null,
+    "grade_combined": null,
+    "salary_table": null,
+    "jp_non_jp_classification": null
   },
   "thinking_text": "クエリを理解しました：AI部門で2年未満の経験を持つ従業員を探す。AI関連部署で2年未満の勤続年数の現役従業員を検索します。"
 }
 
-利用可能なデータベースフィールド：
-- employee_id, employee_name, mail
-- job_title, job_family
-- dept_1, dept_2, dept_3, dept_4, dept_5, dept_6
-- years_of_service (文字列形式、例: "1年3ヵ月")
-- current_employee_flag ("●" が現役従業員、空が退職者)
-- location, employment_type, gender ("男" が男性、"女" が女性)
-- entered_at (日付形式: YYYY-MM-DD)
+利用可能なデータベースフィールド（正確なフィールド名を使用）：
+- employee_id (文字列): 従業員ID
+- employee_name (文字列): 氏名
+- mail (文字列): メールアドレス
+- nickname (文字列またはnull): ニックネーム
+- employment_type (文字列): "正社員"、"業務委託" など
+- current_employee_flag (文字列): "●" が現役従業員、空/null が退職者
+- entered_at (日付, YYYY-MM-DD): 入社日
+- last_day_at (日付またはnull): 最終出社日
+- retired_at (日付またはnull): 退職日
+- fulltime_employee_hired_at (日付またはnull): 正社員採用日
+- fulltime_employee_retired_at (日付またはnull): 正社員退職日
+- employment_category (文字列またはnull): 雇用区分
+- recruitment_category_new_graduate (文字列またはnull): 新卒区分
+- gender (文字列): "男" (男性)、"女" (女性)
+- birthday (日付, YYYY-MM-DD): 生年月日
+- age (数値またはnull): 年齢
+- years_of_service (文字列): 勤続年数、例: "1年3ヵ月"
+- dept_1, dept_2, dept_3, dept_4, dept_5, dept_6 (文字列): 部署階層レベル
+- location (文字列): 勤務地、例: "本社"
+- job_title (文字列): 職位、例: "シニアエンジニア"
+- job_family (文字列): 職種、例: "エンジニア"
+- latest_job_grade (文字列またはnull): 最新の職位等級
+- latest_org_grade (文字列またはnull): 最新の組織等級
+- grade_combined (文字列またはnull): 統合等級
+- salary_table (文字列またはnull): 給与テーブル参照
+- jp_non_jp_classification (文字列): "JP" または "Non-JP" 区分
+
+フィルターフィールドタイプ：
+- 文字列フィールド: 正確な文字列値を使用、または複数一致の場合は文字列配列
+- 日付フィールド: YYYY-MM-DD形式、または範囲の場合は_min/_maxを使用（例: entered_at_min, entered_at_max）
+- 数値フィールド: 数値、または範囲の場合は_min/_maxを使用（例: age_min, age_max, years_of_service_min, years_of_service_max）
+- ブール値風: current_employee_flagは現役従業員に"●"を使用
 
 重要：
-- クエリを注意深く解析し、言及されているすべての条件を抽出
-- years_of_service_min/max: "2年未満"、"5年以上"などのフレーズから数値を抽出
-- dept_3: クエリで言及された部署名をマッピング（例: "AI部門" -> ["AI推進室", "AIアクセラレーション部"]）
-- job_family: 言及されていれば職種を抽出（例: "エンジニア"）
+- クエリを注意深く解析し、上記の正確なフィールド名を使用して言及されているすべての条件を抽出
+- 日付範囲には_minと_maxサフィックスを使用（例: entered_at_min, birthday_max）
+- 数値範囲には_minと_maxサフィックスを使用（例: age_min, years_of_service_max）
+- 部署検索にはdept_1からdept_6のいずれかのフィールドを使用可能
+- リストフィールド（dept_3など）は、複数の値が一致する必要がある場合は配列を使用
+- 使用しないフィールドはnullに設定
 - thinking_text: クエリから理解した内容を自然な日本語で説明
 - JSONのみを出力し、マークダウンコードブロックは使用しない"""
     
-    user_prompt = f"""以下の自然言語クエリを解析して、構造化された検索フィルターに変換してください：
+    if language == "en":
+        user_prompt = f"""Parse the following natural language query and convert it into structured search filters:
 
 "{query}"
 
-利用可能な部署の例：
-- AI推進室、AIアクセラレーション部
-- データサイエンス部
-- 経理部、財務部
-- 人事部、総務部
-など"""
+You can filter by any field in the employee profile schema. Extract all mentioned criteria and map them to the appropriate filter fields."""
+    else:
+        user_prompt = f"""以下の自然言語クエリを解析して、構造化された検索フィルターに変換してください：
+
+"{query}"
+
+従業員プロファイルスキーマの任意のフィールドでフィルタリングできます。言及されているすべての条件を抽出し、適切なフィルターフィールドにマッピングしてください。"""
     
     messages = [
         {"role": "system", "content": system_prompt},
@@ -2307,52 +2416,172 @@ Important:
         filtered_employees = []
         
         for emp in employees:
-            # Check current employee flag
-            if filters.get("current_employee_flag"):
+            match = True
+            
+            # Check employee_id
+            if filters.get("employee_id"):
+                filter_id = filters.get("employee_id")
+                if isinstance(filter_id, list):
+                    if emp.get("employee_id") not in filter_id:
+                        match = False
+                else:
+                    if emp.get("employee_id") != filter_id:
+                        match = False
+            
+            # Check employee_name (partial match)
+            if match and filters.get("employee_name"):
+                filter_name = filters.get("employee_name")
+                emp_name = emp.get("employee_name", "")
+                if isinstance(filter_name, list):
+                    if not any(fn.lower() in emp_name.lower() or emp_name.lower() in fn.lower() for fn in filter_name):
+                        match = False
+                else:
+                    if filter_name.lower() not in emp_name.lower() and emp_name.lower() not in filter_name.lower():
+                        match = False
+            
+            # Check mail (partial match)
+            if match and filters.get("mail"):
+                filter_mail = filters.get("mail")
+                emp_mail = emp.get("mail", "")
+                if isinstance(filter_mail, list):
+                    if not any(fm.lower() in emp_mail.lower() for fm in filter_mail):
+                        match = False
+                else:
+                    if filter_mail.lower() not in emp_mail.lower():
+                        match = False
+            
+            # Check nickname
+            if match and filters.get("nickname"):
+                filter_nickname = filters.get("nickname")
+                emp_nickname = emp.get("nickname", "")
+                if isinstance(filter_nickname, list):
+                    if emp_nickname not in filter_nickname:
+                        match = False
+                else:
+                    if emp_nickname != filter_nickname:
+                        match = False
+            
+            # Check employment_type
+            if match and filters.get("employment_type"):
+                filter_emp_type = filters.get("employment_type")
+                emp_emp_type = emp.get("employment_type", "")
+                if isinstance(filter_emp_type, list):
+                    if emp_emp_type not in filter_emp_type:
+                        match = False
+                else:
+                    if emp_emp_type != filter_emp_type:
+                        match = False
+            
+            # Check current_employee_flag
+            if match and filters.get("current_employee_flag"):
                 if emp.get("current_employee_flag") != filters.get("current_employee_flag"):
-                    continue
+                    match = False
             
-            # Check job_family
-            if filters.get("job_family"):
-                if emp.get("job_family") != filters.get("job_family"):
-                    continue
+            # Check entered_at (date range)
+            if match and (filters.get("entered_at_min") or filters.get("entered_at_max")):
+                entered_at = emp.get("entered_at")
+                if entered_at:
+                    try:
+                        entered_date = datetime.strptime(entered_at, "%Y-%m-%d").date()
+                        if filters.get("entered_at_min"):
+                            min_date = datetime.strptime(filters.get("entered_at_min"), "%Y-%m-%d").date()
+                            if entered_date < min_date:
+                                match = False
+                        if match and filters.get("entered_at_max"):
+                            max_date = datetime.strptime(filters.get("entered_at_max"), "%Y-%m-%d").date()
+                            if entered_date > max_date:
+                                match = False
+                    except (ValueError, TypeError):
+                        pass
             
-            # Check dept_3
-            if filters.get("dept_3"):
-                dept_3_list = filters.get("dept_3", [])
-                emp_dept_3 = emp.get("dept_3", "")
-                if emp_dept_3 not in dept_3_list:
-                    # Allow flexible matching for AI/data-related departments
-                    dept_3_lower = emp_dept_3.lower()
-                    is_related = False
-                    for filter_dept in dept_3_list:
-                        filter_lower = filter_dept.lower()
-                        ai_keywords = ["ai", "機械学習", "データ", "ml", "データサイエンス", "ai推進", "aiアクセラレーション"]
-                        if any(keyword in dept_3_lower or keyword in filter_lower for keyword in ai_keywords):
-                            is_related = True
-                            break
-                    if not is_related:
-                        continue
+            # Check last_day_at
+            if match and filters.get("last_day_at"):
+                filter_date = filters.get("last_day_at")
+                emp_date = emp.get("last_day_at")
+                if emp_date != filter_date:
+                    match = False
             
-            # Check job_title
-            if filters.get("job_title"):
-                job_title_list = filters.get("job_title", [])
-                emp_job_title = emp.get("job_title", "")
-                if emp_job_title not in job_title_list:
-                    # Allow similar roles
-                    is_similar = False
-                    engineer_keywords = ["エンジニア", "engineer"]
-                    emp_title_lower = emp_job_title.lower()
-                    for filter_title in job_title_list:
-                        filter_title_lower = filter_title.lower()
-                        if any(kw in emp_title_lower and kw in filter_title_lower for kw in engineer_keywords):
-                            is_similar = True
-                            break
-                    if not is_similar:
-                        continue
+            # Check retired_at
+            if match and filters.get("retired_at"):
+                filter_date = filters.get("retired_at")
+                emp_date = emp.get("retired_at")
+                if emp_date != filter_date:
+                    match = False
             
-            # Check years_of_service
-            if filters.get("years_of_service_min") is not None or filters.get("years_of_service_max") is not None:
+            # Check fulltime_employee_hired_at
+            if match and filters.get("fulltime_employee_hired_at"):
+                filter_date = filters.get("fulltime_employee_hired_at")
+                emp_date = emp.get("fulltime_employee_hired_at")
+                if emp_date != filter_date:
+                    match = False
+            
+            # Check fulltime_employee_retired_at
+            if match and filters.get("fulltime_employee_retired_at"):
+                filter_date = filters.get("fulltime_employee_retired_at")
+                emp_date = emp.get("fulltime_employee_retired_at")
+                if emp_date != filter_date:
+                    match = False
+            
+            # Check employment_category
+            if match and filters.get("employment_category"):
+                filter_cat = filters.get("employment_category")
+                emp_cat = emp.get("employment_category", "")
+                if isinstance(filter_cat, list):
+                    if emp_cat not in filter_cat:
+                        match = False
+                else:
+                    if emp_cat != filter_cat:
+                        match = False
+            
+            # Check recruitment_category_new_graduate
+            if match and filters.get("recruitment_category_new_graduate"):
+                filter_cat = filters.get("recruitment_category_new_graduate")
+                emp_cat = emp.get("recruitment_category_new_graduate", "")
+                if isinstance(filter_cat, list):
+                    if emp_cat not in filter_cat:
+                        match = False
+                else:
+                    if emp_cat != filter_cat:
+                        match = False
+            
+            # Check gender
+            if match and filters.get("gender"):
+                if emp.get("gender", "") != filters.get("gender"):
+                    match = False
+            
+            # Check birthday (date range)
+            if match and (filters.get("birthday_min") or filters.get("birthday_max")):
+                birthday = emp.get("birthday")
+                if birthday:
+                    try:
+                        birth_date = datetime.strptime(birthday, "%Y-%m-%d").date()
+                        if filters.get("birthday_min"):
+                            min_date = datetime.strptime(filters.get("birthday_min"), "%Y-%m-%d").date()
+                            if birth_date < min_date:
+                                match = False
+                        if match and filters.get("birthday_max"):
+                            max_date = datetime.strptime(filters.get("birthday_max"), "%Y-%m-%d").date()
+                            if birth_date > max_date:
+                                match = False
+                    except (ValueError, TypeError):
+                        pass
+            
+            # Check age (numeric range)
+            if match and (filters.get("age_min") is not None or filters.get("age_max") is not None):
+                emp_age = emp.get("age")
+                if emp_age is not None:
+                    if filters.get("age_min") is not None:
+                        if emp_age < filters.get("age_min"):
+                            match = False
+                    if match and filters.get("age_max") is not None:
+                        if emp_age > filters.get("age_max"):
+                            match = False
+                elif filters.get("age_min") is not None or filters.get("age_max") is not None:
+                    # If age filter is set but employee age is null, exclude
+                    match = False
+            
+            # Check years_of_service (numeric range)
+            if match and (filters.get("years_of_service_min") is not None or filters.get("years_of_service_max") is not None):
                 years_str = emp.get("years_of_service", "")
                 entered_at = emp.get("entered_at")
                 years = 0.0
@@ -2361,31 +2590,188 @@ Important:
                     years = calculate_years_of_experience(entered_at)
                 elif years_str:
                     # Parse string like "1年3ヵ月" or "1 year 3 months"
-                    match = re.search(r'(\d+)年', years_str)
-                    if match:
-                        years = float(match.group(1))
+                    match_years = re.search(r'(\d+)年', years_str)
+                    if match_years:
+                        years = float(match_years.group(1))
                 
                 if filters.get("years_of_service_min") is not None:
                     if years < filters.get("years_of_service_min"):
-                        continue
+                        match = False
                 
-                if filters.get("years_of_service_max") is not None:
+                if match and filters.get("years_of_service_max") is not None:
                     if years > filters.get("years_of_service_max"):
-                        continue
+                        match = False
             
-            # Check gender
-            if filters.get("gender"):
-                emp_gender = emp.get("gender", "")
-                if emp_gender != filters.get("gender"):
-                    continue
+            # Check dept_1
+            if match and filters.get("dept_1"):
+                filter_dept = filters.get("dept_1")
+                emp_dept = emp.get("dept_1", "")
+                if isinstance(filter_dept, list):
+                    if emp_dept not in filter_dept:
+                        match = False
+                else:
+                    if filter_dept.lower() not in emp_dept.lower() and emp_dept.lower() not in filter_dept.lower():
+                        match = False
+            
+            # Check dept_2
+            if match and filters.get("dept_2"):
+                filter_dept = filters.get("dept_2")
+                emp_dept = emp.get("dept_2", "")
+                if isinstance(filter_dept, list):
+                    if emp_dept not in filter_dept:
+                        match = False
+                else:
+                    if filter_dept.lower() not in emp_dept.lower() and emp_dept.lower() not in filter_dept.lower():
+                        match = False
+            
+            # Check dept_3
+            if match and filters.get("dept_3"):
+                filter_dept = filters.get("dept_3")
+                emp_dept = emp.get("dept_3", "")
+                if isinstance(filter_dept, list):
+                    if emp_dept not in filter_dept:
+                        # Allow flexible matching for AI/data-related departments
+                        dept_lower = emp_dept.lower()
+                        is_related = False
+                        for fd in filter_dept:
+                            fd_lower = fd.lower()
+                            ai_keywords = ["ai", "機械学習", "データ", "ml", "データサイエンス", "ai推進", "aiアクセラレーション"]
+                            if any(keyword in dept_lower or keyword in fd_lower for keyword in ai_keywords):
+                                is_related = True
+                                break
+                        if not is_related:
+                            match = False
+                else:
+                    if filter_dept.lower() not in emp_dept.lower() and emp_dept.lower() not in filter_dept.lower():
+                        match = False
+            
+            # Check dept_4
+            if match and filters.get("dept_4"):
+                filter_dept = filters.get("dept_4")
+                emp_dept = emp.get("dept_4", "")
+                if isinstance(filter_dept, list):
+                    if emp_dept not in filter_dept:
+                        match = False
+                else:
+                    if filter_dept.lower() not in emp_dept.lower() and emp_dept.lower() not in filter_dept.lower():
+                        match = False
+            
+            # Check dept_5
+            if match and filters.get("dept_5"):
+                filter_dept = filters.get("dept_5")
+                emp_dept = emp.get("dept_5", "")
+                if isinstance(filter_dept, list):
+                    if emp_dept not in filter_dept:
+                        match = False
+                else:
+                    if filter_dept.lower() not in emp_dept.lower() and emp_dept.lower() not in filter_dept.lower():
+                        match = False
+            
+            # Check dept_6
+            if match and filters.get("dept_6"):
+                filter_dept = filters.get("dept_6")
+                emp_dept = emp.get("dept_6", "")
+                if isinstance(filter_dept, list):
+                    if emp_dept not in filter_dept:
+                        match = False
+                else:
+                    if filter_dept.lower() not in emp_dept.lower() and emp_dept.lower() not in filter_dept.lower():
+                        match = False
             
             # Check location
-            if filters.get("location"):
+            if match and filters.get("location"):
+                filter_location = filters.get("location")
                 emp_location = emp.get("location", "")
-                if filters.get("location").lower() not in emp_location.lower():
-                    continue
+                if isinstance(filter_location, list):
+                    if not any(fl.lower() in emp_location.lower() or emp_location.lower() in fl.lower() for fl in filter_location):
+                        match = False
+                else:
+                    if filter_location.lower() not in emp_location.lower() and emp_location.lower() not in filter_location.lower():
+                        match = False
             
-            filtered_employees.append(emp)
+            # Check job_title
+            if match and filters.get("job_title"):
+                filter_title = filters.get("job_title")
+                emp_title = emp.get("job_title", "")
+                if isinstance(filter_title, list):
+                    if emp_title not in filter_title:
+                        # Allow similar roles
+                        is_similar = False
+                        engineer_keywords = ["エンジニア", "engineer"]
+                        emp_title_lower = emp_title.lower()
+                        for ft in filter_title:
+                            ft_lower = ft.lower()
+                            if any(kw in emp_title_lower and kw in ft_lower for kw in engineer_keywords):
+                                is_similar = True
+                                break
+                        if not is_similar:
+                            match = False
+                else:
+                    if filter_title.lower() not in emp_title.lower() and emp_title.lower() not in filter_title.lower():
+                        match = False
+            
+            # Check job_family
+            if match and filters.get("job_family"):
+                if emp.get("job_family", "") != filters.get("job_family"):
+                    match = False
+            
+            # Check latest_job_grade
+            if match and filters.get("latest_job_grade"):
+                filter_grade = filters.get("latest_job_grade")
+                emp_grade = emp.get("latest_job_grade", "")
+                if isinstance(filter_grade, list):
+                    if emp_grade not in filter_grade:
+                        match = False
+                else:
+                    if emp_grade != filter_grade:
+                        match = False
+            
+            # Check latest_org_grade
+            if match and filters.get("latest_org_grade"):
+                filter_grade = filters.get("latest_org_grade")
+                emp_grade = emp.get("latest_org_grade", "")
+                if isinstance(filter_grade, list):
+                    if emp_grade not in filter_grade:
+                        match = False
+                else:
+                    if emp_grade != filter_grade:
+                        match = False
+            
+            # Check grade_combined
+            if match and filters.get("grade_combined"):
+                filter_grade = filters.get("grade_combined")
+                emp_grade = emp.get("grade_combined", "")
+                if isinstance(filter_grade, list):
+                    if emp_grade not in filter_grade:
+                        match = False
+                else:
+                    if emp_grade != filter_grade:
+                        match = False
+            
+            # Check salary_table
+            if match and filters.get("salary_table"):
+                filter_table = filters.get("salary_table")
+                emp_table = emp.get("salary_table", "")
+                if isinstance(filter_table, list):
+                    if emp_table not in filter_table:
+                        match = False
+                else:
+                    if emp_table != filter_table:
+                        match = False
+            
+            # Check jp_non_jp_classification
+            if match and filters.get("jp_non_jp_classification"):
+                filter_class = filters.get("jp_non_jp_classification")
+                emp_class = emp.get("jp_non_jp_classification", "")
+                if isinstance(filter_class, list):
+                    if emp_class not in filter_class:
+                        match = False
+                else:
+                    if filter_class.lower() not in emp_class.lower() and emp_class.lower() not in filter_class.lower():
+                        match = False
+            
+            if match:
+                filtered_employees.append(emp)
         
         # Limit results
         filtered_employees = filtered_employees[:100]
