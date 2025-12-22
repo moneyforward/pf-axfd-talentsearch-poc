@@ -1,7 +1,7 @@
 import UnifiedSearch from './UnifiedSearch'
 import './MainHeader.css'
 
-const MainHeader = ({ breadcrumbs = [], onPersonSelect, selectedPerson, onClear, onNaturalLanguageResults, onSimilarSearch }) => {
+const MainHeader = ({ breadcrumbs = [], onPersonSelect, selectedPerson, onClear, onNaturalLanguageResults, onSimilarSearch, onClearSearch }) => {
   return (
     <div className="main-header">
       <div className="main-header-breadcrumbs">
@@ -17,6 +17,7 @@ const MainHeader = ({ breadcrumbs = [], onPersonSelect, selectedPerson, onClear,
           selectedEmployee={selectedPerson}
           onSimilarSearch={onSimilarSearch}
           onNaturalLanguageResults={onNaturalLanguageResults}
+          onClearSearch={onClearSearch}
         />
       </div>
     </div>

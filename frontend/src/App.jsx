@@ -58,6 +58,8 @@ function App() {
     localStorage.setItem('user', JSON.stringify(userData))
     // Auto-select backfill page on login
     setCurrentPage('backfill')
+    // Clear all previous search results on login
+    handleClearSelection()
   }
 
   const handlePageChange = (page) => {
@@ -87,16 +89,12 @@ function App() {
   }
 
   const handleNaturalLanguageResults = (results, thinkingLines = []) => {
-    // Reset all previous search results and context
+    // Clear all previous search results FIRST before setting new ones
+    handleClearSelection()
+    // Then set new results
     setNaturalLanguageResults(results)
     setNaturalLanguageThinking(thinkingLines)
     setIsNaturalLanguageSearch(true)
-    // Clear other search results and selection when natural language search is used
-    setSelectedPerson(null)
-    setMatchedPeople([])
-    setSimilarSearchStage('idle')
-    setTopSimilarCandidates([])
-    setThinkingLines([])
   }
 
   const handleSearch = async (person, persona) => {
@@ -146,6 +144,9 @@ function App() {
       console.error('❌ [Similar Search] No target employee provided')
       return
     }
+
+    // Clear all previous search results FIRST
+    handleClearSelection()
 
     // Set the selected person so it shows in the sidebar
     setSelectedPerson(targetEmployee)
@@ -587,6 +588,7 @@ function App() {
                 selectedEmployee={selectedPerson}
                 onSimilarSearch={handleSimilarSearch}
                 onNaturalLanguageResults={handleNaturalLanguageResults}
+                onClearSearch={handleClearSelection}
               />
               <div className="search-suggestions">
                 <div className="suggestion-item">
@@ -612,6 +614,7 @@ function App() {
             onClear={handleClearSelection}
             onNaturalLanguageResults={handleNaturalLanguageResults}
             onSimilarSearch={handleSimilarSearch}
+            onClearSearch={handleClearSelection}
           />
           <div className="app-content">
             {!isNaturalLanguageSearch && (

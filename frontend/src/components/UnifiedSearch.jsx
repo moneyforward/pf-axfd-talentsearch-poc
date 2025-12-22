@@ -7,7 +7,7 @@ import './UnifiedSearch.css'
 
 const API_BASE_URL = '/api'
 
-const UnifiedSearch = ({ onEmployeeSelect, onSimilarSearch, onNaturalLanguageResults, selectedEmployee }) => {
+const UnifiedSearch = ({ onEmployeeSelect, onSimilarSearch, onNaturalLanguageResults, selectedEmployee, onClearSearch }) => {
   const { t } = useLanguage()
   const [searchTerm, setSearchTerm] = useState('')
   const [employeeResults, setEmployeeResults] = useState([])
@@ -123,6 +123,11 @@ const UnifiedSearch = ({ onEmployeeSelect, onSimilarSearch, onNaturalLanguageRes
   const handleSearch = async (userFilters = {}) => {
     if (!searchTerm.trim()) {
       return
+    }
+
+    // Clear all previous search results BEFORE starting new search
+    if (onClearSearch) {
+      onClearSearch()
     }
 
     // Reset all previous search state
@@ -246,6 +251,10 @@ const UnifiedSearch = ({ onEmployeeSelect, onSimilarSearch, onNaturalLanguageRes
     setThinkingLines([])
     if (onEmployeeSelect) {
       onEmployeeSelect(null)
+    }
+    // Clear all search results when clearing the search input
+    if (onClearSearch) {
+      onClearSearch()
     }
   }
 
