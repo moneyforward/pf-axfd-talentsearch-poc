@@ -16,6 +16,8 @@ import logging
 import asyncio
 from datetime import datetime
 from review_service import ReviewService
+from face_image_service import FaceImageService
+from fastapi.responses import Response
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -115,6 +117,18 @@ RESUMES_DIR = BASE_DIR / "mock-data" / "resumes"
 
 # Initialize review service
 review_service = ReviewService()
+
+# Initialize face image service (with error handling for optional GCS)
+try:
+    face_image_service = FaceImageService()
+except ImportError as e:
+    logger.warning(f"Face image service not available: {e}. Using mock mode only.")
+    face_image_service = None
+except Exception as e:
+    logger.warning(f"Error initializing face image service: {e}. Using mock mode only.")
+    # Fallback to mock mode
+    os.environ["USE_MOCK_DATA"] = "true"
+    face_image_service = FaceImageService()
 
 # Load data on startup
 _employees_data = None
@@ -2801,6 +2815,94 @@ You can filter by any field in the employee profile schema. Extract all mentione
     except Exception as e:
         logger.error(f"Error in natural language search: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing natural language search: {str(e)}")
+
+
+# Face Image Endpoints
+@app.get("/api/person/{employee_id}/face")
+async def get_face_image(employee_id: str):
+    """
+    Get face image (profile picture) for a specific employee.
+    
+    - **employee_id**: Employee ID to search for
+    - Returns JPEG image or 404 if not found
+    - Content-Type: image/jpeg
+    - If image not found, returns 404 (frontend will use default placeholder)
+    """
+    if face_image_service is None:
+        raise HTTPException(status_code=503, detail="Face image service not available")
+    
+    try:
+        image_data = face_image_service.get_face_image(employee_id)
+        if image_data is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Face image for employee {employee_id} not found"
+            )
+        
+        return Response(
+            content=image_data,
+            media_type="image/jpeg",
+            headers={
+                "Content-Disposition": f'inline; filename="{employee_id}.jpg"',
+                "Cache-Control": "public, max-age=3600"
+            }
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching face image: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error fetching face image: {str(e)}")
+
+
+@app.get("/api/person/{employee_id}/face/exists")
+async def check_face_image_exists(employee_id: str):
+    """
+    Check if face image exists for an employee.
+    
+    - **employee_id**: Employee ID to check
+    - Returns JSON with exists boolean and URL if exists
+    """
+    if face_image_service is None:
+        return {
+            "employee_id": employee_id,
+            "exists": False,
+            "url": None
+        }
+    
+    try:
+        exists = face_image_service.face_image_exists(employee_id)
+        return {
+            "employee_id": employee_id,
+            "exists": exists,
+            "url": f"/api/person/{employee_id}/face" if exists else None
+        }
+    except Exception as e:
+        logger.error(f"Error checking face image: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error checking face image: {str(e)}")
+
+
+@app.get("/api/person/face/list")
+async def list_available_images():
+    """
+    List all available employee IDs that have face images.
+    
+    Returns a list of employee IDs with available images.
+    """
+    if face_image_service is None:
+        return {
+            "count": 0,
+            "employee_ids": []
+        }
+    
+    try:
+        employee_ids = face_image_service.list_available_images()
+        return {
+            "count": len(employee_ids),
+            "employee_ids": employee_ids
+        }
+    except Exception as e:
+        logger.error(f"Error listing images: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error listing images: {str(e)}")
 
 
 # Review Endpoints
