@@ -1,0 +1,298 @@
+================================================================================
+Table Name: mart_emp_search_employee_profile
+================================================================================
+Description: Integrated employee profile for employee search app. Consolidates 9 individual queries into 1 query, clustered by employee_id.
+
+Clustering: employee_id
+Dataset: prod_mart
+Row Count: 2,463
+Size: ~192MB
+
+================================================================================
+【Basic Columns (Scalar Values)】
+================================================================================
+
+■ Identification Information
+  employee_id              STRING    Employee ID (Cluster Key)
+  employee_name            STRING    Full Name
+  employee_name_kana       STRING    Name in Katakana
+  nickname                 STRING    Nickname
+  mail                     STRING    Email Address
+
+■ Employment Information
+  current_employee_flag    STRING    Current Employee Flag ("●": Active, empty: Retired, etc.)
+  employment_type          STRING    Employment Type (e.g., "正社員" / Regular Employee)
+  entered_at               DATE      Join Date
+  last_day_at              DATE      Last Working Day
+  retired_at               DATE      Retirement Date
+  years_of_service         STRING    Years of Service (e.g., "7年9ヵ月" / "7 years 9 months")
+  employment_category      STRING    Employment Category (e.g., "中途" / Mid-career, "新卒" / New Graduate)
+  recruitment_category_new_graduate STRING New Graduate Category
+
+■ Personal Information
+  gender                   STRING    Gender (e.g., "男" / Male, "女" / Female)
+  birthday                 DATE      Date of Birth
+  age                      INTEGER   Age
+  nationality              STRING    Nationality
+
+■ Organizational Information
+  dept_name                STRING    Department Name (Hierarchical structure, separated by ">")
+  location                 STRING    Work Location (e.g., "本社" / Head Office)
+  job_title                STRING    Job Title (e.g., "部長" / Director, "リーダー" / Leader, "-")
+  job_family               STRING    Job Family (e.g., "セールス" / Sales, "エンジニア" / Engineer)
+  job_family_detail        STRING    Job Family Detail (e.g., "バックエンドエンジニア" / Backend Engineer)
+
+■ Compensation & Evaluation Information
+  salary_table             STRING    Salary Table (e.g., "Aテーブル" / Table A)
+  latest_job_grade         STRING    Latest Job Grade (e.g., 5, 4, 3, 2)
+  latest_org_grade         STRING    Latest Organizational Contribution Grade
+  annual_salary            INTEGER   Annual Salary
+
+■ FFS (Personality Assessment) Information
+  ffs_a_factor             INTEGER   FFS Factor A (凝縮性 / Condensation)
+  ffs_b_factor             INTEGER   FFS Factor B (受容性 / Receptivity)
+  ffs_c_factor             INTEGER   FFS Factor C (弁別性 / Discriminability)
+  ffs_d_factor             INTEGER   FFS Factor D (拡散性 / Diffusion)
+  ffs_e_factor             INTEGER   FFS Factor E (保全性 / Conservation)
+  ffs_type                 STRING    FFS Type (e.g., CD, AB, AC)
+  ffs_concat_text          STRING    FFS Factor Concatenated Text
+
+■ Others
+  jp_non_jp_classification STRING    JP/Non-JP Classification (e.g., "JP社員" / JP Employee)
+  self_introduction        STRING    Self Introduction URL (Kibela link, etc.)
+  kaonavi_url              STRING    Kaonavi URL
+
+================================================================================
+【Array Columns (ARRAY<RECORD>)】
+================================================================================
+
+■ pulse_survey_history
+  Description: Pulse survey history (all records, array type)
+  Sort Order: year_month DESC (newest first)
+  
+  Structure:
+    year_month                      DATE      Target Year-Month
+    overall_score                   FLOAT     Overall Score
+    e_nps                           FLOAT     eNPS (Employee Net Promoter Score)
+    professional_duties_total       FLOAT     Professional Duties Score
+    personal_growth_total           FLOAT     Personal Growth Score
+    health_total                    FLOAT     Health Score
+    support_total                   FLOAT     Support Score
+    relationships_total             FLOAT     Relationships Score
+    approval_total                  FLOAT     Approval Score
+    vision_strategy_total           FLOAT     Vision & Strategy Score
+    org_culture_total               FLOAT     Organizational Culture Score
+    environment_total               FLOAT     Environment Score
+
+  Example:
+    [
+      {
+        "year_month": "2025-11-01",
+        "overall_score": 4.2,
+        "e_nps": 8.5,
+        "professional_duties_total": 4.1,
+        ...
+      }
+    ]
+
+
+■ ggi_history
+  Description: GGI half-year goal history (all records, array type)
+  Sort Order: cycle_start_date DESC (newest first)
+  
+  Structure:
+    fy_cycle                        STRING    Fiscal Year Cycle (e.g., "2025年_下期_FY25H2")
+    cycle_start_date                DATE      Cycle Start Date
+    half_year_goal                  STRING    Half-Year Goal
+    half_year_goal_indicator        STRING    Half-Year Goal Indicator
+    action_plan                     STRING    Action Plan
+    values_to_embody                STRING    Values to Embody
+    self_assessment_score           STRING    Self Assessment Score (e.g., "A:期待通りである" / "A: Met expectations")
+    half_year_self_review_achievement_growth STRING Half-Year Self Review (Achievement & Growth)
+    short_term_challenges           STRING    Short-Term Challenges
+    med_term_challenges             STRING    Medium-Term Challenges
+    strengths_and_skills_to_improve STRING    Strengths and Skills to Improve
+    career_intentions               STRING    Career Intentions
+    reason_for_transfer_or_desired_role STRING Reason for Transfer or Desired Role
+    monthly_interview_owner_employee_id STRING Monthly Interview Owner Employee ID
+    monthly_interview_owner_name    STRING    Monthly Interview Owner Name
+    first_evaluator_owner_employee_id STRING First Evaluator Employee ID
+    first_evaluator_owner_name      STRING    First Evaluator Name
+    second_evaluator_owner_employee_id STRING Second Evaluator Employee ID
+    second_evaluator_owner_name     STRING    Second Evaluator Name
+
+  Example:
+    [
+      {
+        "fy_cycle": "2025年_下期_FY25H2",
+        "cycle_start_date": "2025-06-01",
+        "half_year_goal": "上位G:セールス組織の売上目標達成...",
+        ...
+      }
+    ]
+
+
+■ ggi_monthly_history
+  Description: GGI monthly review history (all records, array type)
+  Sort Order: parse_date('%Y-%m', year_month) ASC (oldest first)
+  
+  Structure:
+    fy_cycle                        STRING    Fiscal Year Cycle
+    cycle_start_date                DATE      Cycle Start Date
+    year_month                      STRING    Target Year-Month (e.g., "2025-11")
+    monthly_goal                    STRING    Monthly Goal
+    monthly_review                  STRING    Monthly Review
+    monthly_self_evaluation         STRING    Monthly Self Evaluation
+    monthly_comment_good            STRING    Monthly Comment (Good Points)
+    monthly_comment_more            STRING    Monthly Comment (Areas for Improvement)
+    monthly_interview_owner_employee_id STRING Monthly Interview Owner Employee ID
+    monthly_interview_owner_name    STRING    Monthly Interview Owner Name
+    first_evaluator_owner_employee_id STRING First Evaluator Employee ID
+    first_evaluator_owner_name      STRING    First Evaluator Name
+    second_evaluator_owner_employee_id STRING Second Evaluator Employee ID
+    second_evaluator_owner_name     STRING    Second Evaluator Name
+
+  Example:
+    [
+      {
+        "fy_cycle": "2025年_下期_FY25H2",
+        "year_month": "2025-11",
+        "monthly_goal": "- 大型案件のクロージング...",
+        ...
+      }
+    ]
+
+
+■ evaluation_history
+  Description: Evaluation history (all records, array type)
+  Sort Order: updated_at DESC (newest first)
+  
+  Structure:
+    updated_at                      DATE      Updated Date
+    fy                              STRING    Fiscal Year (e.g., "2025年上期評価" / "FY25 H1 Evaluation")
+    output_evaluation               STRING    Evaluation Result (e.g., "A", "A-", "B")
+    new_job_grade                   STRING    New Job Grade
+    new_organizational_contribution_grade STRING New Organizational Contribution Grade
+    new_annual_salary               STRING    New Annual Salary
+    feedback_details                STRING    Feedback Details
+    reason_for_promotion_demotion_final STRING Reason for Promotion/Demotion
+    training_and_assignment_plan   STRING    Training and Assignment Plan
+    high_performance_bonus         STRING    High Performance Bonus
+    mfbc_sales_incentive            STRING    MFBC Sales Incentive
+    special_raise                   STRING    Special Raise
+    reason_for_salary_adjustment    STRING    Reason for Salary Adjustment
+    hr_comment                      STRING    HR Comment
+
+  Example:
+    [
+      {
+        "updated_at": "2025-07-17",
+        "fy": "2025年上期評価",
+        "output_evaluation": "A",
+        "new_job_grade": "5",
+        ...
+      }
+    ]
+
+
+■ activity_history
+  Description: Activity data history (all records, array type)
+  Sort Order: year_month DESC (newest first)
+  
+  Structure:
+    year_month                      DATE      Target Year-Month
+    attendance_days_worked          FLOAT     Days Worked
+    attendance_office_count          INTEGER   Office Attendance Count
+    attendance_actual_working_hours  FLOAT     Actual Working Hours
+    attendance_overtime_hours        FLOAT     Overtime Hours
+    attendance_avg_working_hours_per_day FLOAT Average Working Hours per Day
+    slack_activity_messages_posted_in_channels INTEGER Slack Channel Messages Posted
+    slack_activity_direct_messages_posted INTEGER Slack Direct Messages Posted
+    slack_activity_reactions_added   INTEGER   Slack Reactions Added
+    emotip_sent_point                INTEGER   Emotip Sent Points
+    emotip_posted_times              INTEGER   Emotip Posted Times
+    emotip_received_point            INTEGER   Emotip Received Points
+    emotip_clapped_point             INTEGER   Emotip Clapped Points
+
+  Example:
+    [
+      {
+        "year_month": "2025-11-01",
+        "attendance_days_worked": 20.0,
+        "attendance_office_count": 12,
+        "attendance_actual_working_hours": 160.0,
+        ...
+      }
+    ]
+
+
+■ transfer_history
+  Description: Department transfer history (all records, array type)
+  Sort Order: end_date DESC (newest first)
+  
+  Structure:
+    dept_id                         STRING    Department ID
+    department                      STRING    Department Name (Hierarchical structure, separated by ">")
+    start_date                      DATE      Start Date
+    end_date                        DATE      End Date
+    duration_days                   INTEGER   Duration in Days
+    duration_formatted              STRING    Duration Formatted (e.g., "2年8ヶ月" / "2 years 8 months")
+    period_status                  STRING    Period Status (e.g., "Current", "Past")
+
+  Example:
+    [
+      {
+        "dept_id": "A010101010000",
+        "department": "株式会社マネーフォワード > ... > Enterpriseセールス部",
+        "start_date": "2023-04-01",
+        "end_date": "2025-12-01",
+        "duration_days": 975,
+        "duration_formatted": "2年8ヶ月",
+        "period_status": "Current"
+      }
+    ]
+
+
+■ grade_retention_history
+  Description: Grade retention period history (all records, array type). Stores JG and OG separately.
+  Sort Order: grade_type, end_date DESC (by grade type, then newest first)
+  
+  Structure:
+    job_grade                       STRING    Job Grade (e.g., "5", "4", "3", "2")
+    fy                              STRING    Fiscal Year (e.g., "2025年上期評価" / "FY25 H1 Evaluation")
+    start_date                      DATE      Start Date
+    end_date                        DATE      End Date
+    duration_days                   INTEGER   Retention Days
+    duration_formatted              STRING    Retention Period Formatted (e.g., "2年6ヶ月" / "2 years 6 months")
+    period_status                  STRING    Period Status (e.g., "Current", "Past")
+    grade_type                      STRING    Grade Type (e.g., "COMBINED")
+
+  Example:
+    [
+      {
+        "job_grade": "5",
+        "fy": "2025年上期評価",
+        "start_date": "2023-07-01",
+        "end_date": "2025-12-31",
+        "duration_days": 914,
+        "duration_formatted": "2年6ヶ月",
+        "period_status": "Current",
+        "grade_type": "COMBINED"
+      }
+    ]
+
+
+================================================================================
+【Data Characteristics】
+================================================================================
+
+• 1 row = Complete information for 1 employee
+• Array columns store historical data for each employee in chronological order
+• Arrays may be NULL (when there is no historical data)
+• current_employee_flag "●" indicates active employee, empty string indicates retired, etc.
+• Department names are stored as hierarchical strings separated by ">"
+• Date types are DATE format (YYYY-MM-DD)
+• Numeric types are FLOAT (decimal) or INTEGER (integer)
+
+================================================================================
+

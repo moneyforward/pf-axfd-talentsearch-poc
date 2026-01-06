@@ -1,0 +1,298 @@
+================================================================================
+テーブル名: mart_emp_search_employee_profile
+================================================================================
+説明: 従業員検索アプリ用統合プロファイル。9個の個別クエリを1クエリに統合し、employee_idでクラスタリング。
+
+クラスタリング: employee_id
+データセット: prod_mart
+行数: 2,463
+サイズ: 約192MB
+
+================================================================================
+【基本カラム（スカラー値）】
+================================================================================
+
+■ 識別情報
+  employee_id              STRING    社員番号（クラスタキー）
+  employee_name            STRING    氏名
+  employee_name_kana       STRING    社員カナ氏名
+  nickname                 STRING    ニックネーム
+  mail                     STRING    メールアドレス
+
+■ 雇用情報
+  current_employee_flag    STRING    現職者フラグ（●:現職者、空文字:退職者など）
+  employment_type          STRING    雇用形態（例: 正社員）
+  entered_at               DATE      入社日
+  last_day_at              DATE      最終出社日
+  retired_at               DATE      退職日
+  years_of_service         STRING    勤続年数（例: "7年9ヵ月"）
+  employment_category      STRING    雇用カテゴリ（例: 中途、新卒）
+  recruitment_category_new_graduate STRING 新卒区分
+
+■ 個人情報
+  gender                   STRING    性別（例: 男、女）
+  birthday                 DATE      生年月日
+  age                      INTEGER   年齢
+  nationality              STRING    国籍
+
+■ 組織情報
+  dept_name                STRING    部署名（階層構造、>区切り）
+  location                 STRING    勤務地（例: 本社）
+  job_title                STRING    役職（例: 部長、リーダー、-）
+  job_family               STRING    職種ファミリー（例: セールス、エンジニア）
+  job_family_detail        STRING    職種ファミリー詳細（例: バックエンドエンジニア）
+
+■ 給与・評価情報
+  salary_table             STRING    給与テーブル（例: Aテーブル）
+  latest_job_grade         STRING    最新ジョブグレード（例: 5、4、3、2）
+  latest_org_grade         STRING    最新組織貢献グレード
+  annual_salary            INTEGER   年収
+
+■ FFS（適性検査）情報
+  ffs_a_factor             INTEGER   FFS A因子（凝縮性）
+  ffs_b_factor             INTEGER   FFS B因子（受容性）
+  ffs_c_factor             INTEGER   FFS C因子（弁別性）
+  ffs_d_factor             INTEGER   FFS D因子（拡散性）
+  ffs_e_factor             INTEGER   FFS E因子（保全性）
+  ffs_type                 STRING     FFSタイプ（例: CD、AB、AC）
+  ffs_concat_text          STRING    FFS因子結合テキスト
+
+■ その他
+  jp_non_jp_classification STRING    JP/非JP区分（例: JP社員）
+  self_introduction        STRING    自己紹介URL（Kibelaリンクなど）
+  kaonavi_url              STRING    Kaonavi URL
+
+================================================================================
+【配列カラム（ARRAY<RECORD>）】
+================================================================================
+
+■ pulse_survey_history
+  説明: パルスサーベイ履歴（全件、配列型）
+  ソート: year_month DESC（新しい順）
+  
+  構造:
+    year_month                      DATE      対象年月
+    overall_score                   FLOAT     総合スコア
+    e_nps                           FLOAT     eNPS（従業員推奨度）
+    professional_duties_total       FLOAT     業務遂行スコア
+    personal_growth_total           FLOAT     個人成長スコア
+    health_total                    FLOAT     健康スコア
+    support_total                   FLOAT     サポートスコア
+    relationships_total             FLOAT     人間関係スコア
+    approval_total                  FLOAT     承認スコア
+    vision_strategy_total           FLOAT     ビジョン・戦略スコア
+    org_culture_total               FLOAT     組織文化スコア
+    environment_total               FLOAT     環境スコア
+
+  例:
+    [
+      {
+        "year_month": "2025-11-01",
+        "overall_score": 4.2,
+        "e_nps": 8.5,
+        "professional_duties_total": 4.1,
+        ...
+      }
+    ]
+
+
+■ ggi_history
+  説明: GGI半期目標履歴（全件、配列型）
+  ソート: cycle_start_date DESC（新しい順）
+  
+  構造:
+    fy_cycle                        STRING    年度サイクル（例: "2025年_下期_FY25H2"）
+    cycle_start_date                DATE      サイクル開始日
+    half_year_goal                  STRING    半期目標
+    half_year_goal_indicator        STRING    半期目標指標
+    action_plan                     STRING    アクションプラン
+    values_to_embody                STRING    体現すべき価値観
+    self_assessment_score           STRING    自己評価スコア（例: "A:期待通りである"）
+    half_year_self_review_achievement_growth STRING 半期自己振り返り（成果・成長）
+    short_term_challenges           STRING    短期チャレンジ
+    med_term_challenges             STRING    中期チャレンジ
+    strengths_and_skills_to_improve STRING    強みと伸ばしたいスキル
+    career_intentions               STRING    キャリア意向
+    reason_for_transfer_or_desired_role STRING 異動希望理由・希望役割
+    monthly_interview_owner_employee_id STRING 月次面談オーナー社員ID
+    monthly_interview_owner_name    STRING    月次面談オーナー氏名
+    first_evaluator_owner_employee_id STRING 一次評価者社員ID
+    first_evaluator_owner_name      STRING    一次評価者氏名
+    second_evaluator_owner_employee_id STRING 二次評価者社員ID
+    second_evaluator_owner_name     STRING    二次評価者氏名
+
+  例:
+    [
+      {
+        "fy_cycle": "2025年_下期_FY25H2",
+        "cycle_start_date": "2025-06-01",
+        "half_year_goal": "上位G:セールス組織の売上目標達成...",
+        ...
+      }
+    ]
+
+
+■ ggi_monthly_history
+  説明: GGI月次振り返り履歴（全件、配列型）
+  ソート: parse_date('%Y-%m', year_month) ASC（古い順）
+  
+  構造:
+    fy_cycle                        STRING    年度サイクル
+    cycle_start_date                DATE      サイクル開始日
+    year_month                      STRING    対象年月（例: "2025-11"）
+    monthly_goal                    STRING    月次目標
+    monthly_review                  STRING    月次振り返り
+    monthly_self_evaluation         STRING    月次自己評価
+    monthly_comment_good            STRING    月次コメント（良い点）
+    monthly_comment_more            STRING    月次コメント（改善点）
+    monthly_interview_owner_employee_id STRING 月次面談オーナー社員ID
+    monthly_interview_owner_name    STRING    月次面談オーナー氏名
+    first_evaluator_owner_employee_id STRING 一次評価者社員ID
+    first_evaluator_owner_name      STRING    一次評価者氏名
+    second_evaluator_owner_employee_id STRING 二次評価者社員ID
+    second_evaluator_owner_name     STRING    二次評価者氏名
+
+  例:
+    [
+      {
+        "fy_cycle": "2025年_下期_FY25H2",
+        "year_month": "2025-11",
+        "monthly_goal": "- 大型案件のクロージング...",
+        ...
+      }
+    ]
+
+
+■ evaluation_history
+  説明: 評価履歴（全件、配列型）
+  ソート: updated_at DESC（新しい順）
+  
+  構造:
+    updated_at                      DATE      更新日
+    fy                              STRING    年度（例: "2025年上期評価"）
+    output_evaluation               STRING    評価結果（例: "A"、"A-"、"B"）
+    new_job_grade                   STRING    新ジョブグレード
+    new_organizational_contribution_grade STRING 新組織貢献グレード
+    new_annual_salary               STRING    新年収
+    feedback_details                STRING    フィードバック詳細
+    reason_for_promotion_demotion_final STRING 昇格・降格理由
+    training_and_assignment_plan   STRING    育成・配属計画
+    high_performance_bonus         STRING    高パフォーマンスボーナス
+    mfbc_sales_incentive            STRING    MFBCセールスインセンティブ
+    special_raise                   STRING    特別昇給
+    reason_for_salary_adjustment    STRING    給与調整理由
+    hr_comment                      STRING    HRコメント
+
+  例:
+    [
+      {
+        "updated_at": "2025-07-17",
+        "fy": "2025年上期評価",
+        "output_evaluation": "A",
+        "new_job_grade": "5",
+        ...
+      }
+    ]
+
+
+■ activity_history
+  説明: 活動データ履歴（全件、配列型）
+  ソート: year_month DESC（新しい順）
+  
+  構造:
+    year_month                      DATE      対象年月
+    attendance_days_worked          FLOAT     出勤日数
+    attendance_office_count          INTEGER   出社回数
+    attendance_actual_working_hours  FLOAT     実労働時間
+    attendance_overtime_hours        FLOAT     残業時間
+    attendance_avg_working_hours_per_day FLOAT 1日あたり平均労働時間
+    slack_activity_messages_posted_in_channels INTEGER Slackチャンネル投稿数
+    slack_activity_direct_messages_posted INTEGER Slack DM投稿数
+    slack_activity_reactions_added   INTEGER   Slackリアクション数
+    emotip_sent_point                INTEGER   Emotip送信ポイント
+    emotip_posted_times              INTEGER   Emotip投稿回数
+    emotip_received_point            INTEGER   Emotip受信ポイント
+    emotip_clapped_point             INTEGER   Emotip拍手ポイント
+
+  例:
+    [
+      {
+        "year_month": "2025-11-01",
+        "attendance_days_worked": 20.0,
+        "attendance_office_count": 12,
+        "attendance_actual_working_hours": 160.0,
+        ...
+      }
+    ]
+
+
+■ transfer_history
+  説明: 部署異動履歴（全件、配列型）
+  ソート: end_date DESC（新しい順）
+  
+  構造:
+    dept_id                         STRING    部署ID
+    department                      STRING    部署名（階層構造、>区切り）
+    start_date                      DATE      開始日
+    end_date                        DATE      終了日
+    duration_days                   INTEGER   在籍日数
+    duration_formatted              STRING    在籍期間（フォーマット済み、例: "2年8ヶ月"）
+    period_status                  STRING    期間ステータス（例: "Current"、"Past"）
+
+  例:
+    [
+      {
+        "dept_id": "A010101010000",
+        "department": "株式会社マネーフォワード > ... > Enterpriseセールス部",
+        "start_date": "2023-04-01",
+        "end_date": "2025-12-01",
+        "duration_days": 975,
+        "duration_formatted": "2年8ヶ月",
+        "period_status": "Current"
+      }
+    ]
+
+
+■ grade_retention_history
+  説明: グレード滞留期間履歴（全件、配列型）JGとOGを区別して格納
+  ソート: grade_type, end_date DESC（グレードタイプ順、その後新しい順）
+  
+  構造:
+    job_grade                       STRING    ジョブグレード（例: "5"、"4"、"3"、"2"）
+    fy                              STRING    年度（例: "2025年上期評価"）
+    start_date                      DATE      開始日
+    end_date                        DATE      終了日
+    duration_days                   INTEGER   滞留日数
+    duration_formatted              STRING    滞留期間（フォーマット済み、例: "2年6ヶ月"）
+    period_status                  STRING    期間ステータス（例: "Current"、"Past"）
+    grade_type                      STRING    グレードタイプ（例: "COMBINED"）
+
+  例:
+    [
+      {
+        "job_grade": "5",
+        "fy": "2025年上期評価",
+        "start_date": "2023-07-01",
+        "end_date": "2025-12-31",
+        "duration_days": 914,
+        "duration_formatted": "2年6ヶ月",
+        "period_status": "Current",
+        "grade_type": "COMBINED"
+      }
+    ]
+
+
+================================================================================
+【データの特徴】
+================================================================================
+
+• 1行 = 1従業員の全情報
+• 配列カラムは各従業員の履歴データを時系列で保持
+• 配列はNULLの可能性あり（履歴データがない場合）
+• current_employee_flagが"●"の場合は現職者、空文字の場合は退職者など
+• 部署名は階層構造を">"で区切った文字列として格納
+• 日付型はDATE型（YYYY-MM-DD形式）
+• 数値型はFLOAT（小数）またはINTEGER（整数）
+
+================================================================================
+

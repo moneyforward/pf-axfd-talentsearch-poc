@@ -18,6 +18,8 @@ from datetime import datetime
 from review_service import ReviewService
 from face_image_service import FaceImageService
 from fastapi.responses import Response
+from llm_service import call_llm
+from data_validator import validate_and_log
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -26,7 +28,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="PF Talent Search API",
     version="1.0.0",
-    description="Minimal prototype for skill-based people search using Azure OpenAI"
+    description="Minimal prototype for skill-based people search with configurable LLM support (Azure OpenAI or Google Gemini)"
 )
 
 # CORS middleware
@@ -134,14 +136,74 @@ except Exception as e:
 _employees_data = None
 _personas_data = None
 
+def _normalize_employee_data(emp: dict) -> dict:
+    """
+    Normalize employee data to support both BigQuery schema and legacy schema.
+    - Converts dept_name (hierarchical) to dept_1, dept_2, dept_3, etc.
+    - Handles missing fields gracefully
+    """
+    normalized = emp.copy()
+    
+    # Convert dept_name (BigQuery format) to dept_1, dept_2, etc. (legacy format)
+    # Only convert if dept_1 doesn't already exist (backward compatibility)
+    if "dept_name" in normalized and normalized["dept_name"] and "dept_1" not in normalized:
+        dept_parts = [part.strip() for part in str(normalized["dept_name"]).split(">")]
+        # Remove empty parts and "-" placeholders
+        dept_parts = [part for part in dept_parts if part and part != "-"]
+        
+        # Map to dept_1 through dept_6 (take first 6 non-empty parts)
+        for i, dept_part in enumerate(dept_parts[:6], start=1):
+            normalized[f"dept_{i}"] = dept_part
+        
+        # Fill remaining dept fields with None if not already set
+        for i in range(len(dept_parts) + 1, 7):
+            if f"dept_{i}" not in normalized:
+                normalized[f"dept_{i}"] = None
+    elif "dept_1" not in normalized:
+        # If neither dept_name nor dept_1 exists, initialize all dept fields
+        for i in range(1, 7):
+            normalized[f"dept_{i}"] = None
+    
+    # Ensure all expected fields exist (for backward compatibility)
+    # This allows the app to work with both old and new data formats
+    expected_fields = {
+        "load_date": None,  # Legacy field, may not exist in BigQuery data
+        "fulltime_employee_hired_at": None,
+        "fulltime_employee_retired_at": None,
+    }
+    
+    for field, default_value in expected_fields.items():
+        if field not in normalized:
+            normalized[field] = default_value
+    
+    return normalized
+
+
 def load_employees():
-    """Load employees data from JSON file"""
+    """Load employees data from JSON file and normalize to support both schemas"""
     global _employees_data
     if _employees_data is None:
         if EMPLOYEES_FILE.exists():
-            with open(EMPLOYEES_FILE, 'r', encoding='utf-8') as f:
-                _employees_data = json.load(f)
+            try:
+                with open(EMPLOYEES_FILE, 'r', encoding='utf-8') as f:
+                    raw_data = json.load(f)
+                
+                # Validate data before processing
+                is_valid = validate_and_log(raw_data, raise_on_error=False)
+                if not is_valid:
+                    logger.warning("Employee data validation failed, but continuing with available data")
+                
+                # Normalize each employee record
+                _employees_data = [_normalize_employee_data(emp) for emp in raw_data]
+                logger.info(f"Loaded {len(_employees_data)} employees from {EMPLOYEES_FILE}")
+            except json.JSONDecodeError as e:
+                logger.error(f"Failed to parse JSON file {EMPLOYEES_FILE}: {e}")
+                _employees_data = []
+            except Exception as e:
+                logger.error(f"Error loading employee data: {e}")
+                _employees_data = []
         else:
+            logger.warning(f"Employee data file not found: {EMPLOYEES_FILE}")
             _employees_data = []
     return _employees_data
 
@@ -421,52 +483,18 @@ class EmployeeReviewsResponse(BaseModel):
     half_year: Optional[HalfReview] = None
 
 
-# Azure OpenAI Client
+# Legacy function for backward compatibility - now uses the unified LLM service
 async def call_azure_openai(messages: List[dict], temperature: float = 0.0, use_json_format: bool = False) -> dict:
-    """Call Azure OpenAI API"""
-    url = f"{AZURE_OPENAI_ENDPOINT}openai/deployments/{AZURE_OPENAI_DEPLOYMENT}/chat/completions"
-    params = {"api-version": AZURE_OPENAI_API_VERSION}
-    
-    headers = {
-        "Content-Type": "application/json",
-        "api-key": AZURE_OPENAI_API_KEY
-    }
-    
-    payload = {
-        "model": AZURE_OPENAI_DEPLOYMENT,
-        "messages": messages,
-        "temperature": temperature
-    }
-    
-    if use_json_format:
-        payload["response_format"] = {"type": "json_object"}
-    
-    async with httpx.AsyncClient() as client:
-        try:
-            response = await client.post(url, params=params, headers=headers, json=payload, timeout=30.0)
-            response.raise_for_status()
-            result = response.json()
-            
-            # Log LLM response
-            logger.info("=" * 80)
-            logger.info("LLM API Response:")
-            logger.info(f"Model: {AZURE_OPENAI_DEPLOYMENT}")
-            logger.info(f"Temperature: {temperature}")
-            if "choices" in result and len(result["choices"]) > 0:
-                content = result["choices"][0]["message"]["content"]
-                logger.info(f"Response Content:\n{content}")
-            else:
-                logger.warning(f"Unexpected response structure: {result}")
-            logger.info("=" * 80)
-            
-            return result
-        except httpx.HTTPStatusError as e:
-            error_detail = f"Status: {e.response.status_code}, Response: {e.response.text}"
-            logger.error(f"HTTP Error: {error_detail}")
-            raise HTTPException(status_code=e.response.status_code, detail=error_detail)
-        except Exception as e:
-            logger.error(f"Error calling Azure OpenAI: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"Error calling Azure OpenAI: {str(e)}")
+    """
+    Legacy function - redirects to unified LLM service.
+    This function is kept for backward compatibility but now uses the configurable LLM service.
+    """
+    try:
+        result = await call_llm(messages, temperature, use_json_format)
+        return result
+    except Exception as e:
+        logger.error(f"Error calling LLM: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error calling LLM: {str(e)}")
 
 
 @app.get("/")
@@ -550,17 +578,28 @@ JSON形式:
 
 @app.get("/api/test-openai")
 async def test_openai():
-    """Test endpoint to verify Azure OpenAI connection"""
+    """Legacy endpoint name - redirects to test_llm. Use /api/test-llm for the new endpoint."""
+    return await test_llm()
+
+@app.get("/api/test-llm")
+async def test_llm():
+    """Test endpoint to verify LLM connection (works with any configured provider)"""
+    from llm_service import get_llm_service
+    
+    service = get_llm_service()
+    provider_name = service.provider.value
+    
     test_messages = [
         {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": "Say 'Hello, Azure OpenAI is working!' in Japanese."}
+        {"role": "user", "content": f"Say 'Hello, {provider_name} is working!' in Japanese."}
     ]
     
     try:
-        response = await call_azure_openai(test_messages, temperature=0.0)
+        response = await call_llm(test_messages, temperature=0.0)
         if "choices" in response and len(response["choices"]) > 0:
             return {
                 "status": "success",
+                "provider": provider_name,
                 "response": response["choices"][0]["message"]["content"]
             }
         else:
